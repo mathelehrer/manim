@@ -193,6 +193,8 @@ __all__ = [
     "MathTex",
     "Tex",
     "BulletedList",
+    "NoBulletedList",
+    "CustomizedBulletedList",
     "Title",
     "TexMobject",
     "TextMobject",
@@ -568,6 +570,80 @@ class BulletedList(Tex):
         )
         for part in self:
             dot = MathTex("\\cdot").scale(self.dot_scale_factor)
+            dot.next_to(part[0], LEFT, SMALL_BUFF)
+            part.add_to_back(dot)
+        self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
+
+    def fade_all_but(self, index_or_string, opacity=0.5):
+        arg = index_or_string
+        if isinstance(arg, str):
+            part = self.get_part_by_tex(arg)
+        elif isinstance(arg, int):
+            part = self.submobjects[arg]
+        else:
+            raise TypeError(f"Expected int or string, got {arg}")
+        for other_part in self.submobjects:
+            if other_part is part:
+                other_part.set_fill(opacity=1)
+            else:
+                other_part.set_fill(opacity=opacity)
+
+
+class NoBulletedList(Tex):
+    def __init__(
+        self,
+        *items,
+        buff=MED_LARGE_BUFF,
+        dot_scale_factor=2,
+        tex_environment=None,
+        **kwargs,
+    ):
+        self.buff = buff
+        self.dot_scale_factor = dot_scale_factor
+        self.tex_environment = tex_environment
+        line_separated_items = [s + "\\\\" for s in items]
+        Tex.__init__(
+            self, *line_separated_items, tex_environment=tex_environment, **kwargs
+        )
+        for part in self:
+            dot = MathTex("").scale(self.dot_scale_factor)
+            dot.next_to(part[0], LEFT, SMALL_BUFF)
+            part.add_to_back(dot)
+        self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
+
+    def fade_all_but(self, index_or_string, opacity=0.5):
+        arg = index_or_string
+        if isinstance(arg, str):
+            part = self.get_part_by_tex(arg)
+        elif isinstance(arg, int):
+            part = self.submobjects[arg]
+        else:
+            raise TypeError(f"Expected int or string, got {arg}")
+        for other_part in self.submobjects:
+            if other_part is part:
+                other_part.set_fill(opacity=1)
+            else:
+                other_part.set_fill(opacity=opacity)
+
+
+class CustomizedBulletedList(Tex):
+    def __init__(
+        self,
+        *items,
+        buff=MED_LARGE_BUFF,
+        dot_scale_factor=2,
+        tex_environment=None,
+        **kwargs,
+    ):
+        self.buff = buff
+        self.dot_scale_factor = dot_scale_factor
+        self.tex_environment = tex_environment
+        line_separated_items = [s + "\\\\" for s in items]
+        Tex.__init__(
+            self, *line_separated_items, tex_environment=tex_environment, **kwargs
+        )
+        for part in self:
+            dot = MathTex("\\infty").scale(self.dot_scale_factor)
             dot.next_to(part[0], LEFT, SMALL_BUFF)
             part.add_to_back(dot)
         self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
