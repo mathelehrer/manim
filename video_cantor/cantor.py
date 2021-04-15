@@ -466,9 +466,7 @@ class Reals(Scene):
 
         for i in range(0, l):
             numbers[i].move_to(RIGHT * positions[i].x + UP * positions[i].y)
-            self.play(
-                Write(numbers[i], run_time=0.0)
-            )
+            self.add(numbers[i])
 
         self.wait(1)
 
@@ -505,7 +503,7 @@ class Reals(Scene):
         )
 
         number_line = NumberLine(x_min=0, x_max=10)
-        number_line.move_to(LEFT * 0+UP*0.1)
+        number_line.move_to(LEFT * 0+UP*0.0)
 
         blue = Color("blue")
         red = Color("red")
@@ -527,7 +525,7 @@ class Reals(Scene):
             color = colors[math.floor(fraction_vals[i] * 100)]
             fraction.set_color(color)
             arrow = Arrow(Line(UP * 0.1, UP * 0))
-            arrow.rotate(np.pi / 2)
+            arrow.rotate(-np.pi / 2)
             arrow.scale(0.5)
             position = LEFT * 5 + 10 * fraction_vals[i] * RIGHT
             arrow.move_to(position + UP * 0.25)
@@ -559,7 +557,7 @@ class Reals(Scene):
 
         self.play(
             AnimationGroup(Succession(
-                *[ApplyMethod(arrows[i].move_to, LEFT * 5 + 10 * fraction_vals[i] * RIGHT + UP * 0) for i in
+                *[ApplyMethod(arrows[i].move_to, LEFT * 5 + 10 * fraction_vals[i] * RIGHT + UP * 0.1) for i in
                   range(13, len(fractions))]), run_time=10),
             AnimationGroup(Succession(
                 *[ApplyMethod(fractions[i].set_color, colors[math.floor(fraction_vals[i] * 100)]) for i in
