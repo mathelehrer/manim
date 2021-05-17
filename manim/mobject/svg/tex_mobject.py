@@ -204,6 +204,7 @@ __all__ = [
 import itertools as it
 import operator as op
 import re
+from abc import ABC
 from functools import reduce
 
 from ... import config, logger
@@ -552,7 +553,7 @@ class Tex(MathTex):
         )
 
 
-class BulletedList(Tex):
+class BulletedList(Tex, ABC):
     def __init__(
         self,
         *items,
@@ -569,7 +570,7 @@ class BulletedList(Tex):
             self, *line_separated_items, tex_environment=tex_environment, **kwargs
         )
         for part in self:
-            dot = MathTex("\\cdot").scale(self.dot_scale_factor)
+            dot = MathTex("\\infty").scale(self.dot_scale_factor)
             dot.next_to(part[0], LEFT, SMALL_BUFF)
             part.add_to_back(dot)
         self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
@@ -589,7 +590,7 @@ class BulletedList(Tex):
                 other_part.set_fill(opacity=opacity)
 
 
-class NoBulletedList(Tex):
+class NoBulletedList(Tex, ABC):
     def __init__(
         self,
         *items,

@@ -161,6 +161,8 @@ class ImageMobject(AbstractImageMobject):
         self.stroke_opacity = 1
         self.invert = invert
         self.image_mode = image_mode
+        print(filename_or_array)
+        print(get_full_raster_image_path(filename_or_array))
         if isinstance(filename_or_array, (str, pathlib.PurePath)):
             path = get_full_raster_image_path(filename_or_array)
             image = Image.open(path).convert(self.image_mode)
