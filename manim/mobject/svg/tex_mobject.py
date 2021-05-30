@@ -614,7 +614,7 @@ class BulletedList(Tex, ABC):
             self, *line_separated_items, tex_environment=tex_environment, **kwargs
         )
         for part in self:
-            dot = MathTex("\\infty").scale(self.dot_scale_factor)
+            dot = MathTex("\\dot").scale(self.dot_scale_factor)
             dot.next_to(part[0], LEFT, SMALL_BUFF)
             part.add_to_back(dot)
         self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
@@ -688,7 +688,7 @@ class CustomizedBulletedList(Tex):
             self, *line_separated_items, tex_environment=tex_environment, **kwargs
         )
         for part in self:
-            dot = MathTex("\\infty").scale(self.dot_scale_factor)
+            dot = MathTex("\\Longrightarrow").scale(self.dot_scale_factor)
             dot.next_to(part[0], LEFT, SMALL_BUFF)
             part.add_to_back(dot)
         self.arrange(DOWN, aligned_edge=LEFT, buff=self.buff)
