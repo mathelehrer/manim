@@ -1,0 +1,1560 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1205"
+   height="638"
+   viewBox="3 3 673 358"
+   version="1.1"
+   id="svg5177"
+   sodipodi:docname="periodic_table.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <metadata
+     id="metadata5183">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs5181" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="3440"
+     inkscape:window-height="1376"
+     id="namedview5179"
+     showgrid="false"
+     showguides="false"
+     inkscape:zoom="1.8777429"
+     inkscape:cx="467.76377"
+     inkscape:cy="359.59518"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g260" />
+  <g
+     id="g260"
+     stroke="#000">
+    <g
+       id="P"
+       fill="#fdff8c">
+      <rect
+         x="540"
+         y="75"
+         width="30"
+         height="30"
+         id="rect242" />
+      <rect
+         x="575"
+         y="75"
+         width="30"
+         height="30"
+         id="rect244" />
+      <rect
+         x="575"
+         y="145"
+         width="30"
+         height="30"
+         id="rect250" />
+      <rect
+         x="505"
+         y="75"
+         width="30"
+         height="30"
+         id="rect252" />
+      <rect
+         x="540"
+         y="110"
+         width="30"
+         height="30"
+         id="rect254" />
+      <rect
+         x="575"
+         y="110"
+         width="30"
+         height="30"
+         id="rect256" />
+      <rect
+         x="645"
+         y="145"
+         width="30"
+         height="30"
+         id="rect4" />
+      <rect
+         x="645"
+         y="180"
+         width="30"
+         height="30"
+         id="rect6" />
+      <rect
+         x="645"
+         y="215"
+         width="30"
+         height="30"
+         id="rect8" />
+      <rect
+         x="645"
+         y="75"
+         width="30"
+         height="30"
+         id="rect10" />
+      <rect
+         x="645"
+         y="110"
+         width="30"
+         height="30"
+         id="rect12" />
+      <rect
+         x="505"
+         y="145"
+         width="30"
+         height="30"
+         id="rect18" />
+      <rect
+         x="540"
+         y="145"
+         width="30"
+         height="30"
+         id="rect20" />
+      <rect
+         x="540"
+         y="180"
+         width="30"
+         height="30"
+         id="rect22" />
+      <rect
+         x="575"
+         y="180"
+         width="30"
+         height="30"
+         id="rect24" />
+      <rect
+         x="470"
+         y="75"
+         width="30"
+         height="30"
+         id="rect28" />
+      <rect
+         x="505"
+         y="110"
+         width="30"
+         height="30"
+         id="rect30Si" />
+      <rect
+         x="470"
+         y="145"
+         width="30"
+         height="30"
+         id="rect42" />
+      <rect
+         x="470"
+         y="180"
+         width="30"
+         height="30"
+         id="rect44" />
+      <rect
+         x="470"
+         y="215"
+         width="30"
+         height="30"
+         id="rect46" />
+      <rect
+         x="505"
+         y="180"
+         width="30"
+         height="30"
+         id="rect48" />
+      <rect
+         x="505"
+         y="215"
+         width="30"
+         height="30"
+         id="rect50" />
+      <rect
+         x="540"
+         y="215"
+         width="30"
+         height="30"
+         id="rect52" />
+      <rect
+         x="575"
+         y="215"
+         width="30"
+         height="30"
+         id="rect54" />
+      <rect
+         x="470"
+         y="110"
+         width="30"
+         height="30"
+         id="rect56" />
+      <rect
+         x="610"
+         y="75"
+         width="30"
+         height="30"
+         id="rect246" />
+      <rect
+         x="610"
+         y="110"
+         width="30"
+         height="30"
+         id="rect248" />
+      <rect
+         x="610"
+         y="145"
+         width="30"
+         height="30"
+         id="rect238" />
+      <rect
+         x="610"
+         y="180"
+         width="30"
+         height="30"
+         id="rect240" />
+      <rect
+         x="610"
+         y="215"
+         width="30"
+         height="30"
+         id="rect26At" />
+    </g>
+    <g
+       id="F"
+       fill="#9bff99">
+      <rect
+         x="155"
+         y="295"
+         width="30"
+         height="30"
+         id="rect114" />
+      <rect
+         x="190"
+         y="295"
+         width="30"
+         height="30"
+         id="rect116" />
+      <rect
+         x="225"
+         y="295"
+         width="30"
+         height="30"
+         id="rect118" />
+      <rect
+         x="260"
+         y="295"
+         width="30"
+         height="30"
+         id="rect120" />
+      <rect
+         x="295"
+         y="295"
+         width="30"
+         height="30"
+         id="rect122" />
+      <rect
+         x="330"
+         y="295"
+         width="30"
+         height="30"
+         id="rect124" />
+      <rect
+         x="365"
+         y="295"
+         width="30"
+         height="30"
+         id="rect126" />
+      <rect
+         x="400"
+         y="295"
+         width="30"
+         height="30"
+         id="rect128" />
+      <rect
+         x="435"
+         y="295"
+         width="30"
+         height="30"
+         id="rect130" />
+      <rect
+         x="470"
+         y="295"
+         width="30"
+         height="30"
+         id="rect132" />
+      <rect
+         x="505"
+         y="295"
+         width="30"
+         height="30"
+         id="rect134" />
+      <rect
+         x="540"
+         y="295"
+         width="30"
+         height="30"
+         id="rect136" />
+      <rect
+         x="575"
+         y="295"
+         width="30"
+         height="30"
+         id="rect138" />
+      <rect
+         x="120"
+         y="295"
+         width="30"
+         height="30"
+         id="rect140" />
+      <rect
+         style="stroke-width:0.99999994"
+         x="119.69886"
+         y="250.67279"
+         width="30"
+         height="30"
+         id="rect108" />
+      <rect
+         style="stroke-width:0.99999994"
+         x="154.66214"
+         y="250.67279"
+         width="30"
+         height="30"
+         id="rect108-3" />
+      <rect
+         style="stroke-width:0.99999994"
+         x="189.92424"
+         y="250.07512"
+         width="30"
+         height="30"
+         id="rect108-6" />
+      <rect
+         style="stroke-width:0.99999994"
+         x="224.88751"
+         y="250.07512"
+         width="30"
+         height="30"
+         id="rect108-7" />
+    </g>
+    <g
+       id="D"
+       fill="#99ccff">
+      <rect
+         x="435"
+         y="145"
+         width="30"
+         height="30"
+         id="rect34Zn" />
+      <rect
+         x="435"
+         y="180"
+         width="30"
+         height="30"
+         id="rect36" />
+      <rect
+         x="435"
+         y="215"
+         width="30"
+         height="30"
+         id="rect38" />
+      <rect
+         x="120"
+         y="145"
+         width="30"
+         height="30"
+         id="rect144" />
+      <rect
+         x="120"
+         y="180"
+         width="30"
+         height="30"
+         id="rect146" />
+      <rect
+         x="155"
+         y="145"
+         width="30"
+         height="30"
+         id="rect148" />
+      <rect
+         x="155"
+         y="180"
+         width="30"
+         height="30"
+         id="rect150" />
+      <rect
+         x="155"
+         y="215"
+         width="30"
+         height="30"
+         id="rect152" />
+      <rect
+         x="190"
+         y="145"
+         width="30"
+         height="30"
+         id="rect156" />
+      <rect
+         x="190"
+         y="180"
+         width="30"
+         height="30"
+         id="rect158" />
+      <rect
+         x="190"
+         y="215"
+         width="30"
+         height="30"
+         id="rect160" />
+      <rect
+         x="225"
+         y="145"
+         width="30"
+         height="30"
+         id="rect164" />
+      <rect
+         x="225"
+         y="180"
+         width="30"
+         height="30"
+         id="rect166" />
+      <rect
+         x="225"
+         y="215"
+         width="30"
+         height="30"
+         id="rect168" />
+      <rect
+         x="260"
+         y="145"
+         width="30"
+         height="30"
+         id="rect172" />
+      <rect
+         x="260"
+         y="180"
+         width="30"
+         height="30"
+         id="rect174" />
+      <rect
+         x="260"
+         y="215"
+         width="30"
+         height="30"
+         id="rect176" />
+      <rect
+         x="295"
+         y="145"
+         width="30"
+         height="30"
+         id="rect180" />
+      <rect
+         x="295"
+         y="180"
+         width="30"
+         height="30"
+         id="rect182" />
+      <rect
+         x="295"
+         y="215"
+         width="30"
+         height="30"
+         id="rect184" />
+      <rect
+         x="330"
+         y="145"
+         width="30"
+         height="30"
+         id="rect188" />
+      <rect
+         x="330"
+         y="180"
+         width="30"
+         height="30"
+         id="rect190" />
+      <rect
+         x="330"
+         y="215"
+         width="30"
+         height="30"
+         id="rect192" />
+      <rect
+         x="365"
+         y="145"
+         width="30"
+         height="30"
+         id="rect194" />
+      <rect
+         x="365"
+         y="180"
+         width="30"
+         height="30"
+         id="rect196" />
+      <rect
+         x="365"
+         y="215"
+         width="30"
+         height="30"
+         id="rect198" />
+      <rect
+         x="400"
+         y="145"
+         width="30"
+         height="30"
+         id="rect200" />
+      <rect
+         x="400"
+         y="180"
+         width="30"
+         height="30"
+         id="rect202" />
+      <rect
+         x="400"
+         y="215"
+         width="30"
+         height="30"
+         id="rect204" />
+      <rect
+         x="120"
+         y="215"
+         width="30"
+         height="30"
+         id="rect112" />
+    </g>
+    <g
+       id="S"
+       fill="#ff9999">
+      <rect
+         x="40"
+         y="40"
+         width="30"
+         height="30"
+         id="rect236" />
+      <rect
+         x="40"
+         y="75"
+         width="30"
+         height="30"
+         id="rect208" />
+      <rect
+         x="40"
+         y="110"
+         width="30"
+         height="30"
+         id="rect210" />
+      <rect
+         x="40"
+         y="145"
+         width="30"
+         height="30"
+         id="rect212" />
+      <rect
+         x="40"
+         y="180"
+         width="30"
+         height="30"
+         id="rect214" />
+      <rect
+         x="40"
+         y="215"
+         width="30"
+         height="30"
+         id="rect216" />
+      <rect
+         x="40"
+         y="250"
+         width="30"
+         height="30"
+         id="rect218" />
+      <rect
+         x="75"
+         y="75"
+         width="30"
+         height="30"
+         id="rect222" />
+      <rect
+         x="75"
+         y="110"
+         width="30"
+         height="30"
+         id="rect224" />
+      <rect
+         x="75"
+         y="145"
+         width="30"
+         height="30"
+         id="rect226" />
+      <rect
+         x="75"
+         y="180"
+         width="30"
+         height="30"
+         id="rect228" />
+      <rect
+         x="75"
+         y="215"
+         width="30"
+         height="30"
+         id="rect230" />
+      <rect
+         x="75"
+         y="250"
+         width="30"
+         height="30"
+         id="rect232" />
+      <rect
+         x="645"
+         y="40"
+         width="30"
+         height="30"
+         id="rect14" />
+    </g>
+  </g>
+  <g
+     font-size="9"
+     id="g5175"
+     text-anchor="middle"
+     font-family="Noto Sans">
+    <g
+       font-size="14"
+       id="g5173">
+      <g
+         transform="translate(20)"
+         id="g4611" />
+      <g
+         transform="translate(0,22)"
+         id="g5171">
+        <g
+           transform="translate(55)"
+           id="g4643">
+          <text
+             y="32"
+             id="text4617"
+             style="fill:#808080;">1<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4615"
+   style="fill:#808080;">H</tspan>
+</text>
+          <text
+             y="67"
+             id="text4621"
+             style="fill:#808080;">3<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4619"
+   style="fill:#808080;">Li</tspan>
+</text>
+          <text
+             y="102"
+             id="text4625"
+             style="fill:#808080;">11<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4623"
+   style="fill:#808080;">Na</tspan>
+</text>
+          <text
+             y="137"
+             id="text4629"
+             style="fill:#808080;">19<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4627"
+   style="fill:#808080;">K</tspan>
+</text>
+          <text
+             y="172"
+             id="text4633"
+             style="fill:#808080;">37<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4631"
+   style="fill:#808080;">Rb</tspan>
+</text>
+          <text
+             y="207"
+             id="text4637"
+             style="fill:#808080;">55<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4635"
+   style="fill:#808080;">Cs</tspan>
+</text>
+          <text
+             y="242"
+             id="text4641"
+             style="fill:#808080;">87<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4639"
+   style="fill:#808080;">Fr</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(90)"
+           id="g4671">
+          <text
+             y="67"
+             id="text4649"
+             style="fill:#808080;">4<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4647"
+   style="fill:#808080;">Be</tspan>
+</text>
+          <text
+             y="102"
+             id="text4653"
+             style="fill:#808080;">12<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4651"
+   style="fill:#808080;">Mg</tspan>
+</text>
+          <text
+             y="137"
+             id="text4657"
+             style="fill:#808080;">20<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4655"
+   style="fill:#808080;">Ca</tspan>
+</text>
+          <text
+             y="172"
+             id="text4661"
+             style="fill:#808080;">38<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4659"
+   style="fill:#808080;">Sr</tspan>
+</text>
+          <text
+             y="207"
+             id="text4665"
+             style="fill:#808080;">56<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4663"
+   style="fill:#808080;">Ba</tspan>
+</text>
+          <text
+             y="242"
+             id="text4669"
+             style="fill:#808080;">88<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4667"
+   style="fill:#808080;">Ra</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(112)"
+           id="g4685">
+          <text
+             y="208"
+             id="text4673"
+             style="fill:#808080;">*</text>
+          <text
+             y="288"
+             id="text4679"
+             style="fill:#808080;">*</text>
+        </g>
+        <g
+           transform="translate(135)"
+           id="g4713">
+          <text
+             y="137"
+             id="text4691"
+             style="fill:#808080;">21<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4689"
+   style="fill:#808080;">Sc</tspan>
+</text>
+          <text
+             y="172"
+             id="text4695"
+             style="fill:#808080;">39<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4693"
+   style="fill:#808080;">Y</tspan>
+</text>
+          <text
+             y="207"
+             id="text4699"
+             style="fill:#808080;">71<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4697"
+   style="fill:#808080;">Lu</tspan>
+</text>
+          <text
+             y="287"
+             id="text4707"
+             style="fill:#808080;">57<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4705"
+   style="fill:#808080;">La</tspan>
+</text>
+          <text
+             y="243.10852"
+             id="text4711"
+             x="-0.59766275"
+             style="fill:#808080;">89<tspan
+   x="-0.59766275"
+   dy="11.5"
+   id="tspan4709"
+   style="fill:#808080;">Ac</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(170)"
+           id="g4741">
+          <text
+             y="137"
+             id="text4719"
+             style="fill:#808080;">22<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4717"
+   style="fill:#808080;">Ti</tspan>
+</text>
+          <text
+             y="172"
+             id="text4723"
+             style="fill:#808080;">40<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4721"
+   style="fill:#808080;">Zr</tspan>
+</text>
+          <text
+             y="207"
+             id="text4727"
+             style="fill:#808080;">72<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4725"
+   style="fill:#808080;">Hf</tspan>
+</text>
+          <text
+             y="287"
+             id="text4735"
+             style="fill:#808080;">58<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4733"
+   style="fill:#808080;">Ce</tspan>
+</text>
+          <text
+             y="241.91319"
+             id="text4739"
+             x="-0.59766275"
+             style="fill:#808080;">90<tspan
+   x="-0.59766275"
+   dy="11.5"
+   id="tspan4737"
+   style="fill:#808080;">Th</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(205)"
+           id="g4769">
+          <text
+             y="137"
+             id="text4747"
+             style="fill:#808080;">23<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4745"
+   style="fill:#808080;">V</tspan>
+</text>
+          <text
+             y="172"
+             id="text4751"
+             style="fill:#808080;">41<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4749"
+   style="fill:#808080;">Nb</tspan>
+</text>
+          <text
+             y="207"
+             id="text4755"
+             style="fill:#808080;">73<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4753"
+   style="fill:#808080;">Ta</tspan>
+</text>
+          <text
+             y="287"
+             id="text4763"
+             style="fill:#808080;">59<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4761"
+   style="fill:#808080;">Pr</tspan>
+</text>
+          <text
+             y="241.91319"
+             id="text4767"
+             style="fill:#808080;">91<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4765"
+   style="fill:#808080;">Pa</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(240)"
+           id="g4797">
+          <text
+             y="137"
+             id="text4775"
+             style="fill:#808080;">24<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4773"
+   style="fill:#808080;">Cr</tspan>
+</text>
+          <text
+             y="172"
+             id="text4779"
+             style="fill:#808080;">42<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4777"
+   style="fill:#808080;">Mo</tspan>
+</text>
+          <text
+             y="207"
+             id="text4783"
+             style="fill:#808080;">74<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4781"
+   style="fill:#808080;">W</tspan>
+</text>
+          <text
+             y="287"
+             id="text4791"
+             style="fill:#808080;">60<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4789"
+   style="fill:#808080;">Nd</tspan>
+</text>
+          <text
+             y="242.21202"
+             id="text4795"
+             x="-0.59766275"
+             style="fill:#808080;">92<tspan
+   x="-0.59766275"
+   dy="11.5"
+   id="tspan4793"
+   style="fill:#808080;">U</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(275)"
+           id="g4825">
+          <text
+             y="137"
+             id="text4803"
+             style="fill:#808080;">25<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4801"
+   style="fill:#808080;">Mn</tspan>
+</text>
+          <text
+             y="172"
+             id="text4807"
+             style="fill:#808080;">43<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4805"
+   style="fill:#808080;">Tc</tspan>
+</text>
+          <text
+             y="207"
+             id="text4811"
+             style="fill:#808080;">75<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4809"
+   style="fill:#808080;">Re</tspan>
+</text>
+          <text
+             y="287"
+             id="text4819"
+             style="fill:#808080;">61<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4817"
+   style="fill:#808080;">Pm</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(310)"
+           id="g4853">
+          <text
+             y="137"
+             id="text4831"
+             style="fill:#808080;">26<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4829"
+   style="fill:#808080;">Fe</tspan>
+</text>
+          <text
+             y="172"
+             id="text4835"
+             style="fill:#808080;">44<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4833"
+   style="fill:#808080;">Ru</tspan>
+</text>
+          <text
+             y="207"
+             id="text4839"
+             style="fill:#808080;">76<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4837"
+   style="fill:#808080;">Os</tspan>
+</text>
+          <text
+             y="287"
+             id="text4847"
+             style="fill:#808080;">62<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4845"
+   style="fill:#808080;">Sm</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(345)"
+           id="g4881">
+          <text
+             y="137"
+             id="text4859"
+             style="fill:#808080;">27<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4857"
+   style="fill:#808080;">Co</tspan>
+</text>
+          <text
+             y="172"
+             id="text4863"
+             style="fill:#808080;">45<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4861"
+   style="fill:#808080;">Rh</tspan>
+</text>
+          <text
+             y="207"
+             id="text4867"
+             style="fill:#808080;">77<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4865"
+   style="fill:#808080;">Ir</tspan>
+</text>
+          <text
+             y="287"
+             id="text4875"
+             style="fill:#808080;">63<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4873"
+   style="fill:#808080;">Eu</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(380)"
+           id="g4909">
+          <text
+             y="137"
+             id="text4887"
+             style="fill:#808080;">28<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4885"
+   style="fill:#808080;">Ni</tspan>
+</text>
+          <text
+             y="172"
+             id="text4891"
+             style="fill:#808080;">46<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4889"
+   style="fill:#808080;">Pd</tspan>
+</text>
+          <text
+             y="207"
+             id="text4895"
+             style="fill:#808080;">78<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4893"
+   style="fill:#808080;">Pt</tspan>
+</text>
+          <text
+             y="287"
+             id="text4903"
+             style="fill:#808080;">64<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4901"
+   style="fill:#808080;">Gd</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(415)"
+           id="g4937">
+          <text
+             y="137"
+             id="text4915"
+             style="fill:#808080;">29<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4913"
+   style="fill:#808080;">Cu</tspan>
+</text>
+          <text
+             y="172"
+             id="text4919"
+             style="fill:#808080;">47<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4917"
+   style="fill:#808080;">Ag</tspan>
+</text>
+          <text
+             y="207"
+             id="text4923"
+             style="fill:#808080;">79<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4921"
+   style="fill:#808080;">Au</tspan>
+</text>
+          <text
+             y="287"
+             id="text4931"
+             style="fill:#808080;">65<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4929"
+   style="fill:#808080;">Tb</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(450)"
+           id="g4965">
+          <text
+             y="137"
+             id="text4943"
+             style="fill:#808080;">30<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4941"
+   style="fill:#808080;">Zn</tspan>
+</text>
+          <text
+             y="172"
+             id="text4947"
+             style="fill:#808080;">48<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4945"
+   style="fill:#808080;">Cd</tspan>
+</text>
+          <text
+             y="207"
+             id="text4951"
+             style="fill:#808080;">80<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4949"
+   style="fill:#808080;">Hg</tspan>
+</text>
+          <text
+             y="287"
+             id="text4959"
+             style="fill:#808080;">66<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4957"
+   style="fill:#808080;">Dy</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(485)"
+           id="g5001">
+          <text
+             y="67"
+             id="text4971"
+             style="fill:#808080;">5<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4969"
+   style="fill:#808080;">B</tspan>
+</text>
+          <text
+             y="102"
+             id="text4975"
+             style="fill:#808080;">13<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4973"
+   style="fill:#808080;">Al</tspan>
+</text>
+          <text
+             y="137"
+             id="text4979"
+             style="fill:#808080;">31<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4977"
+   style="fill:#808080;">Ga</tspan>
+</text>
+          <text
+             y="172"
+             id="text4983"
+             style="fill:#808080;">49<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4981"
+   style="fill:#808080;">In</tspan>
+</text>
+          <text
+             y="207"
+             id="text4987"
+             style="fill:#808080;">81<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4985"
+   style="fill:#808080;">Tl</tspan>
+</text>
+          <text
+             y="287"
+             id="text4995"
+             style="fill:#808080;">67<tspan
+   x="0"
+   dy="11.5"
+   id="tspan4993"
+   style="fill:#808080;">Ho</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(520)"
+           id="g5037">
+          <text
+             y="67"
+             id="text5007"
+             style="fill:#808080;">6<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5005"
+   style="fill:#808080;">C</tspan>
+</text>
+          <text
+             y="102"
+             id="text5011"
+             style="fill:#808080;">14<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5009"
+   style="fill:#808080;">Si</tspan>
+</text>
+          <text
+             y="137"
+             id="text5015"
+             style="fill:#808080;">32<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5013"
+   style="fill:#808080;">Ge</tspan>
+</text>
+          <text
+             y="172"
+             id="text5019"
+             style="fill:#808080;">50<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5017"
+   style="fill:#808080;">Sn</tspan>
+</text>
+          <text
+             y="207"
+             id="text5023"
+             style="fill:#808080;">82<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5021"
+   style="fill:#808080;">Pb</tspan>
+</text>
+          <text
+             y="287"
+             id="text5031"
+             style="fill:#808080;">68<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5029"
+   style="fill:#808080;">Er</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(555)"
+           id="g5073">
+          <text
+             y="67"
+             id="text5043"
+             style="fill:#808080;">7<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5041"
+   style="fill:#808080;">N</tspan>
+</text>
+          <text
+             y="102"
+             id="text5047"
+             style="fill:#808080;">15<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5045"
+   style="fill:#808080;">P</tspan>
+</text>
+          <text
+             y="137"
+             id="text5051"
+             style="fill:#808080;">33<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5049"
+   style="fill:#808080;">As</tspan>
+</text>
+          <text
+             y="172"
+             id="text5055"
+             style="fill:#808080;">51<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5053"
+   style="fill:#808080;">Sb</tspan>
+</text>
+          <text
+             y="207"
+             id="text5059"
+             style="fill:#808080;">83<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5057"
+   style="fill:#808080;">Bi</tspan>
+</text>
+          <text
+             y="287"
+             id="text5067"
+             style="fill:#808080;">69<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5065"
+   style="fill:#808080;">Tm</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(590)"
+           id="g5109">
+          <text
+             y="67"
+             id="text5079"
+             style="fill:#808080;">8<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5077"
+   style="fill:#808080;">O</tspan>
+</text>
+          <text
+             y="102"
+             id="text5083"
+             style="fill:#808080;">16<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5081"
+   style="fill:#808080;">S</tspan>
+</text>
+          <text
+             y="137"
+             id="text5087"
+             style="fill:#808080;">34<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5085"
+   style="fill:#808080;">Se</tspan>
+</text>
+          <text
+             y="172"
+             id="text5091"
+             style="fill:#808080;">52<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5089"
+   style="fill:#808080;">Te</tspan>
+</text>
+          <text
+             y="207"
+             id="text5095"
+             style="fill:#808080;">84<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5093"
+   style="fill:#808080;">Po</tspan>
+</text>
+          <text
+             y="287"
+             id="text5103"
+             style="fill:#808080;">70<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5101"
+   style="fill:#808080;">Yb</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(625)"
+           id="g5137">
+          <text
+             y="67"
+             id="text5115"
+             style="fill:#808080;">9<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5113"
+   style="fill:#808080;">F</tspan>
+</text>
+          <text
+             y="102"
+             id="text5119"
+             style="fill:#808080;">17<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5117"
+   style="fill:#808080;">Cl</tspan>
+</text>
+          <text
+             y="137"
+             id="text5123"
+             style="fill:#808080;">35<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5121"
+   style="fill:#808080;">Br</tspan>
+</text>
+          <text
+             y="172"
+             id="text5127"
+             style="fill:#808080;">53<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5125"
+   style="fill:#808080;">I</tspan>
+</text>
+          <text
+             y="207"
+             id="text5131"
+             style="fill:#808080;">85<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5129"
+   style="fill:#808080;">At</tspan>
+</text>
+        </g>
+        <g
+           transform="translate(660)"
+           id="g5169">
+          <text
+             y="32"
+             id="text5143"
+             style="fill:#808080;">2<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5141"
+   style="fill:#808080;">He</tspan>
+</text>
+          <text
+             y="67"
+             id="text5147"
+             style="fill:#808080;">10<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5145"
+   style="fill:#808080;">Ne</tspan>
+</text>
+          <text
+             y="102"
+             id="text5151"
+             style="fill:#808080;">18<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5149"
+   style="fill:#808080;">Ar</tspan>
+</text>
+          <text
+             y="137"
+             id="text5155"
+             style="fill:#808080;">36<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5153"
+   style="fill:#808080;">Kr</tspan>
+</text>
+          <text
+             y="172"
+             id="text5159"
+             style="fill:#808080;">54<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5157"
+   style="fill:#808080;">Xe</tspan>
+</text>
+          <text
+             y="207"
+             id="text5163"
+             style="fill:#808080;">86<tspan
+   x="0"
+   dy="11.5"
+   id="tspan5161"
+   style="fill:#808080;">Rn</tspan>
+</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

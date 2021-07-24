@@ -2877,3 +2877,4 @@ class RightAngle(Angle):
 
     def __init__(self, line1, line2, length=None, **kwargs):
         super().__init__(line1, line2, radius=length, elbow=True, **kwargs)
+
