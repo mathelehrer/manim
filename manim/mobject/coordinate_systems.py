@@ -968,7 +968,7 @@ class Axes(VGroup, CoordinateSystem):
         axis_config: Optional[dict] = None,
         x_axis_config: Optional[dict] = None,
         y_axis_config: Optional[dict] = None,
-        tips: bool = True,
+        tips: bool = False, # undo when back at linux
         **kwargs,
     ):
         VGroup.__init__(self, **kwargs)
