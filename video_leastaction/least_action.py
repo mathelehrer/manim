@@ -649,16 +649,17 @@ class Application(Scene):
 
         fades = []
 
-        lines = [MathTex(r"E_\text{kin}","=",r"\tfrac{1}{2}mv^2",r"=\tfrac{1}{2}m l^2",r"\dot\varphi^2"),
-                 MathTex(r"E_\text{pot}","=",r"mg","h","=mg(","l","-",r"l\cdot \cos \varphi",")"),
-                 MathTex(r"S[\varphi,\dot\varphi]","=",r"\int \tfrac{1}{2} m l^2 \dot \varphi^2-mgl(1-\cos\varphi)\,\rm{d}t"),
-                 MathTex(r"\ddot \varphi","=",r"-\frac{g}{l} \sin \varphi")]
+        lines = [MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2}mv^2", r"=\tfrac{1}{2}m l^2", r"\dot\varphi^2"),
+                 MathTex(r"E_\text{pot}", "=", r"mg", "h", "=mg(", "l", "-", r"l\cdot \cos \varphi", ")"),
+                 MathTex(r"S[\varphi,\dot\varphi]", "=",
+                         r"\int \tfrac{1}{2} m l^2 \dot \varphi^2-mgl(1-\cos\varphi)\,\rm{d}t"),
+                 MathTex(r"\ddot \varphi", "=", r"-\frac{g}{l} \sin \varphi")]
 
         fades.extend(lines[0:3])
         # for i in range(0,3):
         #     fades.append(lines[i])
 
-        lines[0].next_to(title, DOWN,buff=LARGE_BUFF)
+        lines[0].next_to(title, DOWN, buff=LARGE_BUFF)
         lines[0][4].set_color(YELLOW)
         lines[1][3].set_color(GREEN)
         lines[1][5].set_color(RED)
@@ -667,82 +668,196 @@ class Application(Scene):
         self.play(Write(lines[0][0:3]))
         self.wait(2)
 
-        #create pendulum with length l
+        # create pendulum with length l
         l = 3
         pendulum = Pendulum(l)
-        pendulum.shift(4*RIGHT)
+        pendulum.shift(4 * RIGHT)
 
         pendulum.play(self)
         fades.append(pendulum)
 
-        #rotate by angle alpha
-        alpha = PI/5
-        arc = Arc(1,-PI/2,alpha)
+        # rotate by angle alpha
+        alpha = PI / 5
+        arc = Arc(1, -PI / 2, alpha)
         arc.set_color(YELLOW)
-        arc.shift(4 * RIGHT+3*UP)
+        arc.shift(4 * RIGHT + 3 * UP)
         angle = MathTex(r"\varphi")
         angle.set_color(YELLOW)
-        angle.shift(4.25 * RIGHT+2.25*UP)
+        angle.shift(4.25 * RIGHT + 2.25 * UP)
 
         pendulum2 = pendulum.copy()
         pendulum2.rotate(alpha)
-        self.play(TransformFromCopy(pendulum, pendulum2),GrowFromPoint(arc,arc.get_left()), Write(lines[0][3:5]))
+        self.play(TransformFromCopy(pendulum, pendulum2), GrowFromPoint(arc, arc.get_left()), Write(lines[0][3:5]))
         self.play(Write(angle))
         self.wait(2)
 
-        fades.extend([arc,angle])
+        fades.extend([arc, angle])
 
         for i in range(1, len(lines)):
-            #layout
+            # layout
             lines[i].next_to(lines[i - 1], DOWN)
-            if i==2:
-                lines[i].shift(2*LARGE_BUFF*DOWN)
-            align_formulas_with_equal(lines[i],lines[i-1],1,1)
+            if i == 2:
+                lines[i].shift(2 * LARGE_BUFF * DOWN)
+            align_formulas_with_equal(lines[i], lines[i - 1], 1, 1)
 
-            if i==1:
+            if i == 1:
                 # explain potential energy
                 self.play(Write(lines[1][0:3]))
                 center = pendulum.get_body().get_center()
                 center2 = pendulum2.get_body().get_center()
                 h = l * (1 - np.cos(alpha))
-                aux_line = Line(center2,center+h*UP)
-                aux_line2 = Line(center,center2+h*DOWN)
-                self.play(GrowFromPoint(aux_line,center2),GrowFromPoint(aux_line2,center))
-                h_line = Line(aux_line.get_center(),aux_line2.get_center())
+                aux_line = Line(center2, center + h * UP)
+                aux_line2 = Line(center, center2 + h * DOWN)
+                self.play(GrowFromPoint(aux_line, center2), GrowFromPoint(aux_line2, center))
+                h_line = Line(aux_line.get_center(), aux_line2.get_center())
                 h_line.set_color(GREEN)
                 h_label = MathTex("h")
                 h_label.set_color(GREEN)
                 h_label.next_to(h_line)
-                self.play(Create(h_line),Write(h_label))
+                self.play(Create(h_line), Write(h_label))
                 self.wait()
                 h_copy = h_label.copy()
-                self.play(Transform(h_copy,lines[1][3]))
+                self.play(Transform(h_copy, lines[1][3]))
                 self.wait()
                 self.play(Write(lines[1][3:5]))
                 l_label = MathTex("l")
                 l_label.set_color(RED)
-                l_label.next_to(pendulum.get_rode(),LEFT)
+                l_label.next_to(pendulum.get_rode(), LEFT)
                 self.play(Write(l_label))
-                self.play(Create(pendulum.get_rode().copy()))
+                l_copy = pendulum.get_rode().copy()
+                self.play(Create(l_copy))
                 self.wait(2)
-                self.play(Transform(l_label,lines[1][5]))
+                self.play(Transform(l_label, lines[1][5]))
                 self.wait()
-                aux_line3=Line(pendulum.get_rode().get_top(),center+h*UP)
+                aux_line3 = Line(pendulum.get_rode().get_top(), center + h * UP)
                 aux_line3.set_color(PURPLE)
                 self.play(Create(aux_line3))
                 self.wait()
                 self.play(Write(lines[1][6]))
-                self.play(Transform(aux_line3,lines[1][7]))
+                self.play(Transform(aux_line3, lines[1][7]))
                 self.play(Write(lines[1][8]))
                 self.wait(2)
-                fades.extend[h_line, aux_line, aux_line2, aux_line3, h_label, h_label, h_copy,l_label]
+                fades.extend([l_copy, h_line, aux_line, aux_line2, aux_line3, h_label, h_label, h_copy, l_label])
             else:
                 self.play(Write(lines[i]))
             self.wait(10)
 
-        self.play(*[FadeOut(fades[i]) for i in range(0,len(fades))])
+        self.play(*[FadeOut(fades[i]) for i in range(0, len(fades))])
+        self.play(ApplyMethod(lines[3].to_corner, UL))
 
 
+class Application2(Scene):
+    def construct(self):
+        title = Tex("Pendulum")
+        title.to_edge(UP)
+        title.shift(0.1 * RIGHT)
+        title.set_color(BLUE)
+
+        l = 2
+        alpha = PI / 5
+        pendulum = Pendulum(l)
+        pendulum.shift(4 * RIGHT + 0.5 * UP)
+        pendulum.rotate(alpha)
+
+        pendulum2 = Pendulum(l)
+        pendulum2.shift(4 * RIGHT + 3.5 * DOWN)
+        pendulum2.rotate(99 * PI / 100)
+
+        eom = MathTex(r"\ddot \varphi", "=", r"-\frac{g}{l} \sin \varphi")
+        eom.to_corner(UL)
+
+        self.add(title, eom)
+
+        box = SurroundingRectangle(eom)
+        self.play(GrowFromCenter(box))
+
+        self.wait(2)
+        pendulum.play(self)
+        self.wait(2)
+        pendulum2.play(self)
+        self.wait(2)
+
+        pendulum2.fadeout(self)
+        pendulum.remove(self)
+
+        (pendulum1, remove1) = self.swing(angle=PI / 5, pendulum_shift=0.5 * UP, duration=10, height=2)
+
+        (pendulum2, remove2) = self.swing(angle=99 * PI / 100, ax_shift=3 * DOWN, pendulum_shift=3.5 * DOWN,
+                                          duration=10, height=3)
+        self.wait(2)
+        self.play(FadeOut(remove2), FadeOut(remove1),FadeOut(eom),FadeOut(box))
+
+        title2 = Tex("Double Pendulum")
+        title2.set_color(BLUE)
+        title2.to_edge(UP)
+
+        pendulum1.shift(3*DOWN)
+        shift = pendulum.get_center() - pendulum2.get_top()
+        self.play(ApplyMethod(pendulum2.shift, shift),Transform(title,title2))
+
+    def swing(self, ax_shift=0, pendulum_shift=0, angle=0, duration=2, height=2):
+        ax = Axes(
+            x_range=[0, 10, 1],
+            y_range=[-180, 180, 90],
+            x_length=7,
+            y_length=height,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 10, 1),
+                "numbers_with_eleongated_tics": np.arange(0, 10, 1),
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(-180, 181, 90),
+                "numbers_with_eleongated_tics": np.arange(-180, 181, 90),
+            },
+            include_tip=True,
+        )
+        labels = ax.get_axis_labels(x_label="t", y_label=r"\varphi(t)")
+        labels.scale(0.5)
+        labels[1].shift(-0.3 * UP + 1.5 * LEFT)
+        labels[0].shift(1.3 * RIGHT + 0.5 * DOWN)
+        ax.add(labels)
+        ax.shift(3 * LEFT + 0.8 * UP)
+        self.add(ax)
+        ax.shift(ax_shift)
+
+        t = ValueTracker(0)
+        t.add_updater(lambda mobject, dt: mobject.increment_value(dt))
+
+        l = 1
+        init_angle = angle
+        phi = ValueTracker(init_angle)
+        omega = ValueTracker(0)
+        omega.add_updater(lambda mobject, dt: mobject.increment_value(-10 / l * np.sin(phi.get_value()) * dt))
+        phi.add_updater(lambda mobject, dt: mobject.increment_value(omega.get_value() * dt))
+
+        # draw_time = (lambda: DecimalNumber().set_value(t.get_value()).shift(2 * RIGHT))
+        # number_time = always_redraw(draw_time)
+        # #
+        # draw_phi = (lambda: DecimalNumber().set_value(phi.get_value()).next_to(number_time, DOWN))
+        # number_phi = always_redraw(draw_phi)
+        #
+        # draw_omega = (lambda: DecimalNumber().set_value(omega.get_value()).next_to(number_phi, DOWN))
+        # number_omega = always_redraw(draw_omega)
+        #
+        # self.add(number_time,number_phi,number_omega)
+
+        draw_pendulum = (lambda: Pendulum(2 * l).shift(4 * RIGHT + pendulum_shift).rotate(phi.get_value()))
+        pendulum_anim = always_redraw(draw_pendulum)
+
+        draw_graph = (lambda: ax.add(Dot().set_style(fill_color=BLUE, stroke_color=RED, stroke_width=4).move_to(
+            ax.coords_to_point(t.get_value(), phi.get_value() * 180 / PI))))
+        graph = always_redraw(draw_graph)
+
+        self.add(t, omega, phi)
+        self.add(pendulum_anim, graph)
+        self.wait(duration)
+        t.clear_updaters()
+        phi.clear_updaters()
+        omega.clear_updaters()
+        pendulum_anim.clear_updaters()
+
+        return pendulum_anim, ax
 
 
 def align_formulas_with_equal(f1, f2, i1, i2):
@@ -752,20 +867,32 @@ def align_formulas_with_equal(f1, f2, i1, i2):
     f1.shift(RIGHT * distance[0])
 
 
-class Pendulum(VGroup,ABC):
-    def __init__(self, length=3, **kwargs):
+class Pendulum(VGroup, ABC):
+    def __init__(self, length=3,color = BLUE, **kwargs):
         VGroup.__init__(self, **kwargs)
 
         self.circle = Circle()
-        self.circle.set_color(BLUE)
+        self.circle.set_color(color)
         self.circle.scale(0.25)
         self.circle.set_style(fill_color=BLUE, fill_opacity=1, stroke_color=RED, stroke_width=5)
         self.line = Line(length * UP, self.circle.get_center())
         self.line.set_style(stroke_width=5, stroke_color=RED)
 
+        self.pivot = self.line.get_all_points()[0]
+
         self.add(self.line)
         self.add(self.circle)
 
+    def shift(self,s):
+        super().shift(s)
+        self.pivot=self.pivot+s
+        return self
+
+    def get_top(self):
+        return self.line.get_all_points()[0]
+
+    def get_center(self):
+        return self.circle.get_center()
 
     def get_rode(self):
         return self.line
@@ -773,11 +900,171 @@ class Pendulum(VGroup,ABC):
     def get_body(self):
         return self.circle
 
-    def rotate(self,angle=0):
-        pivot = self.line.get_top()
-        self.circle.rotate(angle=angle, about_point=pivot)
-        self.line.rotate(angle=angle, about_point=pivot)
+    def remove(self, scene):
+        scene.remove(self.line,self.circle)
+
+    def fadeout(self, scene):
+        scene.play(FadeOut(self.line),FadeOut(self.circle))
+
+    def rotate(self, angle=0):
+        self.circle.rotate(angle=angle, about_point=self.pivot)
+        self.line.rotate(angle=angle, about_point=self.pivot)
+        return self
 
     def play(self, scene):
         scene.play(Create(self.line))
         scene.play(GrowFromCenter(self.circle))
+
+
+class Application3(Scene):
+    def construct(self):
+        title = Tex("Double Pendulum")
+        title.to_edge(UP)
+        title.shift(0.1 * RIGHT)
+        title.set_color(BLUE)
+
+        l = 2
+        alpha = PI / 5
+        # pendulum = Pendulum(l)
+        # pendulum.shift(4 * RIGHT -2.5 * UP)
+        # pendulum.rotate(alpha)
+        #
+        # pendulum2 = Pendulum(l)
+        # pendulum2.shift(4 * RIGHT + 3.5 * DOWN)
+        # pendulum2.rotate(99 * PI / 100)
+        #
+        # shift = pendulum.get_center() - pendulum2.get_top()
+        # pendulum2.shift(shift)
+
+        # self.add(title,pendulum,pendulum2)
+        self.add(title)
+        self.wait(2)
+
+        lines = [MathTex(r"E_\text{pot}", "=",r"mgl(1-\cos\varphi_1)","+",r"mgl(1-\cos\varphi_1)","+",r"mgl(1-\cos\varphi_2)"),
+                 MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2","+", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2","+", r"\tfrac{1}{2} m l^2\dot\varphi_2^2","+",r"\cos(\varphi_1-\varphi_2)\dot \varphi_1\dot\varphi_2"),
+                 MathTex("S","=",r"\int  m l^2 (\dot\varphi_1^2+\tfrac{1}{2}\dot\varphi_2^2+\cos(\varphi_1-\varphi_2)\dot\varphi_1\dot\varphi_2)-2mgl(1-\cos\varphi_1)-mgl(1-\cos\varphi_2)\rm{d}t")]
+
+        lines[0].next_to(title,DOWN)
+        lines[0].to_edge(LEFT)
+        lines[2].set_color(YELLOW)
+        lines[2][2].scale(0.7)
+        lines[2][2].next_to(lines[2][1],RIGHT)
+
+        for i in range(0,len(lines)):
+            if i>0:
+                lines[i].next_to(lines[i - 1], DOWN)
+                align_formulas_with_equal(lines[i], lines[i-1], 1, 1)
+            for j in range(0,len(lines[i])):
+                self.play(Write(lines[i][j]))
+                self.wait()
+
+        self.play(FadeOut(lines[0]),FadeOut(lines[1]))
+        self.play(ApplyMethod(lines[2].next_to,title,DOWN))
+        self.wait(2)
+        self.swing2(angle1=PI/2,angle2=PI,duration=10)
+        self.wait(2)
+        self.swing2(angle1=PI/2+0.01,angle2=PI,duration=10)
+
+
+        self.wait(10)
+
+    def swing2(self, angle1=PI/6, angle2=-PI/6, duration=2, height=2):
+        ax = Axes(
+            x_range=[0, 10, 1],
+            y_range=[-180, 180, 90],
+            x_length=7,
+            y_length=height,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 10, 1),
+                "numbers_with_eleongated_tics": np.arange(0, 10, 1),
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(-180, 181, 90),
+                "numbers_with_eleongated_tics": np.arange(-180, 181, 90),
+            },
+            include_tip=True,
+        )
+        labels = ax.get_axis_labels(x_label="t", y_label=r"\varphi(t)")
+        labels.scale(0.5)
+        labels[1].shift(-0.3 * UP + 1.5 * LEFT)
+        labels[0].shift(1.3 * RIGHT + 0.5 * DOWN)
+        ax.add(labels)
+        ax.shift(3 * LEFT + 1*UP)
+        self.add(ax)
+
+        ax2 = Axes(
+            x_range=[0, 10, 1],
+            y_range=[-180, 180, 90],
+            x_length=7,
+            y_length=height,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 10, 1),
+                "numbers_with_eleongated_tics": np.arange(0, 10, 1),
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(-180, 181, 90),
+                "numbers_with_eleongated_tics": np.arange(-180, 181, 90),
+            },
+            include_tip=True,
+        )
+        labels = ax2.get_axis_labels(x_label="t", y_label=r"\varphi(t)")
+        labels.scale(0.5)
+        labels[1].shift(-0.3 * UP + 1.5 * LEFT)
+        labels[0].shift(1.3 * RIGHT + 0.5 * DOWN)
+        ax2.add(labels)
+        ax2.shift(3 * LEFT + 1*UP)
+        ax2.shift(3*DOWN)
+        self.add(ax2)
+
+        t = ValueTracker(0)
+        t.add_updater(lambda mobject, dt: mobject.increment_value(dt))
+
+        l = 1
+        g = 10
+        f = 0.1
+        phi = ValueTracker(angle1)
+        phi2 = ValueTracker(angle2)
+        omega = ValueTracker(0)
+        omega2 = ValueTracker(0)
+
+        rhs_phi = lambda phi,phi2,omega,omega2: (-f*omega-2*g/l*np.sin(phi)-np.sin(phi-phi2)*np.cos(phi-phi2)*omega*omega+g/l*np.cos(phi-phi2)*np.sin(phi2)-np.sin(phi-phi2)*omega2*omega2)/(2-np.cos(phi-phi2)**2)
+        rhs_phi2= lambda phi,phi2,omega,omega2: (-f*omega2-2*g/l*np.sin(phi2)+np.sin(phi-phi2)*np.cos(phi-phi2)*omega2*omega2+2*g/l*np.cos(phi-phi2)*np.sin(phi)+2*np.sin(phi-phi2)*omega*omega)/(2-np.cos(phi-phi2)**2)
+
+        omega.add_updater(lambda mobject, dt: mobject.increment_value(rhs_phi(phi.get_value(),phi2.get_value(),omega.get_value(),omega2.get_value()) * dt))
+        omega2.add_updater(lambda mobject, dt: mobject.increment_value(rhs_phi2(phi.get_value(),phi2.get_value(),omega.get_value(),omega2.get_value()) * dt))
+        phi.add_updater(lambda mobject, dt: mobject.increment_value(omega.get_value() * dt))
+        phi2.add_updater(lambda mobject, dt: mobject.increment_value(omega2.get_value() * dt))
+
+        draw_pendulum = (lambda: Pendulum(2 * l).shift(3*RIGHT).rotate(phi.get_value()))
+        draw_pendulum2 = (lambda: Pendulum(2*l,color = GREEN).shift((2*l*np.sin(phi.get_value())+3)*RIGHT+2*l*np.cos(phi.get_value())*DOWN).rotate(phi2.get_value()))
+        pendulum_anim = always_redraw(draw_pendulum)
+        pendulum_anim2 = always_redraw(draw_pendulum2)
+
+        def mod_phi(x):
+            if x>PI:
+                return x-2*PI
+            if x<-PI:
+                return x+2*PI
+            return x
+
+        draw_graph = (lambda: ax.add(Dot().set_style(fill_color=BLUE, stroke_color=RED, stroke_width=4).scale(0.25).move_to(
+            ax.coords_to_point(t.get_value(), mod_phi(phi.get_value()) * 180 / PI))))
+        draw_graph2 = (lambda: ax2.add(Dot().set_style(fill_color=GREEN, stroke_color=RED, stroke_width=4).scale(0.25).move_to(
+            ax2.coords_to_point(t.get_value(), mod_phi(phi2.get_value()) * 180 / PI))))
+        graph = always_redraw(draw_graph)
+        graph2 = always_redraw(draw_graph2)
+
+        self.add(t, omega, phi,omega2,phi2)
+        self.add(pendulum_anim, graph,pendulum_anim2,graph2)
+        self.wait(duration)
+        t.clear_updaters()
+        phi.clear_updaters()
+        phi2.clear_updaters()
+        omega.clear_updaters()
+        omega2.clear_updaters()
+        pendulum_anim.clear_updaters()
+        pendulum_anim2.clear_updaters()
+
+        return pendulum_anim, ax
