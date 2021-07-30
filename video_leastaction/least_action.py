@@ -831,17 +831,6 @@ class Application2(Scene):
         omega.add_updater(lambda mobject, dt: mobject.increment_value(-10 / l * np.sin(phi.get_value()) * dt))
         phi.add_updater(lambda mobject, dt: mobject.increment_value(omega.get_value() * dt))
 
-        # draw_time = (lambda: DecimalNumber().set_value(t.get_value()).shift(2 * RIGHT))
-        # number_time = always_redraw(draw_time)
-        # #
-        # draw_phi = (lambda: DecimalNumber().set_value(phi.get_value()).next_to(number_time, DOWN))
-        # number_phi = always_redraw(draw_phi)
-        #
-        # draw_omega = (lambda: DecimalNumber().set_value(omega.get_value()).next_to(number_phi, DOWN))
-        # number_omega = always_redraw(draw_omega)
-        #
-        # self.add(number_time,number_phi,number_omega)
-
         draw_pendulum = (lambda: Pendulum(2 * l).shift(4 * RIGHT + pendulum_shift).rotate(phi.get_value()))
         pendulum_anim = always_redraw(draw_pendulum)
 
@@ -874,9 +863,9 @@ class Pendulum(VGroup, ABC):
         self.circle = Circle()
         self.circle.set_color(color)
         self.circle.scale(0.25)
-        self.circle.set_style(fill_color=BLUE, fill_opacity=1, stroke_color=RED, stroke_width=5)
+        self.circle.set_style(fill_color=color, fill_opacity=1, stroke_color=YELLOW, stroke_width=5)
         self.line = Line(length * UP, self.circle.get_center())
-        self.line.set_style(stroke_width=5, stroke_color=RED)
+        self.line.set_style(stroke_width=5, stroke_color=YELLOW)
 
         self.pivot = self.line.get_all_points()[0]
 
@@ -923,32 +912,32 @@ class Application3(Scene):
         title.shift(0.1 * RIGHT)
         title.set_color(BLUE)
 
-        l = 2
-        alpha = PI / 5
-        # pendulum = Pendulum(l)
-        # pendulum.shift(4 * RIGHT -2.5 * UP)
-        # pendulum.rotate(alpha)
-        #
-        # pendulum2 = Pendulum(l)
-        # pendulum2.shift(4 * RIGHT + 3.5 * DOWN)
-        # pendulum2.rotate(99 * PI / 100)
-        #
-        # shift = pendulum.get_center() - pendulum2.get_top()
-        # pendulum2.shift(shift)
-
-        # self.add(title,pendulum,pendulum2)
         self.add(title)
         self.wait(2)
 
-        lines = [MathTex(r"E_\text{pot}", "=",r"mgl(1-\cos\varphi_1)","+",r"mgl(1-\cos\varphi_1)","+",r"mgl(1-\cos\varphi_2)"),
-                 MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2","+", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2","+", r"\tfrac{1}{2} m l^2\dot\varphi_2^2","+",r"\cos(\varphi_1-\varphi_2)\dot \varphi_1\dot\varphi_2"),
+        lines = [MathTex(r"E_\text{pot}", "=",r"mgl(1-\cos\varphi_1)","+",r"mgl(1-\cos\varphi_1)+mgl(1-\cos\varphi_2)"),
+                 MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2","+", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2+\tfrac{1}{2} m l^2\dot\varphi_2^2","+",r"\cos(\varphi_1-\varphi_2)\dot \varphi_1\dot\varphi_2"),
                  MathTex("S","=",r"\int  m l^2 (\dot\varphi_1^2+\tfrac{1}{2}\dot\varphi_2^2+\cos(\varphi_1-\varphi_2)\dot\varphi_1\dot\varphi_2)-2mgl(1-\cos\varphi_1)-mgl(1-\cos\varphi_2)\rm{d}t")]
 
         lines[0].next_to(title,DOWN)
         lines[0].to_edge(LEFT)
+        lines[0][2].set_color(BLUE)
+        lines[0][4:7].set_color(RED)
+        lines[1][2].set_color(BLUE)
+        lines[1][4:6].set_color(RED)
+        lines[1][6].set_color(PURPLE)
         lines[2].set_color(YELLOW)
         lines[2][2].scale(0.7)
         lines[2][2].next_to(lines[2][1],RIGHT)
+
+        alpha1 = 0.2 *PI
+        l = 2
+        alpha2 = 0.1 *PI
+        p=Pendulum(l,BLUE).shift(DOWN).rotate(alpha1)
+        p2=Pendulum(l,RED).shift(DOWN+l*np.cos(alpha1)*DOWN+l*np.sin(alpha1)*RIGHT).rotate(alpha2)
+        p.play(self)
+        p2.play(self)
+        self.wait(2)
 
         for i in range(0,len(lines)):
             if i>0:
@@ -959,16 +948,13 @@ class Application3(Scene):
                 self.wait()
 
         self.play(FadeOut(lines[0]),FadeOut(lines[1]))
-        self.play(ApplyMethod(lines[2].next_to,title,DOWN))
+        self.play(ApplyMethod(lines[2].next_to,title,DOWN),FadeOut(p), FadeOut(p2))
         self.wait(2)
-        self.swing2(angle1=PI/2,angle2=PI,duration=10)
-        self.wait(2)
-        self.swing2(angle1=PI/2+0.01,angle2=PI,duration=10)
+        self.swing2(angle1=2*PI/3,angle2=3*PI/4,duration=10)
+        self.swing3(angle1=2*PI/3,angle2=2*PI/3,duration=10)
+        self.wait(5)
 
-
-        self.wait(10)
-
-    def swing2(self, angle1=PI/6, angle2=-PI/6, duration=2, height=2):
+    def swing2(self, angle1=PI/6, angle2=-PI/6, duration=2, height=2,color1=BLUE,color2=RED):
         ax = Axes(
             x_range=[0, 10, 1],
             y_range=[-180, 180, 90],
@@ -1037,21 +1023,22 @@ class Application3(Scene):
         phi.add_updater(lambda mobject, dt: mobject.increment_value(omega.get_value() * dt))
         phi2.add_updater(lambda mobject, dt: mobject.increment_value(omega2.get_value() * dt))
 
-        draw_pendulum = (lambda: Pendulum(2 * l).shift(3*RIGHT).rotate(phi.get_value()))
-        draw_pendulum2 = (lambda: Pendulum(2*l,color = GREEN).shift((2*l*np.sin(phi.get_value())+3)*RIGHT+2*l*np.cos(phi.get_value())*DOWN).rotate(phi2.get_value()))
+        yoff = 2*DOWN
+        draw_pendulum = (lambda: Pendulum(2 * l,color = color1).shift(3*RIGHT+yoff).rotate(phi.get_value()))
+        draw_pendulum2 = (lambda: Pendulum(2*l, color = color2).shift((2*l*np.sin(phi.get_value())+3)*RIGHT+2*l*np.cos(phi.get_value())*DOWN+yoff).rotate(phi2.get_value()))
         pendulum_anim = always_redraw(draw_pendulum)
         pendulum_anim2 = always_redraw(draw_pendulum2)
 
         def mod_phi(x):
-            if x>PI:
-                return x-2*PI
-            if x<-PI:
-                return x+2*PI
+            while x>PI:
+                x=x-2*PI
+            while x<-PI:
+                x=x+2*PI
             return x
 
-        draw_graph = (lambda: ax.add(Dot().set_style(fill_color=BLUE, stroke_color=RED, stroke_width=4).scale(0.25).move_to(
+        draw_graph = (lambda: ax.add(Dot().set_style(fill_color=color1, stroke_color=color1, stroke_width=4).scale(0.25).move_to(
             ax.coords_to_point(t.get_value(), mod_phi(phi.get_value()) * 180 / PI))))
-        draw_graph2 = (lambda: ax2.add(Dot().set_style(fill_color=GREEN, stroke_color=RED, stroke_width=4).scale(0.25).move_to(
+        draw_graph2 = (lambda: ax2.add(Dot().set_style(fill_color=color2, stroke_color=color2, stroke_width=4).scale(0.25).move_to(
             ax2.coords_to_point(t.get_value(), mod_phi(phi2.get_value()) * 180 / PI))))
         graph = always_redraw(draw_graph)
         graph2 = always_redraw(draw_graph2)
@@ -1066,5 +1053,131 @@ class Application3(Scene):
         omega2.clear_updaters()
         pendulum_anim.clear_updaters()
         pendulum_anim2.clear_updaters()
+        self.play(FadeOut(pendulum_anim),FadeOut(pendulum_anim2))
 
-        return pendulum_anim, ax
+    def swing3(self,angle1=PI/6, angle2=-PI/6, duration=2, height=2,color1=PURPLE,color2=YELLOW):
+        ax = Axes(
+            x_range=[0, 10, 1],
+            y_range=[-180, 180, 90],
+            x_length=7,
+            y_length=height,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 10, 1),
+                "numbers_with_eleongated_tics": np.arange(0, 10, 1),
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(-180, 181, 90),
+                "numbers_with_eleongated_tics": np.arange(-180, 181, 90),
+            },
+            include_tip=True,
+        )
+        labels = ax.get_axis_labels(x_label="t", y_label=r"\varphi(t)")
+        labels.scale(0.5)
+        labels[1].shift(-0.3 * UP + 1.5 * LEFT)
+        labels[0].shift(1.3 * RIGHT + 0.5 * DOWN)
+        ax.add(labels)
+        ax.shift(3 * LEFT + 1 * UP)
+        self.add(ax)
+
+        ax2 = Axes(
+            x_range=[0, 10, 1],
+            y_range=[-180, 180, 90],
+            x_length=7,
+            y_length=height,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 10, 1),
+                "numbers_with_eleongated_tics": np.arange(0, 10, 1),
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(-180, 181, 90),
+                "numbers_with_eleongated_tics": np.arange(-180, 181, 90),
+            },
+            include_tip=True,
+        )
+        labels = ax2.get_axis_labels(x_label="t", y_label=r"\varphi(t)")
+        labels.scale(0.5)
+        labels[1].shift(-0.3 * UP + 1.5 * LEFT)
+        labels[0].shift(1.3 * RIGHT + 0.5 * DOWN)
+        ax2.add(labels)
+        ax2.shift(3 * LEFT + 1 * UP)
+        ax2.shift(3 * DOWN)
+        self.add(ax2)
+
+        t = ValueTracker(0)
+        t.add_updater(lambda mobject, dt: mobject.increment_value(dt))
+
+        l = 1
+        g = 10
+        f = 0.1
+        phi = ValueTracker(angle1)
+        phi2 = ValueTracker(angle2)
+        omega = ValueTracker(0)
+        omega2 = ValueTracker(0)
+
+        rhs_phi = lambda phi,phi2,omega,omega2: (-f*omega-2*g/l*np.sin(phi)-np.sin(phi-phi2)*np.cos(phi-phi2)*omega*omega+g/l*np.cos(phi-phi2)*np.sin(phi2)-np.sin(phi-phi2)*omega2*omega2)/(2-np.cos(phi-phi2)**2)
+        rhs_phi2= lambda phi,phi2,omega,omega2: (-f*omega2-2*g/l*np.sin(phi2)+np.sin(phi-phi2)*np.cos(phi-phi2)*omega2*omega2+2*g/l*np.cos(phi-phi2)*np.sin(phi)+2*np.sin(phi-phi2)*omega*omega)/(2-np.cos(phi-phi2)**2)
+
+        omega.add_updater(lambda mobject, dt: mobject.increment_value(rhs_phi(phi.get_value(),phi2.get_value(),omega.get_value(),omega2.get_value()) * dt))
+        omega2.add_updater(lambda mobject, dt: mobject.increment_value(rhs_phi2(phi.get_value(),phi2.get_value(),omega.get_value(),omega2.get_value()) * dt))
+        phi.add_updater(lambda mobject, dt: mobject.increment_value(omega.get_value() * dt))
+        phi2.add_updater(lambda mobject, dt: mobject.increment_value(omega2.get_value() * dt))
+
+        yoff = 2 * DOWN
+        draw_pendulum = (lambda: Pendulum(2 * l,color = color1).shift(3*RIGHT+yoff).rotate(phi.get_value()))
+        draw_pendulum2 = (lambda: Pendulum(2*l, color = color2).shift((2*l*np.sin(phi.get_value())+3)*RIGHT+2*l*np.cos(phi.get_value())*DOWN+yoff).rotate(phi2.get_value()))
+        pendulum_anim = always_redraw(draw_pendulum)
+        pendulum_anim2 = always_redraw(draw_pendulum2)
+
+        def mod_phi(x):
+            while x > PI:
+                x = x - 2 * PI
+            while x < -PI:
+                x = x + 2 * PI
+            return x
+
+        draw_graph = (lambda: ax.add(Dot().set_style(fill_color=color1, stroke_color=color1, stroke_width=4).scale(0.25).move_to(
+        ax.coords_to_point(t.get_value(), mod_phi(phi.get_value()) * 180 / PI))))
+        draw_graph2 = (lambda: ax2.add(Dot().set_style(fill_color=color2, stroke_color=color2, stroke_width=4).scale(0.25).move_to(
+            ax2.coords_to_point(t.get_value(), mod_phi(phi2.get_value()) * 180 / PI))))
+        graph = always_redraw(draw_graph)
+        graph2 = always_redraw(draw_graph2)
+
+        self.add(t, omega, phi,omega2,phi2)
+        self.add(pendulum_anim, graph,pendulum_anim2,graph2)
+        self.wait(duration)
+        t.clear_updaters()
+        phi.clear_updaters()
+        phi2.clear_updaters()
+        omega.clear_updaters()
+        omega2.clear_updaters()
+        pendulum_anim.clear_updaters()
+        pendulum_anim2.clear_updaters()
+        self.play(FadeOut(pendulum_anim), FadeOut(pendulum_anim2))
+
+
+class Final(Scene):
+    def construct(self):
+        title = Tex("The Least Action Principle")
+        title.to_edge(UP)
+        title.set_color(YELLOW)
+        self.play(Write(title))
+        self.wait()
+
+        tops = BulletedList("General Relativity", "The Standard Model of Particle Physics",
+                            "Model Building beyond", "However: Quantum Physics")
+        tops[0].set_color(RED)
+        tops[1].set_color(GREEN)
+        tops[2].set_color(YELLOW)
+        tops[3].set_color(BLUE)
+
+        self.play(Write(tops[0]))
+        self.wait(1)
+        self.play(Write(tops[1]))
+        self.wait(1)
+        self.play(Write(tops[2]))
+        self.wait(1)
+        self.play(Write(tops[3]))
+        self.wait(10)
+
