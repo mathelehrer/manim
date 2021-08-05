@@ -2,6 +2,7 @@ from abc import ABC
 
 import numpy as np
 from manim import *
+from colour import Color
 
 
 class Intro(Scene):
@@ -13,11 +14,12 @@ class Intro(Scene):
         self.wait()
 
         tops = BulletedList("Optimal points", "Optimal functions",
-                            "Least action principle", "Applications")
+                            "Least action principle", "Applications","Technical details")
         tops[0].set_color(RED)
         tops[1].set_color(GREEN)
         tops[2].set_color(YELLOW)
         tops[3].set_color(BLUE)
+        tops[4].set_color(WHITE)
 
         self.play(Write(tops[0]))
         self.wait(1)
@@ -653,18 +655,20 @@ class Application(Scene):
                  MathTex(r"E_\text{pot}", "=", r"mg", "h", "=mg(", "l", "-", r"l\cdot \cos \varphi", ")"),
                  MathTex(r"S[\varphi,\dot\varphi]", "=",
                          r"\int \tfrac{1}{2} m l^2 \dot \varphi^2-mgl(1-\cos\varphi)\,\rm{d}t"),
+                 MathTex(r"\frac{\delta}{\delta \varphi(t)}S[\varphi,\dot\varphi]","=","0",r"\,\,\Longrightarrow"),
                  MathTex(r"\ddot \varphi", "=", r"-\frac{g}{l} \sin \varphi")]
 
-        fades.extend(lines[0:3])
+        fades.extend(lines[0:4])
         # for i in range(0,3):
         #     fades.append(lines[i])
 
-        lines[0].next_to(title, DOWN, buff=LARGE_BUFF)
+        lines[0].next_to(title, DOWN, buff=0.5*LARGE_BUFF)
         lines[0][4].set_color(YELLOW)
         lines[1][3].set_color(GREEN)
         lines[1][5].set_color(RED)
         lines[1][7].set_color(PURPLE)
-        lines[0].to_edge(LEFT, buff=LARGE_BUFF)
+        lines[0].to_edge(LEFT, buff=2*LARGE_BUFF)
+        lines[4].set_color(YELLOW)
         self.play(Write(lines[0][0:3]))
         self.wait(2)
 
@@ -697,9 +701,8 @@ class Application(Scene):
             # layout
             lines[i].next_to(lines[i - 1], DOWN)
             if i == 2:
-                lines[i].shift(2 * LARGE_BUFF * DOWN)
+                lines[i].shift(LARGE_BUFF * DOWN)
             align_formulas_with_equal(lines[i], lines[i - 1], 1, 1)
-
             if i == 1:
                 # explain potential energy
                 self.play(Write(lines[1][0:3]))
@@ -738,12 +741,22 @@ class Application(Scene):
                 self.play(Write(lines[1][8]))
                 self.wait(2)
                 fades.extend([l_copy, h_line, aux_line, aux_line2, aux_line3, h_label, h_label, h_copy, l_label])
+            elif i==3:
+                rect = SurroundingRectangle(lines[3][0:3])
+                rect.set_color(YELLOW)
+                fades.append(rect)
+                self.play(Write(lines[i]))
+                self.play(GrowFromCenter(rect))
+            elif i==4:
+                lines[i].shift(3*RIGHT)
+                lines[i].scale(1.5)
+                self.play(Write(lines[i]))
             else:
                 self.play(Write(lines[i]))
             self.wait(10)
 
         self.play(*[FadeOut(fades[i]) for i in range(0, len(fades))])
-        self.play(ApplyMethod(lines[3].to_corner, UL))
+        self.play(ApplyMethod(lines[4].to_corner, UL))
 
 
 class Application2(Scene):
@@ -759,43 +772,24 @@ class Application2(Scene):
         pendulum.shift(4 * RIGHT + 0.5 * UP)
         pendulum.rotate(alpha)
 
-        pendulum2 = Pendulum(l)
-        pendulum2.shift(4 * RIGHT + 3.5 * DOWN)
-        pendulum2.rotate(99 * PI / 100)
-
         eom = MathTex(r"\ddot \varphi", "=", r"-\frac{g}{l} \sin \varphi")
+        eom.scale(1.5)
         eom.to_corner(UL)
+        eom.set_color(YELLOW)
 
         self.add(title, eom)
-
-        box = SurroundingRectangle(eom)
-        self.play(GrowFromCenter(box))
 
         self.wait(2)
         pendulum.play(self)
         self.wait(2)
-        pendulum2.play(self)
-        self.wait(2)
-
-        pendulum2.fadeout(self)
         pendulum.remove(self)
 
         (pendulum1, remove1) = self.swing(angle=PI / 5, pendulum_shift=0.5 * UP, duration=10, height=2)
-
-        (pendulum2, remove2) = self.swing(angle=99 * PI / 100, ax_shift=3 * DOWN, pendulum_shift=3.5 * DOWN,
-                                          duration=10, height=3)
         self.wait(2)
-        self.play(FadeOut(remove2), FadeOut(remove1),FadeOut(eom),FadeOut(box))
+        (pendulum2, remove2) = self.swing(angle=99 * PI / 100, ax_shift=3 * DOWN, pendulum_shift=3.5 * DOWN,duration=10, height=3,color=RED)
+        self.wait(10)
 
-        title2 = Tex("Double Pendulum")
-        title2.set_color(BLUE)
-        title2.to_edge(UP)
-
-        pendulum1.shift(3*DOWN)
-        shift = pendulum.get_center() - pendulum2.get_top()
-        self.play(ApplyMethod(pendulum2.shift, shift),Transform(title,title2))
-
-    def swing(self, ax_shift=0, pendulum_shift=0, angle=0, duration=2, height=2):
+    def swing(self, ax_shift=0, pendulum_shift=0, angle=0, duration=2, height=2,color = BLUE):
         ax = Axes(
             x_range=[0, 10, 1],
             y_range=[-180, 180, 90],
@@ -831,10 +825,10 @@ class Application2(Scene):
         omega.add_updater(lambda mobject, dt: mobject.increment_value(-10 / l * np.sin(phi.get_value()) * dt))
         phi.add_updater(lambda mobject, dt: mobject.increment_value(omega.get_value() * dt))
 
-        draw_pendulum = (lambda: Pendulum(2 * l).shift(4 * RIGHT + pendulum_shift).rotate(phi.get_value()))
+        draw_pendulum = (lambda: Pendulum(2 * l, central_color = color).shift(4 * RIGHT + pendulum_shift).rotate(phi.get_value()))
         pendulum_anim = always_redraw(draw_pendulum)
 
-        draw_graph = (lambda: ax.add(Dot().set_style(fill_color=BLUE, stroke_color=RED, stroke_width=4).move_to(
+        draw_graph = (lambda: ax.add(Dot().set_style(fill_color=color, stroke_color=color, stroke_width=4).move_to(
             ax.coords_to_point(t.get_value(), phi.get_value() * 180 / PI))))
         graph = always_redraw(draw_graph)
 
@@ -857,13 +851,13 @@ def align_formulas_with_equal(f1, f2, i1, i2):
 
 
 class Pendulum(VGroup, ABC):
-    def __init__(self, length=3,color = BLUE, **kwargs):
+    def __init__(self, length=3,central_color=BLUE, **kwargs):
         VGroup.__init__(self, **kwargs)
 
         self.circle = Circle()
-        self.circle.set_color(color)
+        self.circle.set_color(central_color)
         self.circle.scale(0.25)
-        self.circle.set_style(fill_color=color, fill_opacity=1, stroke_color=YELLOW, stroke_width=5)
+        self.circle.set_style(fill_color=central_color, fill_opacity=1, stroke_color=YELLOW, stroke_width=5)
         self.line = Line(length * UP, self.circle.get_center())
         self.line.set_style(stroke_width=5, stroke_color=YELLOW)
 
@@ -916,7 +910,7 @@ class Application3(Scene):
         self.wait(2)
 
         lines = [MathTex(r"E_\text{pot}", "=",r"mgl(1-\cos\varphi_1)","+",r"mgl(1-\cos\varphi_1)+mgl(1-\cos\varphi_2)"),
-                 MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2","+", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2+\tfrac{1}{2} m l^2\dot\varphi_2^2","+",r"\cos(\varphi_1-\varphi_2)\dot \varphi_1\dot\varphi_2"),
+                 MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2","+", r"\tfrac{1}{2} m l^2 \dot\varphi_1^2+\tfrac{1}{2} m l^2\dot\varphi_2^2","+",r"m l^2 \cos(\varphi_1-\varphi_2)\dot \varphi_1\dot\varphi_2"),
                  MathTex("S","=",r"\int  m l^2 (\dot\varphi_1^2+\tfrac{1}{2}\dot\varphi_2^2+\cos(\varphi_1-\varphi_2)\dot\varphi_1\dot\varphi_2)-2mgl(1-\cos\varphi_1)-mgl(1-\cos\varphi_2)\rm{d}t")]
 
         lines[0].next_to(title,DOWN)
@@ -924,7 +918,7 @@ class Application3(Scene):
         lines[0][2].set_color(BLUE)
         lines[0][4:7].set_color(RED)
         lines[1][2].set_color(BLUE)
-        lines[1][4:6].set_color(RED)
+        lines[1][4].set_color(RED)
         lines[1][6].set_color(PURPLE)
         lines[2].set_color(YELLOW)
         lines[2][2].scale(0.7)
@@ -1181,3 +1175,232 @@ class Final(Scene):
         self.play(Write(tops[3]))
         self.wait(10)
 
+
+class EulerLagrange(Scene):
+    def construct(self):
+        title = Tex("What is the meaning of:")
+        title2 = MathTex(r"\frac{\delta}{\delta x} S[\dot{x},x]=0")
+        title.to_edge(UP)
+        title2.next_to(title,DOWN)
+        title.set_color(WHITE)
+        title2.set_color(YELLOW)
+        self.play(Write(title))
+        self.play(Write(title2))
+        self.wait()
+
+        ax = Axes(
+            x_range=[0, 1., 0.2],
+            y_range=[0, 5, 1],
+            x_length=4,
+            y_length=4,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": [0.2, 0.4, 0.6, 0.8, 1.0],
+                "numbers_with_eleongated_tics": np.arange(0, 1.1, 1),
+                "label": 't',
+                'decimal_number_config': {
+                    'num_decimal_places': 1,
+                }
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 5, 1),
+                "numbers_with_eleongated_tics": np.arange(0, 5, 1),
+            },
+            include_tip=True,
+        )
+        labels = ax.get_axis_labels(x_label="t", y_label="")
+        labels[0].shift(0.3 * LEFT)
+        ax.add(labels)
+        ax.shift(4 * RIGHT+DOWN)
+
+        self.play(Create(ax))
+        self.wait(2)
+
+        a = Dot()
+        a.set_color(YELLOW)
+        a.move_to(ax.coords_to_point(0, 5))
+        b = Dot()
+        b.set_color(YELLOW)
+        b.move_to(ax.coords_to_point(1, 0))
+
+        self.play(Create(a), Create(b))
+        self.wait(2)
+
+        parabel = ax.get_graph(lambda x: 5 - 5 * x * x, color=RED, x_range=[0, 1])
+        label = MathTex("S","=","-16.7")
+        label.set_color(RED)
+        label.scale(0.7)
+        label.move_to(ax.coords_to_point(0.8, 3.5))
+        self.play(Create(parabel))
+        self.play(Write(label))
+        self.wait(2)
+
+        parabel2 = ax.get_graph(lambda x: 5 - 5 * x, color=GREEN, x_range=[0, 1])
+        label2 = MathTex("S","=","-12.5")
+        label2.set_color(GREEN)
+        label2.scale(0.7)
+        label2.move_to(ax.coords_to_point(0.4, 1.5))
+        self.play(Create(parabel2))
+        self.play(Write(label2))
+        self.wait(2)
+
+        label3 = MathTex(r"\delta x(t)","=",r"\varepsilon \cdot \sin(5\pi t)")
+        label3.set_color(BLUE)
+        label3.next_to(title2,DOWN)
+        label3.to_edge(LEFT)
+
+        label3b = MathTex(r"\varepsilon","=","0.00")
+        label3b.set_color(BLUE)
+        label3b.next_to(label3b,DOWN)
+        align_formulas_with_equal(label3b,label3,1,1)
+
+        l_value = DecimalNumber(0, num_decimal_places=2)
+        l_value.set_color(BLUE)
+        l_value.move_to(label3b[2].get_center())
+
+        self.play(Write(label3))
+        self.play(Write(label3b))
+        self.play(Transform(label3b[2],l_value))
+        self.wait(2)
+
+        l = ValueTracker(0)
+        self.first = True
+
+        def reverse(dt):
+            if l.get_value()<0.5 and self.first==True:
+                return dt
+            else:
+                self.first = False
+                return -dt
+
+        l.add_updater(lambda mob,dt: mob.increment_value(reverse(0.5*dt)))
+        perturbation = always_redraw(lambda: ax.get_graph(lambda x: l.get_value() * np.sin(5 * 3.141592654 * x), color=BLUE, x_range=[0, 1]))
+        l_value_dyn=always_redraw(lambda: l_value.set_value(l.get_value()))
+
+        self.add(l)
+        self.add(perturbation)
+        self.remove(label3b[2])
+        self.add(l_value_dyn)
+        self.wait(2)
+        l.clear_updaters()
+        self.play(FadeOut(perturbation))
+        self.wait(2)
+
+        S_value = DecimalNumber(-50/3, num_decimal_places=1)
+        S_value.set_color(RED)
+        S_value.set_scale(0.7)
+        S_value.move_to(label[2].get_center())
+        S2_value = DecimalNumber(-50/4, num_decimal_places=1)
+        S2_value.set_color(GREEN)
+        S2_value.set_scale(0.7)
+        S2_value.move_to(label2[2].get_center())
+
+        pi = 3.141592654
+
+        l.add_updater(lambda mob, dt: mob.increment_value(reverse(0.125*dt)))
+        pert_parabel = always_redraw(lambda: ax.get_graph(lambda x: 5-5*x*x+l.get_value() * np.sin(5 * 3.141592654 * x), color = RED, x_range=[0, 1]))
+        pert_parabel2 = always_redraw(lambda: ax.get_graph(lambda x:5-5*x+ l.get_value() * np.sin(5 * 3.141592654 * x), color = GREEN, x_range=[0, 1]))
+        S_value_dyn = always_redraw(lambda: S_value.set_value(-50/3+25/4*pi*pi*l.get_value()*l.get_value()))
+        S2_value_dyn = always_redraw(lambda: S2_value.set_value(-50/4+25/4*pi*pi*l.get_value()*l.get_value()-16*l.get_value()))
+
+        self.first = True
+        l.set_value(0)
+        self.remove(parabel2,parabel)
+        self.add(pert_parabel,pert_parabel2,l,S_value,S2_value)
+        self.remove(label2[2],label[2])
+        self.wait(8)
+        l.clear_updaters()
+        self.play(FadeOut(l_value),FadeOut(l_value_dyn),FadeOut(label3b))
+        self.wait(2)
+
+        label4 = MathTex(r"\delta S","=",r"S[x(t)+\delta x(t)]-S[x(t)]")
+        label4.set_color(WHITE)
+        label4.set_scale(0.5)
+        label4.next_to(label3, DOWN)
+        align_formulas_with_equal(label4, label3, 1, 1)
+
+        label5 = MathTex(r"\delta S","=",r"\frac{\delta S}{\delta x} \delta x+\mathcal{O}\left(\delta x^2\right)")
+        label5.set_color(WHITE)
+        label5.set_scale(0.5)
+        label5.next_to(label4, DOWN)
+        align_formulas_with_equal(label5, label4, 1, 1)
+
+        self.play(Write(label4))
+        self.play(Write(label5))
+
+        ax2 = Axes(
+            x_range=[0, 0.01, 0.005],
+            y_range=[-0.006, 0.006, 0.002],
+            x_length=4,
+            y_length=2,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": [ 0.005, 0.01],
+                "label": 't',
+                'decimal_number_config': {
+                    'num_decimal_places': 3,
+                }
+            },
+            y_axis_config={
+                "numbers_to_include":[],
+            },
+            include_tip=True,
+        )
+        labels = ax2.get_axis_labels(x_label=r"\varepsilon", y_label="")
+        labels[0].shift(0.3 * LEFT+0.35*DOWN)
+        ax2.add(labels)
+        ax2.shift(4 * LEFT + 2.5*DOWN)
+
+        self.play(Create(ax2))
+        self.wait(2)
+
+        dS = ax2.get_graph((lambda x:25/4*pi*pi*x*x),color=RED,x_range=[0,0.01])
+        dS2 = ax2.get_graph((lambda x:25/4*pi*pi*x*x-4/pi*x),color=GREEN,x_range=[0,0.01])
+        dS_label = MathTex(r"\delta S")
+        dS_label.set_color(RED)
+        dS_label.move_to(ax2.coords_to_point(0.01,0.004))
+        dS2_label = MathTex(r"\delta S")
+        dS2_label.set_color(GREEN)
+        dS2_label.move_to(ax2.coords_to_point(0.01, -0.005))
+        self.play(Create(dS),Write(dS_label))
+        self.wait(2)
+        self.play(Create(dS2),Write(dS2_label))
+
+        self.wait(10)
+
+
+class EulerLagrange2(Scene):
+    def construct(self):
+        title = Tex("What is the meaning of:")
+        title2 = MathTex(r"\frac{\delta}{\delta \vec{x}} S[\dot{\vec{x}},\vec{x}]=0")
+        title.to_edge(UP)
+        title2.next_to(title,DOWN)
+        title.set_color(WHITE)
+        title2.set_color(YELLOW)
+        self.play(Write(title))
+        self.play(Write(title2))
+        self.wait()
+
+
+
+        lines = [
+            MathTex(r"S[\dot{\vec{x}},\vec{x}]","=",r"\int_{t_1}^{t_2} L(\dot{\vec{x}},\vec{x}) {\rm d}t"),
+            MathTex(r"\delta S[\dot{\vec{x}},\vec{x}]","=",r"\int_{t_1}^{t_2} \left(\frac{\partial L}{\partial \dot{\vec{x}}} \cdot \delta \dot{\vec{x}}+\frac{\partial L}{\partial \vec{x}} \cdot \delta \vec{x}\right) {\rm d}t"),
+        ]
+
+        lines[0].scale(0.7)
+        lines[0].next_to(title2,DOWN)
+        lines[0].to_edge(LEFT)
+
+        for i in range(0,len(lines)):
+            if i>0:
+                lines[i].scale(0.7)
+                lines[i].next_to(lines[i - 1], DOWN)
+                align_formulas_with_equal(lines[i], lines[i-1], 1, 1)
+            if i==1:
+                graph(self)
+            for j in range(0,len(lines[i])):
+                self.play(Write(lines[i][j]))
+                self.wait()
+
+        self.wait(2)
