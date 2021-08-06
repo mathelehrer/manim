@@ -1288,11 +1288,11 @@ class EulerLagrange(Scene):
 
         S_value = DecimalNumber(-50/3, num_decimal_places=1)
         S_value.set_color(RED)
-        S_value.set_scale(0.7)
+        S_value.scale(0.7)
         S_value.move_to(label[2].get_center())
         S2_value = DecimalNumber(-50/4, num_decimal_places=1)
         S2_value.set_color(GREEN)
-        S2_value.set_scale(0.7)
+        S2_value.scale(0.7)
         S2_value.move_to(label2[2].get_center())
 
         pi = 3.141592654
@@ -1315,13 +1315,13 @@ class EulerLagrange(Scene):
 
         label4 = MathTex(r"\delta S","=",r"S[x(t)+\delta x(t)]-S[x(t)]")
         label4.set_color(WHITE)
-        label4.set_scale(0.5)
+        label4.scale(0.5)
         label4.next_to(label3, DOWN)
         align_formulas_with_equal(label4, label3, 1, 1)
 
         label5 = MathTex(r"\delta S","=",r"\frac{\delta S}{\delta x} \delta x+\mathcal{O}\left(\delta x^2\right)")
         label5.set_color(WHITE)
-        label5.set_scale(0.5)
+        label5.scale(0.5)
         label5.next_to(label4, DOWN)
         align_formulas_with_equal(label5, label4, 1, 1)
 
@@ -1371,36 +1371,212 @@ class EulerLagrange(Scene):
 
 class EulerLagrange2(Scene):
     def construct(self):
-        title = Tex("What is the meaning of:")
-        title2 = MathTex(r"\frac{\delta}{\delta \vec{x}} S[\dot{\vec{x}},\vec{x}]=0")
+        title = Tex("The Euler-Lagrange equation")
         title.to_edge(UP)
-        title2.next_to(title,DOWN)
-        title.set_color(WHITE)
-        title2.set_color(YELLOW)
+        title.set_color(RED)
         self.play(Write(title))
-        self.play(Write(title2))
         self.wait()
-
-
 
         lines = [
             MathTex(r"S[\dot{\vec{x}},\vec{x}]","=",r"\int_{t_1}^{t_2} L(\dot{\vec{x}},\vec{x}) {\rm d}t"),
-            MathTex(r"\delta S[\dot{\vec{x}},\vec{x}]","=",r"\int_{t_1}^{t_2} \left(\frac{\partial L}{\partial \dot{\vec{x}}} \cdot \delta \dot{\vec{x}}+\frac{\partial L}{\partial \vec{x}} \cdot \delta \vec{x}\right) {\rm d}t"),
+            MathTex(r"\delta S[\dot{\vec{x}},\vec{x}]","=",r"\int_{t_1}^{t_2} \left(\frac{\partial L}{\partial \dot{\vec{x}}} \cdot ",r"\delta \dot{\vec{x}}",r"+\frac{\partial L}{\partial \vec{x}} \cdot \delta \vec{x}\right) {\rm d}t"),
+            MathTex(r"\tfrac{\partial L}{\partial \dot{\vec{x}}} \cdot \tfrac{\rm d}{ {\rm d} t}\delta \vec{x}","=",r"\frac{\rm d}{ {\rm d} t}\left(\tfrac{\partial L}{\partial \dot{\vec{x}}} \cdot \delta \vec{x} \right)-\delta \vec{x} \cdot \tfrac{\rm d}{ {\rm d} t} \tfrac{\partial L}{\partial \dot{\vec{x}}}"),
+            MathTex(r"\delta S[\dot{\vec{x}},\vec{x}]","=",r"\left. \tfrac{\partial L}{\partial \dot{\vec{x}}} \cdot \delta \vec{x}\right|_{t_1}^{t_2}",r"+\int_{t_1}^{t_2}",r"\left(\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}} \right)",r"\cdot \delta \vec{x}\,{\rm d} t"),
+            MathTex("0","=",r"\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
         ]
 
-        lines[0].scale(0.7)
-        lines[0].next_to(title2,DOWN)
-        lines[0].to_edge(LEFT)
+        lines[0].next_to(title,DOWN)
+        lines[0].to_edge(LEFT,buff = LARGE_BUFF)
+        lines[1][3].set_color(BLUE)
+        lines[2].set_color(YELLOW)
+        lines[2].scale(0.7)
+        lines[3][4].set_color(RED)
+        lines[4].set_color(RED)
 
         for i in range(0,len(lines)):
-            if i>0:
-                lines[i].scale(0.7)
+            if i>0 and i<4:
                 lines[i].next_to(lines[i - 1], DOWN)
                 align_formulas_with_equal(lines[i], lines[i-1], 1, 1)
-            if i==1:
-                graph(self)
-            for j in range(0,len(lines[i])):
-                self.play(Write(lines[i][j]))
+            if i==2:
+                addon = MathTex(r"\delta \dot{\vec{x}}=\frac{\rm d}{ {\rm d}t}\delta \vec{x}")
+                addon.set_color(BLUE)
+                addon.next_to(lines[1],RIGHT,buff = 2*LARGE_BUFF)
+                self.play(Write(addon))
+                self.wait(2)
+                lines[i].shift(RIGHT)
+            if i==3:
+                align_formulas_with_equal(lines[i], lines[i - 2], 1, 1)
+            if i==4:
+                lines[i].scale(1.4)
+                lines[i].to_edge(DOWN)
+                lines[i].shift(0.3*DOWN)
+                self.play(Write(lines[i][0:2]))
+                self.play(TransformFromCopy(lines[3][4].copy(),lines[i][2]))
                 self.wait()
-
+                self.play(GrowFromEdge(SurroundingRectangle(lines[4]),LEFT))
+            else:
+                for j in range(0,len(lines[i])):
+                    self.play(Write(lines[i][j]))
+            self.wait(2)
         self.wait(2)
+
+
+class EulerLagrange3(Scene):
+    def construct(self):
+        title = Tex("The Euler-Lagrange equation")
+        title.to_edge(UP)
+        title.set_color(RED)
+        self.add(title)
+
+        euler = MathTex("0", "=",
+                r"\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
+        euler.scale(1.4)
+        euler.set_color(RED)
+        euler.to_edge(DOWN)
+        euler.shift(0.3 * DOWN)
+        self.add(euler)
+        rectangle = SurroundingRectangle(euler)
+        self.add(rectangle)
+
+        euler2 = MathTex("0", "=",
+                r"\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
+        euler2.next_to(title,DOWN)
+        euler2.to_edge(LEFT,buff=2*LARGE_BUFF)
+
+        lagrangian = MathTex(r"L(\dot{\vec{x}},\vec{x})=",r"\tfrac{1}{2}m \dot{\vec{x}}^2","-",r"m \vec{g}\cdot \vec{x}")
+        lagrangian.next_to(title,DOWN)
+        lagrangian.to_edge(RIGHT)
+
+        lines=[MathTex(r"\tfrac{\partial L}{\partial \vec{x}}","=",r"m\vec{g}"),
+               MathTex(r"\tfrac{\partial L}{\partial \dot{\vec{x}}}","=",r"m\dot{\vec{x}}"),
+               MathTex(r"\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial L}{\partial \dot{\vec{x}}}","=",r"m\ddot{\vec{x}}"),
+               MathTex(r"\ddot{\vec x}","=",r"\vec{g}"),
+               MathTex(r"\ddot h(t)","=",r"-g"),
+               MathTex(r"h(t)","=",r"-\tfrac{g}{2}\cdot t^2+","c_1", "t+ ","c_2"),
+               MathTex(r"h(t)","=","-5t^2","+5")
+               ]
+
+        lines[6].set_color(RED)
+        lines[5][3].set_color(YELLOW)
+        lines[5][5].set_color(YELLOW)
+        euler_full=VGroup(euler,rectangle)
+        self.play(ApplyMethod(euler_full.move_to,euler2.get_center()))
+        self.wait(2)
+        self.play(Write(lagrangian))
+        self.wait(2)
+
+        for i in range(0, len(lines)):
+            if i == 0:
+                self.play(ApplyMethod(lagrangian[3].set_color,GREEN))
+                lines[i].next_to(euler, DOWN)
+                align_formulas_with_equal(lines[i], euler, 1, 1)
+                self.play(Write(lines[i][0:2]))
+                lines[i][2].set_color(GREEN)
+                self.wait(2)
+                self.play(TransformFromCopy(lagrangian[3].copy(),lines[i][2]))
+            elif i == 1:
+                self.play(ApplyMethod(lagrangian[1].set_color,PURPLE))
+                lines[i].next_to(lines[i - 1], DOWN)
+                align_formulas_with_equal(lines[i], euler, 1, 1)
+                self.play(Write(lines[i][0:2]))
+                lines[i][2].set_color(PURPLE)
+                self.wait(2)
+                self.play(TransformFromCopy(lagrangian[1].copy(),lines[i][2]))
+            elif i==3:
+                lines[i][0].set_color(PURPLE)
+                lines[i][2].set_color(GREEN)
+                lines[i].next_to(lines[i - 1], DOWN)
+                align_formulas_with_equal(lines[i], euler, 1, 1)
+                self.play(TransformFromCopy(lines[i-1][2].copy(), lines[i][0]))
+                self.play(Write(lines[i][1]))
+                self.play(TransformFromCopy(lines[i - 3][2].copy(), lines[i][2]))
+            elif i==6:
+                ax = Axes(
+                    x_range=[0, 1., 0.2],
+                    y_range=[0, 5, 1],
+                    x_length=5,
+                    y_length=5,
+                    axis_config={"color": WHITE},
+                    x_axis_config={
+                        "numbers_to_include": [0.2, 0.4, 0.6, 0.8, 1.0],
+                        "numbers_with_eleongated_tics": np.arange(0, 1.1, 1),
+                        "label": 't',
+                        'decimal_number_config': {
+                            'num_decimal_places': 1,
+                        }
+                    },
+                    y_axis_config={
+                        "numbers_to_include": np.arange(0, 5, 1),
+                        "numbers_with_eleongated_tics": np.arange(0, 5, 1),
+                        "label": 'h(t)',
+                    },
+                    include_tip=True,
+                )
+                labels = ax.get_axis_labels(x_label="t", y_label="h(t)")
+                labels[1].shift(0.5 * DOWN - 1.2 * RIGHT)
+                labels[0].shift(0.3 * LEFT)
+                ax.add(labels)
+                ax.shift(3.5 * RIGHT - 1.2 * UP)
+                self.play(Create(ax))
+                self.wait(2)
+                dot_a = Dot().set_color(YELLOW).move_to(ax.coords_to_point(0,5))
+                dot_b = Dot().set_color(YELLOW).move_to(ax.coords_to_point(1,0))
+                self.wait(2)
+                self.play(Create(dot_a),Create(dot_b))
+                self.wait(2)
+                lines[i].next_to(lines[i - 1], DOWN)
+                align_formulas_with_equal(lines[i], lines[i - 1], 1, 1)
+                parabel = ax.get_graph(lambda x: 5 - 5 * x * x, color=RED, x_range=[0, 1])
+                lines[i].shift(0.1 * UP)
+                self.play(Write(lines[i][0:3]))
+                self.play(Create(parabel),TransformFromCopy(lines[i-1][3:6].copy(),lines[i][3]))
+            else:
+                lines[i].next_to(lines[i - 1], DOWN)
+                if i==2:
+                    lines[i][2].set_color(PURPLE)
+                align_formulas_with_equal(lines[i], lines[i - 1], 1, 1)
+                self.play(Write(lines[i]))
+            self.wait(2)
+
+
+class Exercise(Scene):
+    def construct(self):
+        title = Tex("The Euler-Lagrange equation")
+        title.to_edge(UP)
+        title.set_color(RED)
+        self.add(title)
+
+        euler = MathTex("0", "=",
+                r"\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
+        euler.scale(1.4)
+        euler.set_color(RED)
+
+        euler2 = MathTex("0", "=",
+                r"\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
+        euler2.next_to(title,DOWN)
+        euler2.to_edge(LEFT,buff=2*LARGE_BUFF)
+
+        euler.move_to(euler2.get_center())
+        rectangle = SurroundingRectangle(euler)
+        self.add(rectangle,euler)
+
+        lagrangian = MathTex(r"L(\dot{\vec{x}},\vec{x})=",r"\tfrac{1}{2}m \dot{\vec{x}}^2","-",r"m \vec{g}\cdot \vec{x}")
+        lagrangian.next_to(title,DOWN)
+        lagrangian.to_edge(RIGHT)
+        lagrangian[1].set_color(PURPLE)
+        lagrangian[3].set_color(GREEN)
+
+        self.add(lagrangian)
+
+        title2 = Tex("Exercise")
+        title2.set_color(RED)
+        title2.to_edge(UP)
+
+        lagrangian2 = MathTex(r"L(\dot{\vec{x}},\vec{x})=", r"\tfrac{1}{2}m l^2 \dot{\varphi}^2", "-",
+                             r"m l g (1-\cos\varphi)")
+        lagrangian.scale(0.7)
+        lagrangian2.next_to(title, DOWN)
+        lagrangian2.to_edge(RIGHT)
+        self.play(Transform(title,title2),Transform(lagrangian,lagrangian2))
+        self.wait(2)
+
