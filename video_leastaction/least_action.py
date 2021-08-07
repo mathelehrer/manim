@@ -481,7 +481,7 @@ class OptimalFunction2(Scene):
         dot.set_color(YELLOW)
         dot.scale(1.5)
 
-        emphasize = functions[7]
+        emphasize = functions[6]
         self.play(GrowFromCenter(dot), ApplyMethod(emphasize.set_color, YELLOW))
         self.wait(2)
 
@@ -490,7 +490,7 @@ class OptimalFunction2(Scene):
 
 class LeastAction(Scene):
     def construct(self):
-        title = Tex("Least Action Principle")
+        title = Tex("The Least Action Principle")
         title.to_edge(UP)
         title.shift(0.1 * RIGHT)
         title.set_color(YELLOW)
@@ -518,7 +518,7 @@ class LeastAction(Scene):
         self.play(Write(number[1]))
         self.wait(2)
 
-        action = MathTex(r"\int_0^1", r"\tfrac{1}{2} f'(x)^2-10 f(x)", r"\,\rm{d}x")
+        action = MathTex(r"\int_0^1", r"\left(\tfrac{1}{2} f'(x)^2-10 f(x)\right)", r"\,\rm{d}x")
         action.set_color(WHITE)
         action.next_to(cruncher, DOWN)
 
@@ -527,14 +527,14 @@ class LeastAction(Scene):
         self.play(Write(action[1]))
         self.wait(2)
 
-        action2 = MathTex(r"\int_0^1", r"\tfrac{1}{2} m v(t)^2-m g h(t)", r"\,\rm{d}t")
+        action2 = MathTex(r"\int_0^1", r"\left(\tfrac{1}{2} m v(t)^2-m g h(t)\right)", r"\,\rm{d}t")
         action2.set_color(YELLOW)
         action2.next_to(action, DOWN)
 
         self.play(Write(action2))
         self.wait(2)
 
-        action3 = MathTex("S = ", r"\int_{t_0}^{t_1}", r"E_\text{kin}-E_\text{pot}", r"\,\rm{d}t", "=",
+        action3 = MathTex("S = ", r"\int_{t_0}^{t_1}", r"(E_\text{kin}-E_\text{pot})", r"\,\rm{d}t", "=",
                           r"\int_{t_0}^{t_1}", r"L(\dot{\vec{x}}(t),\vec{x}(t))", r"\,\rm{d}t")
         action3.set_color(YELLOW)
         action3.next_to(action2, DOWN)
@@ -553,7 +553,7 @@ class LeastAction(Scene):
 
 class LeastAction2(Scene):
     def construct(self):
-        title = Tex("Least Action Principle")
+        title = Tex("The Least Action Principle")
         title.to_edge(UP)
         title.shift(0.1 * RIGHT)
         title.set_color(YELLOW)
@@ -641,7 +641,7 @@ class LeastAction2(Scene):
 
 class Application(Scene):
     def construct(self):
-        title = Tex("Pendulum")
+        title = Tex("The Pendulum")
         title.to_edge(UP)
         title.shift(0.1 * RIGHT)
         title.set_color(BLUE)
@@ -761,7 +761,7 @@ class Application(Scene):
 
 class Application2(Scene):
     def construct(self):
-        title = Tex("Pendulum")
+        title = Tex("The Pendulum")
         title.to_edge(UP)
         title.shift(0.1 * RIGHT)
         title.set_color(BLUE)
@@ -901,7 +901,7 @@ class Pendulum(VGroup, ABC):
 
 class Application3(Scene):
     def construct(self):
-        title = Tex("Double Pendulum")
+        title = Tex("The Double Pendulum")
         title.to_edge(UP)
         title.shift(0.1 * RIGHT)
         title.set_color(BLUE)
@@ -1313,15 +1313,13 @@ class EulerLagrange(Scene):
         self.play(FadeOut(l_value),FadeOut(l_value_dyn),FadeOut(label3b))
         self.wait(2)
 
-        label4 = MathTex(r"\delta S","=",r"S[x(t)+\delta x(t)]-S[x(t)]")
-        label4.set_color(WHITE)
-        label4.scale(0.5)
+        label4 = MathTex(r"\delta S","=",r"S[x(t)+",r"\delta x(t)","]-S[x(t)]")
+        label4[3].set_color(BLUE)
         label4.next_to(label3, DOWN)
         align_formulas_with_equal(label4, label3, 1, 1)
 
         label5 = MathTex(r"\delta S","=",r"\frac{\delta S}{\delta x} \delta x+\mathcal{O}\left(\delta x^2\right)")
         label5.set_color(WHITE)
-        label5.scale(0.5)
         label5.next_to(label4, DOWN)
         align_formulas_with_equal(label5, label4, 1, 1)
 
@@ -1429,7 +1427,7 @@ class EulerLagrange3(Scene):
         self.add(title)
 
         euler = MathTex("0", "=",
-                r"\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
+                r"\tfrac{\partial L}{\partial\vec{x}}",r"-\tfrac{\rm d}{ {\rm d}t}",r"\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
         euler.scale(1.4)
         euler.set_color(RED)
         euler.to_edge(DOWN)
@@ -1443,14 +1441,14 @@ class EulerLagrange3(Scene):
         euler2.next_to(title,DOWN)
         euler2.to_edge(LEFT,buff=2*LARGE_BUFF)
 
-        lagrangian = MathTex(r"L(\dot{\vec{x}},\vec{x})=",r"\tfrac{1}{2}m \dot{\vec{x}}^2","-",r"m \vec{g}\cdot \vec{x}")
+        lagrangian = MathTex(r"L(\dot{h},h)=",r"\tfrac{1}{2}m \dot{h}^2","-",r"m g h")
         lagrangian.next_to(title,DOWN)
         lagrangian.to_edge(RIGHT)
 
-        lines=[MathTex(r"\tfrac{\partial L}{\partial \vec{x}}","=",r"m\vec{g}"),
-               MathTex(r"\tfrac{\partial L}{\partial \dot{\vec{x}}}","=",r"m\dot{\vec{x}}"),
-               MathTex(r"\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial L}{\partial \dot{\vec{x}}}","=",r"m\ddot{\vec{x}}"),
-               MathTex(r"\ddot{\vec x}","=",r"\vec{g}"),
+        lines=[MathTex(r"\tfrac{\partial L}{\partial h}","=",r"-m g"),
+               MathTex(r"\tfrac{\partial L}{\partial \dot{h}}","=",r"m\dot{h}"),
+               MathTex(r"\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial L}{\partial \dot{h}}","=",r"m\ddot{h}"),
+               MathTex(r"\ddot{h}","=",r"-g"),
                MathTex(r"\ddot h(t)","=",r"-g"),
                MathTex(r"h(t)","=",r"-\tfrac{g}{2}\cdot t^2+","c_1", "t+ ","c_2"),
                MathTex(r"h(t)","=","-5t^2","+5")
@@ -1462,6 +1460,19 @@ class EulerLagrange3(Scene):
         euler_full=VGroup(euler,rectangle)
         self.play(ApplyMethod(euler_full.move_to,euler2.get_center()))
         self.wait(2)
+
+        one = MathTex(r"\tfrac{\partial L}{\partial h}")
+        two = MathTex(r"\tfrac{\partial  L}{\partial \dot{h}}")
+        one.scale(1.4)
+        two.scale(1.4)
+        one.set_color(RED)
+        two.set_color(RED)
+
+        one.move_to(euler[2])
+        two.move_to(euler[4])
+        self.play(Transform(euler[2], one), Transform(euler[4], two))
+        self.wait(2)
+
         self.play(Write(lagrangian))
         self.wait(2)
 
@@ -1547,7 +1558,7 @@ class Exercise(Scene):
         self.add(title)
 
         euler = MathTex("0", "=",
-                r"\tfrac{\partial L}{\partial \vec{x}}-\tfrac{\rm d}{ {\rm d}t}\tfrac{\partial  L}{\partial \dot{\vec{x}}}")
+                r"\tfrac{\partial L}{\partial h}",r"-\tfrac{\rm d}{ {\rm d}t}",r"\tfrac{\partial  L}{\partial \dot{h}}")
         euler.scale(1.4)
         euler.set_color(RED)
 
@@ -1560,7 +1571,7 @@ class Exercise(Scene):
         rectangle = SurroundingRectangle(euler)
         self.add(rectangle,euler)
 
-        lagrangian = MathTex(r"L(\dot{\vec{x}},\vec{x})=",r"\tfrac{1}{2}m \dot{\vec{x}}^2","-",r"m \vec{g}\cdot \vec{x}")
+        lagrangian = MathTex(r"L(\dot{h},h)=",r"\tfrac{1}{2}m \dot{h}^2","-",r"m g h")
         lagrangian.next_to(title,DOWN)
         lagrangian.to_edge(RIGHT)
         lagrangian[1].set_color(PURPLE)
@@ -1572,11 +1583,219 @@ class Exercise(Scene):
         title2.set_color(RED)
         title2.to_edge(UP)
 
-        lagrangian2 = MathTex(r"L(\dot{\vec{x}},\vec{x})=", r"\tfrac{1}{2}m l^2 \dot{\varphi}^2", "-",
+        lagrangian2 = MathTex(r"L(\dot{\varphi},\varphi)=", r"\tfrac{1}{2}m l^2 \dot{\varphi}^2", "-",
                              r"m l g (1-\cos\varphi)")
-        lagrangian.scale(0.7)
+        lagrangian2.scale(0.9)
         lagrangian2.next_to(title, DOWN)
         lagrangian2.to_edge(RIGHT)
-        self.play(Transform(title,title2),Transform(lagrangian,lagrangian2))
+
+        self.play(Transform(title,title2))
         self.wait(2)
 
+        one = MathTex(r"\tfrac{\partial L}{\partial \varphi}")
+        two = MathTex(r"\tfrac{\partial  L}{\partial \dot{\varphi}}")
+        one.scale(1.4)
+        two.scale(1.4)
+        one.set_color(RED)
+        two.set_color(RED)
+
+        one.move_to(euler[2])
+        two.move_to(euler[4])
+        self.play(Transform(euler[2], one), Transform(euler[4], two))
+        self.wait(2)
+
+        self.play(Transform(lagrangian,lagrangian2))
+
+        eom = MathTex(r"\ddot{\varphi}=-\tfrac{g}{l}\sin\varphi")
+        eom.scale(1.5)
+        eom.set_color(YELLOW)
+
+        self.play(Write(eom))
+        self.wait(10)
+
+
+class EulerMethod(Scene):
+    def construct(self):
+        title = Tex("Euler's method")
+        title.to_edge(UP)
+        title.set_color(GREEN)
+        self.play(Write(title))
+
+        lines=[
+            Tex("discrete time steps:"),
+            MathTex(r"\Delta t=0.1\rightarrow ", r"t_n=n\cdot \Delta t"),
+            Tex("discrete functions:"),
+            MathTex(r"\varphi(t)\rightarrow \varphi(t_n)=\varphi_n"),
+            Tex("initial conditions:"),
+            MathTex(r"\varphi_0=0.5\,",r"\text{ and }",r"\,\dot{\varphi}_0=0"),
+            Tex("initial acceleration:"),
+            MathTex(r"\ddot{\varphi}","_0","=",r"-\tfrac{g}{l}\sin\varphi",r"_0"),
+            Tex("discrete derivative:"),
+            MathTex(r"\dot{\varphi}",r"_0",r"\approx",r"{\varphi",r"_1",r"-",r"\varphi",r"_0",r"\over ",r"\Delta t",r"}"),
+            MathTex(r"\ddot{\varphi}",r"_0",r"\approx",r"{\dot{\varphi}",r"_1",r"-",r"\dot{\varphi}",r"_0",r"\over ",r"\Delta t",r"}")
+        ]
+        for i in range(0,len(lines)):
+            lines[i].scale(0.7)
+        lines[1].set_color(YELLOW)
+        lines[3].set_color(YELLOW)
+        lines[5].set_color(GREEN)
+        lines[5][1].set_color(WHITE)
+        lines[7].set_color(GREEN)
+        lines[9].set_color(GREEN)
+        lines[10].set_color(GREEN)
+        lines[0].next_to(title,DOWN)
+        lines[0].to_edge(LEFT)
+        equations = [
+            MathTex(r"\ddot{\varphi}\,","_0","=",r"-10\cdot\sin",r"\varphi","_0","=","-4.79"),
+            MathTex(r"\varphi\,",r"_1",r"=",r"\varphi",r"_0","+",r"\dot{\varphi}","_0",r"\,\Delta t\,","=","+0.50"),
+            MathTex(r"\dot{\varphi}\,",r"_1",r"=",r"\dot{\varphi}",r"_0","+",r"\ddot{\varphi}","_0",r"\,\Delta t\,","=","-0.48"),
+        ]
+
+        equations[0].move_to(1 * RIGHT + 2 * DOWN)
+        for i in range(0, len(equations)):
+            equations[i].set_color(GREEN)
+            if i>0:
+                equations[i].next_to(equations[i-1],DOWN)
+                align_formulas_with_equal(equations[i],equations[i-1],2,2)
+
+        pi = 3.141592654
+        ax = Axes(
+            x_range=[0, 1., 0.1],
+            y_range=[-pi/6, pi/6, 0.1],
+            x_length=5,
+            y_length=4,
+            axis_config={"color": WHITE},
+            x_axis_config={
+                "numbers_to_include": [0.2, 0.4, 0.6, 0.8, 1.0],
+                "numbers_with_eleongated_tics": np.arange(0, 1.1, 1),
+                "label": 't',
+                'decimal_number_config': {
+                    'num_decimal_places': 1,
+                }
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(-0.5, 0.5, 0.25),
+                "numbers_with_eleongated_tics": np.arange(-0.5, 0.5, 0.25),
+                'decimal_number_config': {
+                    'num_decimal_places': 1,
+                }
+            },
+            include_tip=True,
+        )
+        labels = ax.get_axis_labels(x_label="t", y_label=r"\varphi(t)")
+        labels[1].shift(0.5 * DOWN - 0.75 * RIGHT)
+        labels[0].shift(0.3 * LEFT)
+        ax.add(labels)
+        ax.shift(2*RIGHT+0.5*UP)
+        self.play(Create(ax))
+        self.wait(2)
+
+        alt_labels = [MathTex("n"), MathTex(r"\varphi_n")]
+
+        for i in range(0,len(lines)):
+            if i>0:
+                lines[i].next_to(lines[i - 1], DOWN)
+                lines[i].to_edge(LEFT)
+                # align_formulas_with_equal(lines[i], lines[i - 1], 1, 1)
+
+            self.play(Write(lines[i]))
+            if i<2:
+                alt_labels[i].move_to(labels[i])
+                alt_labels[i].set_color(YELLOW)
+
+            if i==1:
+                for j in range(0,11):
+                    dot = Dot().move_to(ax.coords_to_point(j*0.1,0)).set_color(YELLOW)
+                    self.add(dot)
+                    self.wait(0.2)
+                x_axis = ax.get_x_axis()
+                self.remove(x_axis)
+                self.play(Transform(labels[0], alt_labels[0]))
+            if i==3:
+                self.play(Transform(labels[1], alt_labels[1]))
+            if i==5:
+                dot = Dot().move_to(ax.coords_to_point(0,0.5)).set_color(GREEN)
+                self.play(TransformFromCopy(lines[i][0].copy(),dot))
+            if i==7:
+                self.play(TransformFromCopy(lines[7],equations[0][0:6]))
+            if i==9:
+                self.play(TransformFromCopy(lines[9][3:5].copy(), equations[1][0:2]))
+                self.play(TransformFromCopy(lines[9][2].copy(), equations[1][2]))
+                self.play(TransformFromCopy(lines[9][3:5].copy(), equations[1][3:5]))
+                self.play(TransformFromCopy(lines[9][5].copy(), equations[1][5]))
+                self.play(TransformFromCopy(lines[9][0:1].copy(), equations[1][6:8]))
+                self.play(TransformFromCopy(lines[9][9].copy(), equations[1][8]))
+            if i == 10:
+                self.play(TransformFromCopy(lines[10][3:5].copy(), equations[2][0:2]))
+                self.play(TransformFromCopy(lines[10][2].copy(), equations[2][2]))
+                self.play(TransformFromCopy(lines[10][3:5].copy(), equations[2][3:5]))
+                self.play(TransformFromCopy(lines[10][5].copy(), equations[2][5]))
+                self.play(TransformFromCopy(lines[10][0:1].copy(), equations[2][6:8]))
+                self.play(TransformFromCopy(lines[10][9].copy(), equations[2][8]))
+
+        n=0
+        phi0=0.5
+        dphi0=0
+        dt = 0.1
+        acc_number = DecimalNumber(0,2,include_sign=True).set_color(GREEN).move_to(equations[0][7])
+        phi_number = DecimalNumber(0.5,2,include_sign=True).set_color(GREEN).move_to(equations[1][10])
+        dphi_number = DecimalNumber(0,2,include_sign=True).set_color(GREEN).move_to(equations[2][10])
+        while n<10:
+            n=n+1
+            acc = -10*np.sin(phi0)
+            phi = phi0+dphi0*dt
+            dphi = dphi0+acc*dt
+            acc_number.set_value(acc)
+            phi_number.set_value(phi)
+            dphi_number.set_value(dphi)
+            label_old = MathTex("_{",str(n-1),"}").set_color(GREEN)
+            label_old2 = MathTex("_{",str(n-1),"}").set_color(GREEN)
+            label_new = MathTex("_{",str(n),"}").set_color(GREEN)
+            if n==1:
+                self.play(Write(equations[0][6]))
+            else:
+                label_new.move_to(equations[0][1])
+                label_old.move_to(equations[0][5])
+                self.play(Transform(equations[0][1],label_new),Transform(equations[0][5],label_old))
+            self.play(Transform(equations[0][7],acc_number))
+            if n==1:
+                self.play(Write(equations[1][9]))
+            else:
+                label_new.move_to(equations[1][1])
+                label_old.move_to(equations[1][4])
+                label_old2.move_to(equations[1][7])
+                self.play(Transform(equations[1][1], label_new), Transform(equations[1][4], label_old), Transform(equations[1][7], label_old2))
+            self.play(Transform(equations[1][10], phi_number))
+            if n==1:
+                self.play(Write(equations[2][9]))
+            else:
+                label_new.move_to(equations[2][1])
+                label_old.move_to(equations[2][4])
+                label_old2.move_to(equations[2][7])
+                self.play(Transform(equations[2][1], label_new), Transform(equations[2][4], label_old),Transform(equations[2][7], label_old2))
+            self.play(Transform(equations[2][10], dphi_number))
+            self.wait(1)
+            dot = Dot().set_color(GREEN).move_to(ax.coords_to_point(n*dt,phi))
+            self.play(TransformFromCopy(equations[1][10].copy(),dot))
+            self.wait(1)
+            phi0=phi
+            dphi0=dphi
+
+        self.wait(5)
+
+        n = 0
+        phi0 = 0.5
+        dphi0 = 0
+        dt = 0.025
+        while n < 40:
+            n = n + 1
+            acc = -10 * np.sin(phi0)
+            phi = phi0 + dphi0 * dt
+            dphi = dphi0 + acc * dt
+            dot = Dot().set_color(BLUE).move_to(ax.coords_to_point(n * dt, phi))
+            self.add( dot)
+            self.wait(0.1)
+            phi0 = phi
+            dphi0 = dphi
+
+        self.wait(10)
