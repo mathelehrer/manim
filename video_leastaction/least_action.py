@@ -2192,26 +2192,48 @@ class DoublePendulum(Scene):
         title = Tex("The DoublePendulum")
         title.set_color(BLUE)
         title.to_edge(UP)
-        self.add(title)
+        self.play(Write(title))
 
         lines =[
             MathTex("S","=",r"\int  m l^2 (\dot\varphi_1^2+\tfrac{1}{2}\dot\varphi_2^2+\cos(\varphi_1-\varphi_2)\dot\varphi_1\dot\varphi_2)-2mgl(1-\cos\varphi_1)-mgl(1-\cos\varphi_2)\rm{d}t"),
             MathTex("0","=",r"\frac{\rm d}{ {\rm d} t}\tfrac{\partial L}{\partial \dot{\varphi}_1}-\tfrac{\partial L}{\partial \dot{\varphi}_1}"),
-            MathTex("0","=",)
+            MathTex("0","=",r"m l^2 \ddot{\varphi}_1+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_2+m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_2^2+2 m g l\sin(\varphi_1) "),
             MathTex("0","=",r"\frac{\rm d}{ {\rm d} t}\tfrac{\partial L}{\partial \dot{\varphi}_2}-\tfrac{\partial L}{\partial \dot{\varphi}_2}"),
-
+            MathTex("0", "=",r"m l^2 \ddot{\varphi}_2+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_1-m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_1^2+2 m g l\sin(\varphi_1) "),
+            MathTex(r"\ddot{\varphi_1}","=",r"\frac{-\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_1^2+\dot{\varphi}_2^2\right)-\tfrac{g}{l}\left(2\sin\varphi_1+\cos(\varphi_1-\varphi_2)\sin\varphi_2\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
+            MathTex(r"\ddot{\varphi_2}","=",r"\frac{\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_2^2+2\dot{\varphi}_1^2\right)-\tfrac{g}{l}\left(2\sin\varphi_2+\cos(\varphi_1-\varphi_2)\sin\varphi_1\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
         ]
 
         lines[0].scale(0.7)
         lines[0].set_color(YELLOW)
         lines[0].next_to(title,DOWN)
         lines[0].to_corner(LEFT)
+        lines[5].set_color(YELLOW)
+        lines[6].set_color(YELLOW)
+
 
         for i in range(0,len(lines)):
             if i>0:
                 lines[i].scale(0.7)
+                lines[i].next_to(lines[i-1],DOWN)
                 align_formulas_with_equal(lines[i],lines[i-1],1,1)
+
             self.play(Write(lines[i]))
 
         self.wait(2)
+        rect = SurroundingRectangle(VGroup(lines[5],lines[6]))
+        self.play(GrowFromCenter(rect))
+        self.wait(10)
+
+
+class DoublePendulumCode(Scene):
+    def construct(self):
+        title = Tex("The DoublePendulum")
+        title.set_color(BLUE)
+        title.to_edge(UP)
+        self.add(title)
+
+        code = Code("code.py")
+        self.play(Write(code))
+
         self.wait(10)
