@@ -36,7 +36,6 @@ class Intro0(Scene):
 
 class Intro(Scene):
     def construct(self):
-
         self.swing0(duration=20)
 
     def swing0(self, angle1=PI/6, angle2=-PI/6, duration=2,color2=BLUE,color1=RED):
@@ -80,7 +79,6 @@ class Intro(Scene):
 
 
 class OptimalBox(Scene):
-
     def construct(self):
         title = Tex("Optimal points")
         title.to_edge(UP)
@@ -1284,6 +1282,24 @@ class Final(Scene):
         self.wait(10)
 
 
+class Intro2(Scene):
+    def construct(self):
+
+        content = BulletedList(
+            "Euler-Lagrange equation",
+            "Euler's Method",
+            "The Double Pendulum"
+        )
+
+        content[0].set_color(RED)
+        content[1].set_color(BLUE)
+        content[2].set_color(GREEN)
+
+        for i in range(0,len(content)):
+            self.play(Write(content[i]))
+            self.wait(2)
+
+
 class EulerLagrange(Scene):
     def construct(self):
         title = Tex("What is the meaning of:")
@@ -1297,10 +1313,10 @@ class EulerLagrange(Scene):
         self.wait()
 
         ax = Axes(
-            x_range=[0, 1., 0.2],
-            y_range=[0, 5, 1],
-            x_length=4,
-            y_length=4,
+            x_range=[0, 1.2, 0.2],
+            y_range=[0, 6, 1],
+            x_length=4.8,
+            y_length=4.8,
             axis_config={"color": WHITE},
             x_axis_config={
                 "numbers_to_include": [0.2, 0.4, 0.6, 0.8, 1.0],
@@ -1311,7 +1327,7 @@ class EulerLagrange(Scene):
                 }
             },
             y_axis_config={
-                "numbers_to_include": np.arange(0, 5, 1),
+                "numbers_to_include": np.arange(0, 6, 1),
                 "numbers_with_eleongated_tics": np.arange(0, 5, 1),
             },
             include_tip=True,
@@ -1611,8 +1627,8 @@ class EulerLagrange3(Scene):
                 self.play(TransformFromCopy(lines[i - 3][2].copy(), lines[i][2]))
             elif i==6:
                 ax = Axes(
-                    x_range=[0, 1., 0.2],
-                    y_range=[0, 5, 1],
+                    x_range=[0, 1.2, 0.2],
+                    y_range=[0, 6, 1],
                     x_length=5,
                     y_length=5,
                     axis_config={"color": WHITE},
@@ -1625,8 +1641,8 @@ class EulerLagrange3(Scene):
                         }
                     },
                     y_axis_config={
-                        "numbers_to_include": np.arange(0, 5, 1),
-                        "numbers_with_eleongated_tics": np.arange(0, 5, 1),
+                        "numbers_to_include": np.arange(0, 5.1, 1),
+                        "numbers_with_eleongated_tics": np.arange(0, 5., 1),
                         "label": 'h(t)',
                     },
                     include_tip=True,
@@ -1732,7 +1748,7 @@ class EulerMethod(Scene):
         lines=[
             Tex("discrete time steps:"),
             MathTex(r"\Delta t=0.1\rightarrow ", r"t_n=n\cdot \Delta t"),
-            Tex("discrete functions:"),
+            Tex("function evaluations:"),
             MathTex(r"\varphi(t)\rightarrow \varphi(t_n)=\varphi_n"),
             Tex("initial conditions:"),
             MathTex(r"\varphi_0=0.5\,",r"\text{ and }",r"\,\dot{\varphi}_0=0"),
@@ -1766,11 +1782,10 @@ class EulerMethod(Scene):
                 equations[i].next_to(equations[i-1],DOWN)
                 align_formulas_with_equal(equations[i],equations[i-1],2,2)
 
-        pi = 3.141592654
         ax = Axes(
-            x_range=[0, 1., 0.1],
-            y_range=[-pi/6, pi/6, 0.1],
-            x_length=5,
+            x_range=[0, 1.2, 0.1],
+            y_range=[-0.5, 0.5*1.2, 0.1],
+            x_length=6,
             y_length=4,
             axis_config={"color": WHITE},
             x_axis_config={
@@ -1782,7 +1797,7 @@ class EulerMethod(Scene):
                 }
             },
             y_axis_config={
-                "numbers_to_include": np.arange(-0.5, 0.5, 0.25),
+                "numbers_to_include": np.arange(-0.5, 0.51, 0.2),
                 "numbers_with_eleongated_tics": np.arange(-0.5, 0.5, 0.25),
                 'decimal_number_config': {
                     'num_decimal_places': 1,
@@ -1976,7 +1991,7 @@ class KineticEnergy(Scene):
         l= np.sqrt(len_vec.dot(len_vec))
         print(l)
         arc = always_redraw(lambda: Arc(1.5, -PI / 2,phi.get_value()).set_color(YELLOW).shift(ax.coords_to_point(0,0)))
-        angle = always_redraw(lambda: MathTex(r"\varphi","=",'{0:.3g}'.format(phi.get_value()/pi*180),r"^{\circ}")
+        angle = always_redraw(lambda: MathTex(r"\varphi","=",'{0:.1f}'.format(phi.get_value()/pi*180),r"^{\circ}")
                               .scale(0.7)
                               .set_color(YELLOW)
                               .shift(ax.coords_to_point(0.45*np.sin(phi.get_value()+pi/8),-0.45*np.cos(phi.get_value()+pi/8))))
@@ -1986,7 +2001,7 @@ class KineticEnergy(Scene):
         y_line = always_redraw(lambda: Line(ax.coords_to_point(np.sin(phi.get_value()),0),ax.coords_to_point(np.sin(phi.get_value()),-np.cos(phi.get_value()))).set_color(GREEN))
 
         def coord_label(l_phi):
-            label = MathTex(r"(", '{0:.2g}'.format(np.sin(l_phi)), ",", '{0:.2g}'.format(-np.cos(l_phi)),")")\
+            label = MathTex(r"(", '{0:.1f}'.format(np.sin(l_phi)), ",", '{0:.1f}'.format(-np.cos(l_phi)),")")\
                 .scale(0.7)\
                 .move_to(ax.coords_to_point(np.sin(l_phi)+0.25 ,- np.cos(l_phi))-0.5)
             label[1].set_color(RED)
@@ -2025,27 +2040,34 @@ class KineticEnergy2(Scene):
         title.set_color(BLUE)
         title.to_edge(UP)
 
-        self.play(Write(title))
+        self.add(title)
 
         lines=[
-            MathTex(r"E_\text{kin}","=",r"\tfrac{1}{2}m (\vec{v}^2_1+\vec{v}^2_2)","=",r"\tfrac{1}{2} m (\dot{x}^2_1+\dot{y}^2_1+\dot{x}^2_2+\dot{y}^2_2)"),
+            MathTex(r"E_\text{kin}","=",r"\tfrac{1}{2}m (",r"\vec{v}^2_1","+",r"\vec{v}^2_2",")","=",r"\tfrac{1}{2} m (",r"\dot{x}^2_1+\dot{y}^2_1","+",r"\dot{x}^2_2+\dot{y}^2_2",")"),
             MathTex(r"x_1","=",r"l\sin\varphi_1"),
             MathTex(r"y_1","=",r"-l\cos\varphi_1"),
+            MathTex(r"x_1", "=", r"l\sin\varphi_1","+",r"l\sin\varphi_2"),
+            MathTex(r"y_1", "=", r"-l\cos\varphi_1",r"-l\cos\varphi_2"),
             MathTex(r"\dot{x}_2", "=", r"l\dot{\varphi}_1\cos\varphi_1","+",r"l\dot{\varphi}_2\cos\varphi_2"),
             MathTex(r"\dot{y}_2", "=", r"l\dot{\varphi}_1\sin\varphi_1","+",r"l\dot{\varphi}_2\sin\varphi_2"),
-            MathTex(r"E_\text{kin}", "=",r"\tfrac{1}{2}m l^2\dot{\varphi}^2"),
+            MathTex(r"E_\text{kin}","=",r"\tfrac{1}{2}m l^2(",r"\dot{\varphi}^2_1","+",r"\dot{\varphi}^2_1","+",r"\dot{\varphi}^2_2","+",r"2\dot{\varphi}_1\dot{\varphi}_2\cos(\varphi_1-\varphi_2)",")")
         ]
 
         for line in lines:
             line.scale(0.7)
 
+        lines[0][3].set_color(BLUE)
+        lines[0][5].set_color(ORANGE)
+        lines[0][9].set_color(BLUE)
+        lines[0][11].set_color(ORANGE)
         lines[1].set_color(RED)
         lines[3].set_color(RED)
+        lines[5].set_color(RED)
         lines[2].set_color(GREEN)
         lines[4].set_color(GREEN)
-        lines[5][3].set_color(RED)
-        lines[5][5].set_color(GREEN)
-        lines[6].set_color(BLUE)
+        lines[6].set_color(GREEN)
+        lines[7][3].set_color(BLUE)
+        lines[7][5:10].set_color(ORANGE)
 
         ax = Axes(
             x_range=[-0.2, 1.1, 0.2],
@@ -2074,7 +2096,7 @@ class KineticEnergy2(Scene):
         labels[0].shift(0.3 * LEFT)
         ax.add(labels)
         ax.shift(3 * RIGHT)
-        self.play(Create(ax))
+        self.add(ax)
         self.wait(2)
 
         lines[0].next_to(title,DOWN)
@@ -2082,49 +2104,114 @@ class KineticEnergy2(Scene):
 
 
         pi = 3.141592654
-        phi = ValueTracker(0)
-        len_vec= np.array(ax.coords_to_point(0,-1)-ax.coords_to_point(0,0))
+        len_vec= np.array(ax.coords_to_point(0,-0.5)-ax.coords_to_point(0,0))
         l= np.sqrt(len_vec.dot(len_vec))
-        print(l)
-        arc = always_redraw(lambda: Arc(1.5, -PI / 2,phi.get_value()).set_color(YELLOW).shift(ax.coords_to_point(0,0)))
-        angle = always_redraw(lambda: MathTex(r"\varphi","=",'{0:.3g}'.format(phi.get_value()/pi*180),r"^{\circ}")
-                              .scale(0.7)
-                              .set_color(YELLOW)
-                              .shift(ax.coords_to_point(0.45*np.sin(phi.get_value()+pi/8),-0.45*np.cos(phi.get_value()+pi/8))))
-        phi.add_updater(lambda mobject, dt: mobject.increment_value(dt*pi/40))
-        pendulum= always_redraw(lambda: Pendulum(length=l).shift_from_origin(ax.coords_to_point(0, 0)).rotate(phi.get_value()))
-        x_line = always_redraw(lambda: Line(ax.coords_to_point(0,-np.cos(phi.get_value())),ax.coords_to_point(np.sin(phi.get_value()),-np.cos(phi.get_value()))).set_color(RED))
-        y_line = always_redraw(lambda: Line(ax.coords_to_point(np.sin(phi.get_value()),0),ax.coords_to_point(np.sin(phi.get_value()),-np.cos(phi.get_value()))).set_color(GREEN))
 
-        def coord_label(l_phi):
-            label = MathTex(r"(", '{0:.2g}'.format(np.sin(l_phi)), ",", '{0:.2g}'.format(-np.cos(l_phi)),")")\
-                .scale(0.7)\
-                .move_to(ax.coords_to_point(np.sin(l_phi)+0.25 ,- np.cos(l_phi))-0.5)
-            label[1].set_color(RED)
-            label[3].set_color(GREEN)
-            return label
+        phi = 3.141592654/4
+        arc = Arc(1, -PI / 2,phi).set_color(YELLOW).shift(ax.coords_to_point(0,0))
+        angle = MathTex(r"\varphi_1").scale(0.7).set_color(YELLOW).shift(ax.coords_to_point(0.2*np.sin(phi/2),-0.2*np.cos(phi/2)))
 
-        coords = always_redraw(lambda:coord_label(phi.get_value()))
+        pendulum= Pendulum(length=l).shift_from_origin(ax.coords_to_point(0, 0)).rotate(phi)
+        x_line = Line(ax.coords_to_point(0,-0.5*np.cos(phi)),ax.coords_to_point(0.5*np.sin(phi),-0.5*np.cos(phi)),stroke_width=2*DEFAULT_STROKE_WIDTH).set_color(RED)
+        y_line = Line(ax.coords_to_point(0,0),ax.coords_to_point(0,-0.5*np.cos(phi)),stroke_width=2*DEFAULT_STROKE_WIDTH).set_color(GREEN)
+        coords = MathTex("(","x_1",",","y_1",")")
+        coords.scale(0.7)
+        coords[1].set_color(RED)
+        coords[3].set_color(GREEN)
 
+        pendulum_pos = ax.coords_to_point(0.5*np.sin(phi),-0.5*np.cos(phi))
+        coords.move_to(pendulum_pos+RIGHT)
+
+        arc2 = Arc(1.25, -PI / 2, phi/2).set_color(YELLOW).shift(pendulum_pos)
+        angle2 = MathTex(r"\varphi_2").scale(0.7).set_color(YELLOW).shift(
+            ax.coords_to_point(0.5*np.sin(phi)+0.25 * np.sin(phi / 4), -0.5*np.cos(phi)-0.25 * np.cos(phi / 4)))
+        pendulum2 = Pendulum(length=l,central_color=ORANGE).shift_from_origin(pendulum_pos).rotate(phi/2)
+        x_line2 = Line(ax.coords_to_point(0.5*np.sin(phi),
+                                          -0.5 * np.cos(phi)-0.5*np.cos(phi/2)),
+                      ax.coords_to_point(0.5 * np.sin(phi)+0.5*np.sin(phi/2),
+                                         -0.5 * np.cos(phi)-0.5*np.cos(phi/2)),stroke_width=2*DEFAULT_STROKE_WIDTH
+                       ).set_color(RED)
+        y_line2 = Line(ax.coords_to_point(0.5 * np.sin(phi),
+                                          -0.5 * np.cos(phi)),
+                      ax.coords_to_point(0.5 * np.sin(phi),
+                                         -0.5 * np.cos(phi)-0.5*np.cos(phi/2)),stroke_width=2*DEFAULT_STROKE_WIDTH
+                       ).set_color(GREEN)
+        coords2 = MathTex("(", "x_2", ",", "y_2", ")")
+        coords2.scale(0.7)
+        coords2[1].set_color(RED)
+        coords2[3].set_color(GREEN)
+
+        pendulum_pos2 = ax.coords_to_point(0.5 * np.sin(phi)+0.5*np.sin(phi/2), -0.5 * np.cos(phi)-0.5*np.cos(phi/2))
+        coords2.move_to(pendulum_pos2 + RIGHT)
         for i in range(0,len(lines)):
             if i==0:
+                self.play(Create(pendulum2))
+                self.play(Create(pendulum))
                 self.play(Write(lines[i]))
             if i>0:
                 lines[i].next_to(lines[i - 1], DOWN)
                 lines[i].to_edge(LEFT)
                 align_formulas_with_equal(lines[i], lines[i - 1], 1, 1)
             if i==1:
-                self.add(arc, angle, phi, x_line, y_line, pendulum, coords)
-                self.wait(10)
-                phi.clear_updaters()
+                self.play(Create(arc), Write(angle))
+                self.play(Create(x_line), Create(y_line), Write(coords))
+                self.wait(2)
                 self.play(Write(lines[i][0:2]))
                 self.play(TransformFromCopy(x_line.copy(),lines[1][2]))
                 self.wait(2)
             if i==2:
                 self.play(Write(lines[i][0:2]))
                 self.play(TransformFromCopy(y_line.copy(), lines[2][2]))
-            if i>2:
+                self.wait(2)
+            if i==3:
+                self.play(Create(arc2), Write(angle2), Create(x_line2), Create(y_line2), Write(coords2))
+                self.wait(2)
+                self.play(Write(lines[i][0:2]))
+                self.play(TransformFromCopy(x_line.copy(), lines[i][2]))
+                self.play(Write(lines[i][3]))
+                self.play(TransformFromCopy(x_line2.copy(), lines[i][4]))
+                self.wait(2)
+            if i == 4:
+                self.play(Write(lines[i][0:2]))
+                self.play(TransformFromCopy(y_line.copy(), lines[i][2]))
+                self.play(TransformFromCopy(y_line2.copy(), lines[i][3]))
+                self.wait(2)
+            if i>4 and i<7:
+                self.play(Write(lines[i]))
+                self.wait(2)
+            if i==7:
+                lines[i].scale(1.5).to_corner(DL)
                 self.play(Write(lines[i]))
                 self.wait(2)
 
+        self.wait(10)
+
+
+class DoublePendulum(Scene):
+    def construct(self):
+        title = Tex("The DoublePendulum")
+        title.set_color(BLUE)
+        title.to_edge(UP)
+        self.add(title)
+
+        lines =[
+            MathTex("S","=",r"\int  m l^2 (\dot\varphi_1^2+\tfrac{1}{2}\dot\varphi_2^2+\cos(\varphi_1-\varphi_2)\dot\varphi_1\dot\varphi_2)-2mgl(1-\cos\varphi_1)-mgl(1-\cos\varphi_2)\rm{d}t"),
+            MathTex("0","=",r"\frac{\rm d}{ {\rm d} t}\tfrac{\partial L}{\partial \dot{\varphi}_1}-\tfrac{\partial L}{\partial \dot{\varphi}_1}"),
+            MathTex("0","=",)
+            MathTex("0","=",r"\frac{\rm d}{ {\rm d} t}\tfrac{\partial L}{\partial \dot{\varphi}_2}-\tfrac{\partial L}{\partial \dot{\varphi}_2}"),
+
+        ]
+
+        lines[0].scale(0.7)
+        lines[0].set_color(YELLOW)
+        lines[0].next_to(title,DOWN)
+        lines[0].to_corner(LEFT)
+
+        for i in range(0,len(lines)):
+            if i>0:
+                lines[i].scale(0.7)
+                align_formulas_with_equal(lines[i],lines[i-1],1,1)
+            self.play(Write(lines[i]))
+
+        self.wait(2)
         self.wait(10)
