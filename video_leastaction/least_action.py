@@ -2249,12 +2249,41 @@ class DoublePendulumCode(Scene):
         self.play(Write(listing))
         self.wait(2)
 
+        self.wait(20)
+
+class DoublePendulumCode2(Scene):
+    def construct(self):
+        title = Tex("The DoublePendulum")
+        title.set_color(BLUE)
+        title.to_edge(UP)
+        self.add(title)
+
+        listing = Code(
+            "code2.py",
+            margin=0.2,
+            tab_width=2,
+            scale_factor=0.5,
+            background_stroke_width=1,
+            background_stroke_color=WHITE,
+            insert_line_no=False,
+            style=Code.styles_list[15],
+            background="window",
+            language="Python",
+            #font="Monospace"
+        )
+
+        listing.shift(UP)
+        self.play(Write(listing))
+        self.wait(2)
+
         eom1=MathTex(r"\ddot{\varphi_1}", "=",
                 r"\frac{-\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_1^2+\dot{\varphi}_2^2\right)-\tfrac{g}{l}\left(2\sin\varphi_1+\cos(\varphi_1-\varphi_2)\sin\varphi_2\right)}{2-\cos(\varphi_1-\varphi_2)^2}")
         eom2=MathTex(r"\ddot{\varphi_2}", "=",
                 r"\frac{\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_2^2+2\dot{\varphi}_1^2\right)-\tfrac{g}{l}\left(2\sin\varphi_2+\cos(\varphi_1-\varphi_2)\sin\varphi_1\right)}{2-\cos(\varphi_1-\varphi_2)^2}")
 
-        eom2.to_corner(DL)
+        eom1.scale(0.7)
+        eom2.scale(0.7)
+        eom2.to_corner(DL,buff=LARGE_BUFF)
         eom1.next_to(eom2,UP)
         align_formulas_with_equal(eom1,eom2,1,1)
 
@@ -2264,3 +2293,125 @@ class DoublePendulumCode(Scene):
         self.add(eom1,eom2)
 
         self.wait(20)
+
+
+class DoublePendulumCode3(Scene):
+    def construct(self):
+        title = Tex("The DoublePendulum")
+        title.set_color(BLUE)
+        title.to_edge(UP)
+        self.add(title)
+
+        listing = Code(
+            "code3.py",
+            margin=0.2,
+            tab_width=2,
+            scale_factor=0.5,
+            background_stroke_width=1,
+            background_stroke_color=WHITE,
+            insert_line_no=False,
+            style=Code.styles_list[15],
+            background="window",
+            language="Python",
+            #font="Monospace"
+        )
+
+        listing.shift(UP)
+        self.play(Write(listing))
+        self.wait(2)
+
+        equations = [
+            MathTex(r"\varphi\,", r"_n", r"=", r"\varphi", r"_{n-1}", "+", r"\dot{\varphi}", "_{n-1}", r"\,\Delta t\,"),
+            MathTex(r"\dot{\varphi}\,", r"_n", r"=", r"\dot{\varphi}", r"_{n-1}", "+", r"\ddot{\varphi}", "_{n-1}",r"\,\Delta t\,"),
+        ]
+
+        l = len(equations)
+        equations[l-1].to_edge(DOWN)
+        for i in range(1,l):
+            equations[l-i-1].next_to(equations[l-i],UP)
+            align_formulas_with_equal(equations[l-i-1],equations[l-i],1,1)
+
+        for i in range(0,l):
+            self.play(Write(equations[i]))
+        self.wait(20)
+
+
+class DoublePendulumCode4(Scene):
+    def construct(self):
+        title = Tex("The DoublePendulum")
+        title.set_color(BLUE)
+        title.to_edge(UP)
+        self.add(title)
+
+        listing = Code(
+            "code4.py",
+            margin=0.2,
+            tab_width=2,
+            scale_factor=0.3,
+            background_stroke_width=1,
+            background_stroke_color=WHITE,
+            insert_line_no=False,
+            style=Code.styles_list[15],
+            background="window",
+            language="Python",
+            # font="Monospace"
+        )
+
+        listing.shift(1.5*LEFT+.5*UP)
+        self.add(listing)
+
+        g = 10
+        l = 1
+
+        t = ValueTracker(0)
+        t.add_updater(lambda mob, dt: mob.increment_value(dt))
+
+        phi1 = ValueTracker(np.pi / 2)
+        phi2 = ValueTracker(-np.pi / 2)
+        d_phi1 = ValueTracker(0)
+        d_phi2 = ValueTracker(0)
+
+        def sin(x):
+            return np.sin(x)
+
+        def cos(x):
+            return np.cos(x)
+
+        f=0.01
+        def ddf1(f1, f2, df1, df2):
+            return -f*df1+(-sin(f1 - f2) * (cos(f1 - f2) * df1 ** 2 + df2 ** 2)
+                                         - g / l * (2 * sin(f1) + cos(f1 - f2) * sin(f2))) / (2 - cos(f1 - f2) ** 2)
+
+        def ddf2(f1, f2, df1, df2):
+            return -f*df2+(sin(f1 - f2) * (cos(f1 - f2) * df2 ** 2 + 2 * df1 ** 2)
+                                         - g / l * (2 * sin(f2) + cos(f1 - f2) * sin(f1))) / (2 - cos(f1 - f2) ** 2)
+
+        phi1.add_updater(lambda mob, dt: mob.increment_value(d_phi1.get_value() * dt))
+        phi2.add_updater(lambda mob, dt: mob.increment_value(d_phi2.get_value() * dt))
+
+        d_phi1.add_updater(lambda mob, dt: mob.increment_value(
+            ddf1(phi1.get_value(), phi2.get_value(), d_phi1.get_value(), d_phi2.get_value()) * dt))
+        d_phi2.add_updater(lambda mob, dt: mob.increment_value(
+            ddf2(phi1.get_value(), phi2.get_value(), d_phi1.get_value(), d_phi2.get_value()) * dt))
+
+        def first_line(phi):
+            return Line(UP,DOWN,stroke_width=2*DEFAULT_STROKE_WIDTH).shift(DOWN).rotate(phi,about_point=0*UP).set_color(BLUE)
+
+        def second_line(phi1,phi2):
+            s1 = np.sin(phi1)
+            c1 = np.cos(phi1)
+            pos1 = 2*(DOWN*c1+RIGHT*s1)
+            return Line(UP,DOWN,stroke_width=2*DEFAULT_STROKE_WIDTH).move_to(pos1).shift(DOWN).rotate(phi2,about_point=pos1).set_color(RED)
+
+        pendulum_anim = always_redraw(lambda: first_line(phi1.get_value()))
+        pendulum_anim2 = always_redraw(lambda: second_line(phi1.get_value(),phi2.get_value()))
+
+        self.add(t, d_phi1, phi1, d_phi2, phi2)
+        self.add(pendulum_anim,pendulum_anim2)
+        self.wait(10)
+
+        t.clear_updaters()
+        phi1.clear_updaters()
+        phi2.clear_updaters()
+        d_phi1.clear_updaters()
+        d_phi2.clear_updaters()
