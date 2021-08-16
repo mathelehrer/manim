@@ -2233,7 +2233,34 @@ class DoublePendulumCode(Scene):
         title.to_edge(UP)
         self.add(title)
 
-        code = Code("code.py")
-        self.play(Write(code))
+        listing = Code(
+            "code.py",
+            margin=0.2,
+            tab_width=2,
+            scale_factor=0.5,
+            background_stroke_width=1,
+            background_stroke_color=WHITE,
+            insert_line_no=False,
+            style=Code.styles_list[15],
+            background="window",
+            language="Python",
+            #font="Monospace"
+        )
+        self.play(Write(listing))
+        self.wait(2)
 
-        self.wait(10)
+        eom1=MathTex(r"\ddot{\varphi_1}", "=",
+                r"\frac{-\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_1^2+\dot{\varphi}_2^2\right)-\tfrac{g}{l}\left(2\sin\varphi_1+\cos(\varphi_1-\varphi_2)\sin\varphi_2\right)}{2-\cos(\varphi_1-\varphi_2)^2}")
+        eom2=MathTex(r"\ddot{\varphi_2}", "=",
+                r"\frac{\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_2^2+2\dot{\varphi}_1^2\right)-\tfrac{g}{l}\left(2\sin\varphi_2+\cos(\varphi_1-\varphi_2)\sin\varphi_1\right)}{2-\cos(\varphi_1-\varphi_2)^2}")
+
+        eom2.to_corner(DL)
+        eom1.next_to(eom2,UP)
+        align_formulas_with_equal(eom1,eom2,1,1)
+
+        eom1.set_color(YELLOW)
+        eom2.set_color(YELLOW)
+
+        self.add(eom1,eom2)
+
+        self.wait(20)
