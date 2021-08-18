@@ -1943,7 +1943,7 @@ class KineticEnergy(Scene):
             MathTex(r"y(t)","=",r"-l\cos\varphi(t)"),
             MathTex(r"\dot{x}(t)", "=", r"l\dot{\varphi}(t)\cos\varphi(t)"),
             MathTex(r"\dot{y}(t)", "=", r"l\dot{\varphi}(t)\sin\varphi(t)"),
-            MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2}m l^2\dot{\varphi}^2 (",r"\sin^2\varphi","+",r"\cos^2\varphi",")"),
+            MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2}m l^2\dot{\varphi}^2 (",r"\cos^2\varphi","+",r"\sin^2\varphi",")"),
             MathTex(r"E_\text{kin}", "=",r"\tfrac{1}{2}m l^2\dot{\varphi}^2"),
 
         ]
@@ -2202,9 +2202,9 @@ class DoublePendulum(Scene):
         lines =[
             MathTex("S","=",r"\int  m l^2 (\dot\varphi_1^2+\tfrac{1}{2}\dot\varphi_2^2+\cos(\varphi_1-\varphi_2)\dot\varphi_1\dot\varphi_2)-2mgl(1-\cos\varphi_1)-mgl(1-\cos\varphi_2)\rm{d}t"),
             MathTex("0","=",r"\frac{\rm d}{ {\rm d} t}\tfrac{\partial L}{\partial \dot{\varphi}_1}-\tfrac{\partial L}{\partial \dot{\varphi}_1}"),
-            MathTex("0","=",r"m l^2 \ddot{\varphi}_1+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_2+m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_2^2+2 m g l\sin(\varphi_1) "),
+            MathTex("0","=",r"2 m l^2 \ddot{\varphi}_1+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_2+m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_2^2+2 m g l\sin(\varphi_1) "),
             MathTex("0","=",r"\frac{\rm d}{ {\rm d} t}\tfrac{\partial L}{\partial \dot{\varphi}_2}-\tfrac{\partial L}{\partial \dot{\varphi}_2}"),
-            MathTex("0", "=",r"m l^2 \ddot{\varphi}_2+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_1-m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_1^2+2 m g l\sin(\varphi_1) "),
+            MathTex("0", "=",r"m l^2 \ddot{\varphi}_2+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_1-m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_1^2+m g l\sin(\varphi_2) "),
             MathTex(r"\ddot{\varphi}_1","=",r"\frac{-\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_1^2+\dot{\varphi}_2^2\right)-\tfrac{g}{l}\left(2\sin\varphi_1+\cos(\varphi_1-\varphi_2)\sin\varphi_2\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
             MathTex(r"\ddot{\varphi}_2","=",r"\frac{\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_2^2+2\dot{\varphi}_1^2\right)-\tfrac{g}{l}\left(2\sin\varphi_2+\cos(\varphi_1-\varphi_2)\sin\varphi_1\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
         ]
