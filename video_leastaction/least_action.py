@@ -664,8 +664,8 @@ class LeastAction2(Scene):
         parabel = ax.get_graph(lambda x: 5 - 5 * x * x, color=YELLOW, x_range=[0, 1])
 
         lines2 = []
-        lines2.append(MathTex(r"\frac{\delta}{\delta h(t)} S[\dot{h(t)}, h(t)]", "=", "0"))
-        lines2.append(MathTex(r"\Longrightarrow  \ddot h(t)", " =", " -g"))
+        lines2.append(MathTex(r"\frac{\delta}{\delta h(t)} S[\dot{h}(t), h(t)]", "=", "0"))
+        lines2.append(MathTex(r"\Longrightarrow  \ddot{h}(t)", " =", " -g"))
         lines2.append(MathTex(r"\Longrightarrow h(t)", "=", r"5-\tfrac{g}{2} t^2"))
 
         lines2[0].next_to(lines[0], RIGHT)
@@ -702,9 +702,9 @@ class Application(Scene):
 
         lines = [MathTex(r"E_\text{kin}", "=", r"\tfrac{1}{2}mv^2", r"=\tfrac{1}{2}m l^2", r"\dot\varphi^2"),
                  MathTex(r"E_\text{pot}", "=", r"mg", "h", "=mg(", "l", "-", r"l\cdot \cos \varphi", ")"),
-                 MathTex(r"S[\varphi,\dot\varphi]", "=",
+                 MathTex(r"S[\dot \varphi,\varphi]", "=",
                          r"\int (",r"\tfrac{1}{2} m l^2 \dot \varphi^2","-",r"mgl(1-\cos\varphi)",")",r"\,\rm{d}t"),
-                 MathTex(r"\frac{\delta}{\delta \varphi(t)}S[\varphi,\dot\varphi]","=","0",r"\,\,\Longrightarrow"),
+                 MathTex(r"\frac{\delta}{\delta \varphi(t)}S[\dot\varphi,\varphi]","=","0",r"\,\,\Longrightarrow"),
                  MathTex(r"\ddot \varphi", "=", r"-\frac{g}{l} \sin \varphi")]
 
 
@@ -1287,13 +1287,15 @@ class Intro2(Scene):
 
         content = BulletedList(
             "Euler-Lagrange equation",
-            "Euler's Method",
-            "The Double Pendulum"
+            "Euler's method",
+            "The double pendulum",
+            "The implementation"
         )
 
         content[0].set_color(RED)
-        content[1].set_color(BLUE)
-        content[2].set_color(GREEN)
+        content[1].set_color(GREEN)
+        content[2].set_color(BLUE)
+        content[3].set_color(YELLOW)
 
         for i in range(0,len(content)):
             self.play(Write(content[i]))
@@ -1332,8 +1334,9 @@ class EulerLagrange(Scene):
             },
             include_tip=True,
         )
-        labels = ax.get_axis_labels(x_label="t", y_label="")
+        labels = ax.get_axis_labels(x_label="t", y_label="x(t)")
         labels[0].shift(0.3 * LEFT)
+        labels[1].shift(0.5 * DOWN - 1.2 * RIGHT)
         ax.add(labels)
         ax.shift(4 * RIGHT+DOWN)
 
@@ -1391,13 +1394,13 @@ class EulerLagrange(Scene):
         self.first = True
 
         def reverse(dt):
-            if l.get_value()<0.5 and self.first==True:
+            if l.get_value()<=0.5 and self.first==True:
                 return dt
             else:
                 self.first = False
                 return -dt
 
-        l.add_updater(lambda mob,dt: mob.increment_value(reverse(0.5*dt)))
+        l.add_updater(lambda mob,dt: mob.increment_value(reverse(0.2*dt)))
         perturbation = always_redraw(lambda: ax.get_graph(lambda x: l.get_value() * np.sin(5 * 3.141592654 * x), color=BLUE, x_range=[0, 1]))
         l_value_dyn=always_redraw(lambda: l_value.set_value(l.get_value()))
 
@@ -1405,7 +1408,7 @@ class EulerLagrange(Scene):
         self.add(perturbation)
         self.remove(label3b[2])
         self.add(l_value_dyn)
-        self.wait(2)
+        self.wait(5)
         l.clear_updaters()
         self.play(FadeOut(perturbation))
         self.wait(2)
@@ -1484,9 +1487,9 @@ class EulerLagrange(Scene):
         dS2_label = MathTex(r"\delta S")
         dS2_label.set_color(GREEN)
         dS2_label.move_to(ax2.coords_to_point(0.01, -0.005))
-        self.play(Create(dS),Write(dS_label))
-        self.wait(2)
         self.play(Create(dS2),Write(dS2_label))
+        self.wait(2)
+        self.play(Create(dS),Write(dS_label))
 
         self.wait(10)
 
@@ -1806,8 +1809,8 @@ class EulerMethod(Scene):
             include_tip=True,
         )
         labels = ax.get_axis_labels(x_label="t", y_label=r"\varphi(t)")
-        labels[1].shift(0.5 * DOWN - 0.75 * RIGHT)
-        labels[0].shift(0.3 * LEFT)
+        labels[1].shift(- 0.75 * RIGHT+0.1*DOWN)
+        labels[0].shift(0.8 * LEFT)
         ax.add(labels)
         ax.shift(2*RIGHT+0.5*UP)
         self.play(Create(ax))
@@ -1820,8 +1823,8 @@ class EulerMethod(Scene):
                 lines[i].next_to(lines[i - 1], DOWN)
                 lines[i].to_edge(LEFT)
                 # align_formulas_with_equal(lines[i], lines[i - 1], 1, 1)
-
             self.play(Write(lines[i]))
+            self.wait(2)
             if i<2:
                 alt_labels[i].move_to(labels[i])
                 alt_labels[i].set_color(YELLOW)
@@ -1871,15 +1874,17 @@ class EulerMethod(Scene):
             acc_number.set_value(acc)
             phi_number.set_value(phi)
             dphi_number.set_value(dphi)
+            label_a_old = MathTex("_{",str(n-1),"}").set_color(GREEN)
             label_old = MathTex("_{",str(n-1),"}").set_color(GREEN)
             label_old2 = MathTex("_{",str(n-1),"}").set_color(GREEN)
+            label_a_new = MathTex("_{",str(n-1),"}").set_color(GREEN)
             label_new = MathTex("_{",str(n),"}").set_color(GREEN)
             if n==1:
                 self.play(Write(equations[0][6]))
             else:
-                label_new.move_to(equations[0][1])
-                label_old.move_to(equations[0][5])
-                self.play(Transform(equations[0][1],label_new),Transform(equations[0][5],label_old))
+                label_a_new.move_to(equations[0][1])
+                label_a_old.move_to(equations[0][5])
+                self.play(Transform(equations[0][1],label_a_new),Transform(equations[0][5],label_a_old))
             self.play(Transform(equations[0][7],acc_number))
             if n==1:
                 self.play(Write(equations[1][9]))
@@ -2046,8 +2051,8 @@ class KineticEnergy2(Scene):
             MathTex(r"E_\text{kin}","=",r"\tfrac{1}{2}m (",r"\vec{v}^2_1","+",r"\vec{v}^2_2",")","=",r"\tfrac{1}{2} m (",r"\dot{x}^2_1+\dot{y}^2_1","+",r"\dot{x}^2_2+\dot{y}^2_2",")"),
             MathTex(r"x_1","=",r"l\sin\varphi_1"),
             MathTex(r"y_1","=",r"-l\cos\varphi_1"),
-            MathTex(r"x_1", "=", r"l\sin\varphi_1","+",r"l\sin\varphi_2"),
-            MathTex(r"y_1", "=", r"-l\cos\varphi_1",r"-l\cos\varphi_2"),
+            MathTex(r"x_2", "=", r"l\sin\varphi_1","+",r"l\sin\varphi_2"),
+            MathTex(r"y_2", "=", r"-l\cos\varphi_1",r"-l\cos\varphi_2"),
             MathTex(r"\dot{x}_2", "=", r"l\dot{\varphi}_1\cos\varphi_1","+",r"l\dot{\varphi}_2\cos\varphi_2"),
             MathTex(r"\dot{y}_2", "=", r"l\dot{\varphi}_1\sin\varphi_1","+",r"l\dot{\varphi}_2\sin\varphi_2"),
             MathTex(r"E_\text{kin}","=",r"\tfrac{1}{2}m l^2(",r"\dot{\varphi}^2_1","+",r"\dot{\varphi}^2_1","+",r"\dot{\varphi}^2_2","+",r"2\dot{\varphi}_1\dot{\varphi}_2\cos(\varphi_1-\varphi_2)",")")
@@ -2189,7 +2194,7 @@ class KineticEnergy2(Scene):
 
 class DoublePendulum(Scene):
     def construct(self):
-        title = Tex("The DoublePendulum")
+        title = Tex("The Double Pendulum")
         title.set_color(BLUE)
         title.to_edge(UP)
         self.play(Write(title))
@@ -2200,8 +2205,8 @@ class DoublePendulum(Scene):
             MathTex("0","=",r"m l^2 \ddot{\varphi}_1+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_2+m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_2^2+2 m g l\sin(\varphi_1) "),
             MathTex("0","=",r"\frac{\rm d}{ {\rm d} t}\tfrac{\partial L}{\partial \dot{\varphi}_2}-\tfrac{\partial L}{\partial \dot{\varphi}_2}"),
             MathTex("0", "=",r"m l^2 \ddot{\varphi}_2+m l^2 \cos(\varphi_1-\varphi_2) \ddot{\varphi}_1-m l^2\sin(\varphi_1-\varphi_2) \dot{\varphi}_1^2+2 m g l\sin(\varphi_1) "),
-            MathTex(r"\ddot{\varphi_1}","=",r"\frac{-\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_1^2+\dot{\varphi}_2^2\right)-\tfrac{g}{l}\left(2\sin\varphi_1+\cos(\varphi_1-\varphi_2)\sin\varphi_2\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
-            MathTex(r"\ddot{\varphi_2}","=",r"\frac{\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_2^2+2\dot{\varphi}_1^2\right)-\tfrac{g}{l}\left(2\sin\varphi_2+\cos(\varphi_1-\varphi_2)\sin\varphi_1\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
+            MathTex(r"\ddot{\varphi}_1","=",r"\frac{-\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_1^2+\dot{\varphi}_2^2\right)-\tfrac{g}{l}\left(2\sin\varphi_1+\cos(\varphi_1-\varphi_2)\sin\varphi_2\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
+            MathTex(r"\ddot{\varphi}_2","=",r"\frac{\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_2^2+2\dot{\varphi}_1^2\right)-\tfrac{g}{l}\left(2\sin\varphi_2+\cos(\varphi_1-\varphi_2)\sin\varphi_1\right)}{2-\cos(\varphi_1-\varphi_2)^2}"),
         ]
 
         lines[0].scale(0.7)
@@ -2217,7 +2222,8 @@ class DoublePendulum(Scene):
                 lines[i].scale(0.7)
                 lines[i].next_to(lines[i-1],DOWN)
                 align_formulas_with_equal(lines[i],lines[i-1],1,1)
-
+            if i==5:
+                self.wait(5)
             self.play(Write(lines[i]))
 
         self.wait(2)
@@ -2228,21 +2234,21 @@ class DoublePendulum(Scene):
 
 class DoublePendulumCode(Scene):
     def construct(self):
-        title = Tex("The DoublePendulum")
-        title.set_color(BLUE)
+        title = Tex("Implementation: The setup")
+        title.set_color(YELLOW)
         title.to_edge(UP)
         self.add(title)
 
         listing = Code(
             "code.py",
             margin=0.2,
-            tab_width=2,
+            tab_width=3,
             scale_factor=0.5,
             background_stroke_width=1,
             background_stroke_color=WHITE,
             insert_line_no=False,
-            style=Code.styles_list[15],
-            background="window",
+            #style=Code.styles_list[15],
+            background="rectangle",
             language="Python",
             #font="Monospace"
         )
@@ -2253,21 +2259,21 @@ class DoublePendulumCode(Scene):
 
 class DoublePendulumCode2(Scene):
     def construct(self):
-        title = Tex("The DoublePendulum")
-        title.set_color(BLUE)
+        title = Tex("Implementation: the equations of motion")
+        title.set_color(YELLOW)
         title.to_edge(UP)
         self.add(title)
 
         listing = Code(
             "code2.py",
             margin=0.2,
-            tab_width=2,
-            scale_factor=0.5,
+            tab_width=3,
+            scale_factor=0.4,
             background_stroke_width=1,
             background_stroke_color=WHITE,
             insert_line_no=False,
-            style=Code.styles_list[15],
-            background="window",
+            #style=Code.styles_list[15],
+            background="rectangle",
             language="Python",
             #font="Monospace"
         )
@@ -2276,9 +2282,9 @@ class DoublePendulumCode2(Scene):
         self.play(Write(listing))
         self.wait(2)
 
-        eom1=MathTex(r"\ddot{\varphi_1}", "=",
+        eom1=MathTex(r"\ddot{\varphi}_1", "=",
                 r"\frac{-\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_1^2+\dot{\varphi}_2^2\right)-\tfrac{g}{l}\left(2\sin\varphi_1+\cos(\varphi_1-\varphi_2)\sin\varphi_2\right)}{2-\cos(\varphi_1-\varphi_2)^2}")
-        eom2=MathTex(r"\ddot{\varphi_2}", "=",
+        eom2=MathTex(r"\ddot{\varphi}_2", "=",
                 r"\frac{\sin(\varphi_1-\varphi_2)\left(\cos(\varphi_1-\varphi_2)\dot{\varphi}_2^2+2\dot{\varphi}_1^2\right)-\tfrac{g}{l}\left(2\sin\varphi_2+\cos(\varphi_1-\varphi_2)\sin\varphi_1\right)}{2-\cos(\varphi_1-\varphi_2)^2}")
 
         eom1.scale(0.7)
@@ -2287,8 +2293,8 @@ class DoublePendulumCode2(Scene):
         eom1.next_to(eom2,UP)
         align_formulas_with_equal(eom1,eom2,1,1)
 
-        eom1.set_color(YELLOW)
-        eom2.set_color(YELLOW)
+        eom1.set_color(BLUE)
+        eom2.set_color(BLUE)
 
         self.add(eom1,eom2)
 
@@ -2297,21 +2303,21 @@ class DoublePendulumCode2(Scene):
 
 class DoublePendulumCode3(Scene):
     def construct(self):
-        title = Tex("The DoublePendulum")
-        title.set_color(BLUE)
+        title = Tex("Implementation: Euler's method")
+        title.set_color(YELLOW)
         title.to_edge(UP)
         self.add(title)
 
         listing = Code(
             "code3.py",
             margin=0.2,
-            tab_width=2,
-            scale_factor=0.5,
+            tab_width=3,
+            scale_factor=0.4,
             background_stroke_width=1,
             background_stroke_color=WHITE,
             insert_line_no=False,
-            style=Code.styles_list[15],
-            background="window",
+            #style=Code.styles_list[15],
+            background="rectangle",
             language="Python",
             #font="Monospace"
         )
@@ -2332,14 +2338,15 @@ class DoublePendulumCode3(Scene):
             align_formulas_with_equal(equations[l-i-1],equations[l-i],1,1)
 
         for i in range(0,l):
+            equations[i].set_color(GREEN)
             self.play(Write(equations[i]))
         self.wait(20)
 
 
 class DoublePendulumCode4(Scene):
     def construct(self):
-        title = Tex("The DoublePendulum")
-        title.set_color(BLUE)
+        title = Tex("Implementation: the visualization")
+        title.set_color(YELLOW)
         title.to_edge(UP)
         self.add(title)
 
@@ -2347,18 +2354,18 @@ class DoublePendulumCode4(Scene):
             "code4.py",
             margin=0.2,
             tab_width=2,
-            scale_factor=0.3,
+            scale_factor=0.4,
             background_stroke_width=1,
             background_stroke_color=WHITE,
             insert_line_no=False,
-            style=Code.styles_list[15],
-            background="window",
+            #style=Code.styles_list[15],
+            background="rectangle",
             language="Python",
             # font="Monospace"
         )
 
-        listing.shift(1.5*LEFT+.5*UP)
-        self.add(listing)
+        listing.shift(.5*UP)
+        self.play(Write(listing),run_time=5)
 
         g = 10
         l = 1
@@ -2377,7 +2384,7 @@ class DoublePendulumCode4(Scene):
         def cos(x):
             return np.cos(x)
 
-        f=0.01
+        f=0.01 # introduce a little damping to avoid numerical overflows (this cheat is not mentioned in the video)
         def ddf1(f1, f2, df1, df2):
             return -f*df1+(-sin(f1 - f2) * (cos(f1 - f2) * df1 ** 2 + df2 ** 2)
                                          - g / l * (2 * sin(f1) + cos(f1 - f2) * sin(f2))) / (2 - cos(f1 - f2) ** 2)
@@ -2408,10 +2415,44 @@ class DoublePendulumCode4(Scene):
 
         self.add(t, d_phi1, phi1, d_phi2, phi2)
         self.add(pendulum_anim,pendulum_anim2)
-        self.wait(10)
+        self.wait(20)
 
         t.clear_updaters()
         phi1.clear_updaters()
         phi2.clear_updaters()
         d_phi1.clear_updaters()
         d_phi2.clear_updaters()
+
+
+class AddOn(Scene):
+    def construct(self):
+        self.swing(angle=99 * PI / 100, ax_shift=3 * DOWN, pendulum_shift=3.5 * DOWN,  duration=10, height=2, color=RED)
+        self.wait(2)
+
+    def swing(self, ax_shift=0, pendulum_shift=0, angle=0, duration=2, height=2, color=BLUE):
+
+        t = ValueTracker(0)
+        t.add_updater(lambda mobject, dt: mobject.increment_value(dt))
+
+        l = 1
+        init_angle = angle
+        phi = ValueTracker(init_angle)
+        omega = ValueTracker(0)
+        omega.add_updater(lambda mobject, dt: mobject.increment_value(-10 / l * np.sin(phi.get_value()) * dt))
+        phi.add_updater(lambda mobject, dt: mobject.increment_value(omega.get_value() * dt))
+
+        draw_pendulum = (
+            lambda: Pendulum(3 * l, central_color=color).shift(3.5* RIGHT + pendulum_shift).rotate(phi.get_value()))
+        pendulum_anim = always_redraw(draw_pendulum)
+
+
+
+        self.add(t, omega, phi)
+        self.add(pendulum_anim)
+        self.wait(duration)
+        t.clear_updaters()
+        phi.clear_updaters()
+        omega.clear_updaters()
+        pendulum_anim.clear_updaters()
+
+        return pendulum_anim
