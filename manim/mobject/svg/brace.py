@@ -18,6 +18,7 @@ from ...mobject.svg.svg_path import SVGPathMobject
 from ...mobject.svg.tex_mobject import MathTex, Tex
 from ...mobject.types.vectorized_mobject import VMobject
 from ...utils.color import BLACK
+from ...utils.deprecation import deprecated_params
 
 
 class Brace(SVGPathMobject):
@@ -92,11 +93,13 @@ class Brace(SVGPathMobject):
         right = mobject.get_corner(DOWN + RIGHT)
         target_width = right[0] - left[0]
         linear_section_length = max(
-            0, (target_width * sharpness - default_min_width) / 2
+            0,
+            (target_width * sharpness - default_min_width) / 2,
         )
 
         path = path_string_template.format(
-            linear_section_length, -linear_section_length
+            linear_section_length,
+            -linear_section_length,
         )
 
         SVGPathMobject.__init__(
@@ -137,9 +140,9 @@ class Brace(SVGPathMobject):
     def get_tip(self):
         # Returns the position of the seventh point in the path, which is the tip.
         if config["renderer"] == "opengl":
-            return self.get_points()[34]
+            return self.points[34]
 
-        return self.get_points()[28]  # = 7*4
+        return self.points[28]  # = 7*4
 
     def get_direction(self):
         vect = self.get_tip() - self.get_center()
@@ -147,18 +150,29 @@ class Brace(SVGPathMobject):
 
 
 class BraceLabel(VMobject, metaclass=ConvertToOpenGL):
+    @deprecated_params(
+        params="label_scale",
+        since="v0.10.0",
+        until="v0.11.0",
+        message="Use font_size instead. To convert old scale factors to font size, multiply by 48.",
+    )
     def __init__(
         self,
         obj,
         text,
         brace_direction=DOWN,
         label_constructor=MathTex,
-        label_scale=1,
+        font_size=DEFAULT_FONT_SIZE,
         buff=0.2,
         **kwargs
     ):
+        label_scale = kwargs.pop("label_scale", None)
+        if label_scale:
+            self.font_size = label_scale * DEFAULT_FONT_SIZE
+        else:
+            self.font_size = font_size
+
         self.label_constructor = label_constructor
-        self.label_scale = label_scale
         super().__init__(**kwargs)
 
         self.brace_direction = brace_direction
@@ -167,15 +181,13 @@ class BraceLabel(VMobject, metaclass=ConvertToOpenGL):
             obj = self.get_group_class()(*obj)
         self.brace = Brace(obj, brace_direction, buff, **kwargs)
 
-        if isinstance(text, tuple) or isinstance(text, list):
-            self.label = self.label_constructor(*text, **kwargs)
+        if isinstance(text, (tuple, list)):
+            self.label = self.label_constructor(font_size=font_size, *text, **kwargs)
         else:
-            self.label = self.label_constructor(str(text))
-        if self.label_scale != 1:
-            self.label.scale(self.label_scale)
+            self.label = self.label_constructor(str(text), font_size=font_size)
 
         self.brace.put_at_tip(self.label)
-        self.submobjects = [self.brace, self.label]
+        self.add(self.brace, self.label)
 
     def creation_anim(self, label_anim=FadeIn, brace_anim=GrowFromCenter):
         return AnimationGroup(brace_anim(self.brace), label_anim(self.label))
@@ -185,21 +197,17 @@ class BraceLabel(VMobject, metaclass=ConvertToOpenGL):
             obj = self.get_group_class()(*obj)
         self.brace = Brace(obj, self.brace_direction, **kwargs)
         self.brace.put_at_tip(self.label)
-        self.submobjects[0] = self.brace
         return self
 
     def change_label(self, *text, **kwargs):
         self.label = self.label_constructor(*text, **kwargs)
-        if self.label_scale != 1:
-            self.label.scale(self.label_scale)
 
         self.brace.put_at_tip(self.label)
-        self.submobjects[1] = self.label
         return self
 
-    def change_brace_label(self, obj, *text):
+    def change_brace_label(self, obj, *text, **kwargs):
         self.shift_brace(obj)
-        self.change_label(*text)
+        self.change_label(*text, **kwargs)
         return self
 
 

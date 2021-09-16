@@ -41,8 +41,7 @@ class OpeningManim(Scene):
         self.wait()
 
         grid = NumberPlane()
-        grid_title = Tex("This is a grid")
-        grid_title.scale(1.5)
+        grid_title = Tex("This is a grid", font_size=72)
         grid_title.move_to(transform_title)
 
         self.add(grid, grid_title)  # Make sure title is on top of grid
@@ -54,7 +53,7 @@ class OpeningManim(Scene):
         self.wait()
 
         grid_transform_title = Tex(
-            r"That was a non-linear function \\ applied to the grid"
+            r"That was a non-linear function \\ applied to the grid",
         )
         grid_transform_title.move_to(grid_title, UL)
         grid.prepare_for_nonlinear_transform()
@@ -66,8 +65,8 @@ class OpeningManim(Scene):
                         np.sin(p[1]),
                         np.sin(p[0]),
                         0,
-                    ]
-                )
+                    ],
+                ),
             ),
             run_time=3,
         )
@@ -94,8 +93,9 @@ class WarpSquare(Scene):
         square = Square()
         self.play(
             ApplyPointwiseFunction(
-                lambda point: complex_to_R3(np.exp(R3_to_complex(point))), square
-            )
+                lambda point: complex_to_R3(np.exp(R3_to_complex(point))),
+                square,
+            ),
         )
         self.wait()
 
