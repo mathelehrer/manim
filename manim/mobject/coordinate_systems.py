@@ -1519,7 +1519,7 @@ class Axes(VGroup, CoordinateSystem, metaclass=ConvertToOpenGL):
         axis_config: Optional[dict] = None,
         x_axis_config: Optional[dict] = None,
         y_axis_config: Optional[dict] = None,
-        tips: bool = False, # undo when back at linux
+        tips: bool = True, # undo when back at linux
         **kwargs,
     ):
         VGroup.__init__(self, **kwargs)
