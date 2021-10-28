@@ -1,9 +1,11 @@
+import cmath
 from abc import ABC
 
 import numpy as np
 from manim import *
 from typing import Iterable
 import csv
+from cmath import *
 
 
 def align_formulas_with_equal(f1, f2, i1, i2):
@@ -1422,7 +1424,7 @@ class Riemann4(Scene):
         labels.set_color(WHITE)
         labels[1].set_color(YELLOW)
         ax.add(labels)
-        ax.shift(2*DOWN)
+        ax.shift(2 * DOWN)
 
         primes2 = [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37]
         primes2_labels = [" 2", " 3", "2^2", " 5", " 7", " 2^3", " 3^2", " 11", " 13", "2^4", " 17", " 19", " 23",
@@ -1434,13 +1436,12 @@ class Riemann4(Scene):
         img = ImageMobject("log_zeta.png")
         img.scale(0.5)
         img.to_corner(DOWN + LEFT)
-        img.shift( 0.5*UP+LEFT)
+        img.shift(0.5 * UP + LEFT)
 
-        ax.next_to(img,RIGHT)
+        ax.next_to(img, RIGHT)
         ax.shift(DOWN)
 
-
-        self.play(FadeIn(img),Create(ax))
+        self.play(FadeIn(img), Create(ax))
         self.wait()
 
         data = load_data()
@@ -1453,7 +1454,7 @@ class Riemann4(Scene):
 
         for j in range(0, len(data[last]) - 1):
             line = Line(ax.coords_to_point(x_vals[j], data[last][j]),
-                              ax.coords_to_point(x_vals[j + 1], data[last][j + 1])).set_color(WHITE)
+                        ax.coords_to_point(x_vals[j + 1], data[last][j + 1])).set_color(WHITE)
             line.set_color(YELLOW)
             line.set_style(stroke_width=1)
             lines.append(line)
@@ -1469,7 +1470,7 @@ class Riemann4(Scene):
                 lab = MathTex(current_label)
                 lab.scale(0.4)
                 lab.set_color(prime_color[current_label_index])
-                if prime_color[current_label_index]==YELLOW:
+                if prime_color[current_label_index] == YELLOW:
                     lab.move_to(ax.coords_to_point(primes2[current_label_index], -1))
                 else:
                     lab.move_to(ax.coords_to_point(primes2[current_label_index], +1))
@@ -1482,7 +1483,7 @@ class Riemann4(Scene):
         continued = Tex("To be continued ...")
         continued.scale(0.5)
         continued.to_corner(DOWN + LEFT)
-        continued.shift(0.4*DOWN)
+        continued.shift(0.4 * DOWN)
 
         self.play(Write(continued))
         self.wait(10)
@@ -1491,14 +1492,53 @@ class Riemann4(Scene):
 class Logo(Scene):
     def construct(self):
 
-        def func(t):
-            if t>0:
-                return np.array(((-1)**np.floor(t/np.pi)*np.cos((-1)**np.floor(t/np.pi)*t)-2*np.floor(t/np.pi)+14,np.sin(t),0))
-            else:
-                return np.array(((-1)**np.floor(-t/np.pi)*np.cos(-(-1)**np.floor(-t/np.pi)*t)-2*np.floor(-t/np.pi)+14, np.sin(t), 0))
+        n= 19
 
-        function = ParametricFunction(func,t_range=np.array([-15*np.pi,15*np.pi]),fill_opacity=0).set_color(RED)
-        function.scale(0.5)
-        self.play(Create(function),run_time = 10)
+        def path(t):
+            step = np.floor(np.abs(n*t)/np.pi)
+            sign = (-1)**step
+            val = 0.25*sign*np.cos(sign*np.abs(n*t))-0.5*step+(n-1)/4+1j*(0.25*np.sin(n*t)+0.75)
+            inv = 1/val.conjugate() #circluar inversion
+            return np.array((inv.real, inv.imag, 0))
 
+        function = ParametricFunction(path, t_range=np.array([-np.pi, np.pi]), fill_opacity=0).set_color(RED)
+
+        circles1 = []
+        for i in range(-int(np.floor(n/2)),int(np.floor(n/2))):
+            den = 2+i*i
+            r = 1/den
+            x = 2*i/den
+            y = 3/den
+            c = Circle().scale(r).move_to(x*LEFT+y*UP)
+            c.set_style(fill_color=RED,fill_opacity=0.8);
+            circles1.append(c)
+
+        circles2 = []
+        for i in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 6+4*i*(i-1)
+            r = 1 / den
+            x = (8 * i-4) / den
+            y = 9 / den
+            c = Circle().scale(r).move_to(x * LEFT + y * UP)
+            c.set_style(fill_color=GREEN, fill_opacity=0.8,stroke_color=GREEN);
+            circles2.append(c)
+
+        circles3 = []
+        for i in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 15+4*i*(i-1)
+            r = 1 / den
+            x = (8*i-4) / den
+            y = 15 / den
+            c = Circle().scale(r).move_to(x * LEFT + y * UP)
+            c.set_style(fill_color=BLUE, fill_opacity=0.8,stroke_color=BLUE);
+            circles3.append(c)
+
+        group = VGroup(function,*circles1,*circles2,*circles3)
+
+        group.scale(2)
+        group.shift(5*RIGHT+0.9*UP)
+        anims = []
+        anims.append(Create(function,run_time=12,rate_func=rate_functions.double_smooth))
+        anims.append(AnimationGroup(*[AnimationGroup(GrowFromCenter(circles1[i],run_time=3),GrowFromCenter(circles2[i],run_time=1),GrowFromCenter(circles3[i],run_time=1.5)) for i in range(0,len(circles1))],lag_ratio=0.1))
+        self.play(AnimationGroup(*anims,lag_ratio=0.5))
         self.wait(10)
