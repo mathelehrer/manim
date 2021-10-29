@@ -1491,6 +1491,11 @@ class Riemann4(Scene):
 
 class Logo(Scene):
     def construct(self):
+        title = Tex("Primes and $\zeta(s)$")
+        title.set_color(YELLOW)
+        title.to_edge(UP)
+
+        self.play(Write(title))
 
         n= 19
 
@@ -1536,9 +1541,105 @@ class Logo(Scene):
         group = VGroup(function,*circles1,*circles2,*circles3)
 
         group.scale(2)
-        group.shift(5*RIGHT+0.9*UP)
+        group.shift(-5*RIGHT+0.9*UP)
         anims = []
-        anims.append(Create(function,run_time=12,rate_func=rate_functions.double_smooth))
-        anims.append(AnimationGroup(*[AnimationGroup(GrowFromCenter(circles1[i],run_time=3),GrowFromCenter(circles2[i],run_time=1),GrowFromCenter(circles3[i],run_time=1.5)) for i in range(0,len(circles1))],lag_ratio=0.1))
+        anims.append(Create(function,run_time=6,rate_func=rate_functions.double_smooth))
+        anims.append(AnimationGroup(*[AnimationGroup(GrowFromCenter(circles1[i],run_time=1.5),GrowFromCenter(circles2[i],run_time=1),GrowFromCenter(circles3[i],run_time=1.5)) for i in range(0,len(circles1))],lag_ratio=0.1))
         self.play(AnimationGroup(*anims,lag_ratio=0.5))
-        self.wait(10)
+
+        #squares
+
+        squares = [1,4,9,16,25]
+
+        anims = []
+        for s in squares:
+            anims.append(get_squares(s))
+
+        square_groups = VGroup(*anims)
+        square_groups.arrange()
+        #primes
+
+        # ax = Axes(
+        #     x_range=[0, 33],
+        #     y_range=[0, 15],
+        #     x_length=12,
+        #     y_length=6.5,
+        #     axis_config={"color": GREEN},
+        #     x_axis_config={
+        #         "numbers_to_include": np.arange(0, 32, 5),
+        #         "color": GRAY,
+        #     },
+        #     y_axis_config={
+        #         "numbers_to_include": np.arange(0, 16, 5),
+        #         "color": GRAY
+        #     },
+        #     tips=True,
+        # )
+        # labels = ax.get_axis_labels(x_label="", y_label="")
+        # labels[0].shift(0.4 * DOWN)
+        # labels[1].shift(0.4 * LEFT)
+        # labels.set_color(WHITE)
+        # labels[1].set_color(YELLOW)
+        # ax.add(labels)
+        #
+        #
+        # primes2 = [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37]
+        # primes2_labels = [" 2", " 3", "2^2", " 5", " 7", " 2^3", " 3^2", " 11", " 13", "2^4", " 17", " 19", " 23",
+        #                   " 5^2", " 3^3", " 29", " 31", " 2^5", " 37"]
+        #
+        # prime_color = [YELLOW, YELLOW, RED, YELLOW, YELLOW, GREEN, RED, YELLOW, YELLOW, BLUE, YELLOW, YELLOW,
+        #                YELLOW, RED, GREEN, YELLOW, YELLOW, ORANGE, YELLOW]
+        #
+        # ax.next_to(title,DOWN)
+        # ax.shift(0.5*UP+ 0.75*RIGHT)
+        #
+        # self.play( Create(ax))
+        # self.wait()
+        #
+        # data = load_data()
+        # x_vals = []
+        # for k in range(1, len(data[0]) + 1):
+        #     x_vals.append(37 / 1000 * k)
+        #
+        # lines = []
+        # last = len(data) - 2
+        #
+        # for j in range(0, len(data[last]) - 1):
+        #     line = Line(ax.coords_to_point(x_vals[j], data[last][j]),
+        #                 ax.coords_to_point(x_vals[j + 1], data[last][j + 1])).set_color(WHITE)
+        #     line.set_color(YELLOW)
+        #     line.set_style(stroke_width=3)
+        #     lines.append(line)
+        #
+        # current_label_index = 0
+        # current_label = primes2_labels[current_label_index]
+        # collect_lines = []
+        # count = 0
+        # old_label = None
+        # for i in range(0, len(lines)):
+        #     collect_lines.append(Create(lines[i],rate_func=linear))
+        #     if x_vals[i] > primes2[current_label_index]:
+        #         self.play(AnimationGroup(*collect_lines,lag_ratio=1,run_time=1))
+        #         collect_lines = []
+        #         lab = MathTex(current_label)
+        #         p_color = prime_color[current_label_index]
+        #         lab.set_color(p_color)
+        #         circle = Circle(radius = 0.3)
+        #         circle.set_style(fill_color=p_color,fill_opacity=0.1,stroke_opacity=1,stroke_color=p_color)
+        #         if count%2==0:
+        #             pos = lines[i].get_last_point()+0.5*UP
+        #         else:
+        #             pos = lines[i].get_last_point()-0.8*UP
+        #         label = VGroup(circle,lab)
+        #         label.move_to(pos)
+        #         if old_label is None:
+        #             self.play(Write(lab),GrowFromCenter(circle))
+        #         else:
+        #             self.play(Write(lab),GrowFromCenter(circle))
+        #             #self.play(FadeOut(old_label),Write(lab),GrowFromCenter(circle))
+        #         current_label_index = current_label_index + 1
+        #         current_label = primes2_labels[current_label_index]
+        #         count=count+1
+        #         old_label = label
+        #
+        # self.wait(2)
