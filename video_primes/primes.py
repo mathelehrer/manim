@@ -1,4 +1,5 @@
 import cmath
+import math
 from abc import ABC
 
 import numpy as np
@@ -1489,6 +1490,20 @@ class Riemann4(Scene):
         self.wait(10)
 
 
+def plot_function(axes, fnc, x_range, res, col=WHITE):
+    delta = (x_range[1] - x_range[0]) / (res - 1)
+    points = []
+    for it in range(0, res):
+        x = x_range[0] + delta * it
+        if fnc(x)<25:
+            points.append([x, fnc(x)])
+    lines = []
+    for it in range(0, len(points)-1):
+        lines.append(Line(axes.coords_to_point(points[it][0], points[it][1]),
+                          axes.coords_to_point(points[it + 1][0], points[it + 1][1])).set_color(col))
+    return lines
+
+
 class Logo(Scene):
     def construct(self):
         title = Tex("Primes and $\zeta(s)$")
@@ -1497,80 +1512,88 @@ class Logo(Scene):
 
         self.play(Write(title))
 
-        n= 19
+        #logo
+        n = 19
 
         def path(t):
-            step = np.floor(np.abs(n*t)/np.pi)
-            sign = (-1)**step
-            val = 0.25*sign*np.cos(sign*np.abs(n*t))-0.5*step+(n-1)/4+1j*(0.25*np.sin(n*t)+0.75)
-            inv = 1/val.conjugate() #circluar inversion
+            step = np.floor(np.abs(n * t) / np.pi)
+            sign = (-1) ** step
+            val = 0.25 * sign * np.cos(sign * np.abs(n * t)) - 0.5 * step + (n - 1) / 4 + 1j * (
+                    0.25 * np.sin(n * t) + 0.75)
+            inv = 1 / val.conjugate()  # circluar inversion
             return np.array((inv.real, inv.imag, 0))
 
         function = ParametricFunction(path, t_range=np.array([-np.pi, np.pi]), fill_opacity=0).set_color(RED)
 
         circles1 = []
-        for i in range(-int(np.floor(n/2)),int(np.floor(n/2))):
-            den = 2+i*i
-            r = 1/den
-            x = 2*i/den
-            y = 3/den
-            c = Circle().scale(r).move_to(x*LEFT+y*UP)
-            c.set_style(fill_color=RED,fill_opacity=0.8);
+        for index in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 2 + index * index
+            r = 1 / den
+            x = 2 * index / den
+            y = 3 / den
+            c = Circle().scale(r).move_to(x * LEFT + y * UP)
+            c.set_style(fill_color=RED, fill_opacity=0.8);
             circles1.append(c)
 
         circles2 = []
-        for i in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
-            den = 6+4*i*(i-1)
+        for index in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 6 + 4 * index * (index - 1)
             r = 1 / den
-            x = (8 * i-4) / den
+            x = (8 * index - 4) / den
             y = 9 / den
             c = Circle().scale(r).move_to(x * LEFT + y * UP)
-            c.set_style(fill_color=GREEN, fill_opacity=0.8,stroke_color=GREEN);
+            c.set_style(fill_color=GREEN, fill_opacity=0.8, stroke_color=GREEN);
             circles2.append(c)
 
         circles3 = []
-        for i in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
-            den = 15+4*i*(i-1)
+        for index in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 15 + 4 * index * (index - 1)
             r = 1 / den
-            x = (8*i-4) / den
+            x = (8 * index - 4) / den
             y = 15 / den
             c = Circle().scale(r).move_to(x * LEFT + y * UP)
-            c.set_style(fill_color=BLUE, fill_opacity=0.8,stroke_color=BLUE);
+            c.set_style(fill_color=BLUE, fill_opacity=0.8, stroke_color=BLUE);
             circles3.append(c)
 
-        logo = VGroup(function,*circles1,*circles2,*circles3)
+        logo = VGroup(function, *circles1, *circles2, *circles3)
 
-        logo.scale(2)
-        logo.shift(-5*RIGHT+0.9*UP)
+        logo.scale(1)
+        logo.to_corner(UP+LEFT)
+        logo.shift( RIGHT )
         anims = []
-        time = 1 #6
+        time = 10  # 6
 
-        anims.append(Create(function,run_time=time,rate_func=rate_functions.double_smooth))
-        anims.append(AnimationGroup(*[AnimationGroup(GrowFromCenter(circles1[i],run_time=time/4),GrowFromCenter(circles2[i],run_time=1),GrowFromCenter(circles3[i],run_time=1.5)) for i in range(0,len(circles1))],lag_ratio=0.1))
-        self.play(AnimationGroup(*anims,lag_ratio=0.5))
+        anims.append(Create(function, run_time=time, rate_func=rate_functions.double_smooth))
+        anims.append(AnimationGroup(*[
+            AnimationGroup(GrowFromCenter(circles1[i], run_time=time / 4), GrowFromCenter(circles2[i], run_time=1),
+                           GrowFromCenter(circles3[i], run_time=1.5)) for i in range(0, len(circles1))], lag_ratio=0.1))
+        self.play(AnimationGroup(*anims, lag_ratio=0.5))
 
-        #squares
+        # squares
 
-        squares = [1,4,9,16,25,36]
-        colors = [RED, GREEN,BLUE,ORANGE, PURPLE,PINK]
+        squares = [1, 4, 9, 16, 25, 36]
+        colors = [RED, GREEN, BLUE, ORANGE, PURPLE, PINK]
 
         square_groups = []
-        for i,s in enumerate(squares):
-            square_groups.append(get_squares(s,colors[i]))
+        for index, s in enumerate(squares):
+            square_groups.append(get_squares(s, colors[index]))
 
         square_vgroups = []
         for group in square_groups:
             square_vgroups.append(VGroup(*group))
 
         full_group = VGroup(*square_vgroups)
-        full_group.arrange(buff = MED_SMALL_BUFF)
-        full_group.shift(2*UP+2*RIGHT)
+        full_group.arrange(buff=0.8 * LARGE_BUFF)
+        full_group.shift(2 * UP + 2 * RIGHT)
+
+        removables = []
 
         for square_group in square_groups:
             anims = []
             for square in square_group:
                 anims.append(Create(square))
-            self.play(AnimationGroup(*anims,lag_ratio=1),run_time = 2) # create square one by one
+                removables.append(square)
+            self.play(AnimationGroup(*anims, lag_ratio=1), run_time=2)  # create square one by one
         self.wait(2)
 
         ax = Axes(
@@ -1579,11 +1602,14 @@ class Logo(Scene):
             x_length=7,
             y_length=5,
             x_axis_config={
-                "numbers_to_include": np.arange(0,7, 1),
+                "numbers_to_include": np.arange(0, 7, 1),
                 "color": GRAY,
             },
             y_axis_config={
                 "numbers_to_include": np.arange(0, 40, 10),
+                "tick_size": 0.01,
+                "longer_tick_multiple": 10,
+                "numbers_with_elongated_ticks": np.arange(0, 40, 5),
                 "color": GRAY
             },
             tips=True,
@@ -1594,172 +1620,302 @@ class Logo(Scene):
         labels.set_color(WHITE)
         labels[1].set_color(YELLOW)
         ax.add(labels)
-        ax.next_to(full_group,DOWN)
-        ax.shift(0.5*UP)
+        ax.next_to(full_group, DOWN)
+        ax.shift(0.5 * UP)
 
         self.play(Create(ax))
         self.wait(3)
 
-        removeables = []
-        dots =[]
-        for i,s in enumerate(squares):
-            dot = Dot().set_color(colors[i]).move_to(ax.coords_to_point(i+1,s))
+        dots = []
+        for index, s in enumerate(squares):
+            dot = Dot().set_color(colors[index]).move_to(ax.coords_to_point(index + 1, s))
             dots.append(dot)
-            copy = full_group[i].copy()
-            removeables.append(copy)
-            self.play(TransformFromCopy(copy,dot))
+            copy = full_group[index].copy()
+            removables.append(copy)
+            self.play(Transform(copy, dot))
 
         self.wait(3)
 
-        graph = ax.get_graph(lambda x: x**2,[0,6],color = YELLOW)
-        self.play(GrowFromPoint(graph,ax.coords_to_point(0,0)))
+        graph = ax.get_graph(lambda x: x ** 2, [0, 6], color=YELLOW)
+        removables.append(graph)
+        self.play(GrowFromPoint(graph, ax.coords_to_point(0, 0)))
 
-        headline1 = Tex("d","i","s","c","r","e","t","e","$\leftrightarrow$", r"{\calligra \Large smooth}")
-        for i in range(0,8):
-            headline1[i].set_color(colors[i%len(colors)])
+        headline1 = Tex("d", "i", "s", "c", "r", "e", "t", "e", "$\,\,\leftrightarrow\,\,$",
+                        r"{\calligra \Large smooth}")
+        headline2 = Tex("s", "e", "r", "i", "e", "s", "$\,\,\leftrightarrow\,\,$",
+                        r"{\calligra \Large functions}")
+        headline3 = Tex("n","u","m","b","e","r","s","$\,\,\leftrightarrow\,\,$",r"{\calligra \Large geometry}")
+        for index in range(0, 8):
+            headline1[index].set_color(colors[index % len(colors)])
+            if index<len(headline2)-2:
+                headline2[index].set_color(colors[index % len(colors)])
+            if index<len(headline2)-1:
+                headline3[index].set_color(colors[index % len(colors)])
         headline1[9].set_color(YELLOW)
+        headline2[7].set_color(YELLOW)
+        headline3[8].set_color(YELLOW)
 
         last = logo
-        headlines=[
+
+        headlines = [
             headline1,
+            headline2,
+            headline3
         ]
 
         for headline in headlines:
-            headline.next_to(last,DOWN)
-            if last==logo:
-                headline.to_edge(LEFT)
+            headline.next_to(last, DOWN,buff = LARGE_BUFF)
+            align_formulas_with_equal(headline,last,len(headline)-2,len(last)-2)
+            if last == logo:
+                headline.shift(0.3*RIGHT)
             last = headline
 
-        anims =[]
-        for i in range(0,8):
-            anims.append(Write(headlines[0][i]))
+        anims = []
+        for index in range(0, 8):
+            anims.append(Write(headlines[0][index]))
         self.play(Write(headlines[0][8]))
-        self.play(AnimationGroup(*anims,rate_func=linear, lag_ratio=0.5,run_time=2),Write(headlines[0][9],rate_func=linear,run_time=2))
+        self.play(AnimationGroup(*anims, rate_func=linear, lag_ratio=0.5, run_time=2),
+                  Write(headlines[0][9], rate_func=linear, run_time=2))
 
         self.wait(3)
 
-        self.remove(ax,full_group,*removeables)
+        self.remove(ax)
+        self.remove(full_group)
+        self.remove(*removables)
 
-        table = Table(
-            [["$1!$", "$1$","$1$"],
-             ["$2!$", r"$1\cdot 2$", "$2$"],
-             ["$3!$", r"$1\cdot 2\cdot 3$", "$6$"],
-             ["$4!$", r"$1\cdot 2\cdot 3\cdot 4$", "$24$"],
+        # factorial
+
+        table = MathTable(
+            [["1!", "1", "1"],
+             ["2!", r"1\cdot 2", "2"],
+             ["3!", r"1\cdot 2\cdot 3", "6"],
+             ["4!", r"1\cdot 2\cdot 3\cdot 4", "24"],
+             [r"\tfrac{1}{2}!","?",r"\tfrac{\sqrt{\pi}}{2}"]
              ],
-            #col_labels=[Text("factorial"), Text("expression"),Text("result")],
-            #row_labels=[Text("one"), Text("two"),Text("three"),Text("four")],
-            top_left_entry=Star().scale(0.3),
+            # col_labels=[Text("factorial"), Text("expression"),Text("result")],
+            # row_labels=[Text("one"), Text("two"),Text("three"),Text("four")],
             include_outer_lines=True,
             arrange_in_grid_config={"cell_alignment": RIGHT},
+            v_buff=SMALL_BUFF,
         )
 
-        for row in table:
-            self.play(Write(row))
+        table.next_to(title, DOWN)
+        table.to_edge(RIGHT)
+
+        table_content = table[0]
+        for row in range(0, 4):
+            table_content[3 * row + 2].set_color(colors[row % len(colors)])
+            table_content[3 * row].set_color(colors[row % len(colors)])
+            if row == 0:
+                self.play(Write(table_content[3 * row]))
+                self.play(Write(table_content[3 * row + 2]))
+            else:
+                self.play(Write(table_content[3 * row]))
+                self.play(Write(table_content[3 * row + 1]))
+                self.play(Write(table_content[3 * row + 2]))
             self.wait(2)
 
+        ax = Axes(
+            x_range=[-4, 5],
+            y_range=[-5, 25],
+            x_length=8,
+            y_length=3.5,
+            x_axis_config={
+                "numbers_to_include": np.arange(-4, 5, 1),
+                "color": GRAY,
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 25, 5),
+                "tick_size": 0.01,
+                "longer_tick_multiple": 10,
+                "numbers_with_elongated_ticks": np.arange(0, 25, 5),
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="", y_label="")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        labels[1].set_color(YELLOW)
+        ax.add(labels)
+        ax.next_to(full_group, DOWN)
+        ax.shift(DOWN )
 
-        #primes
+        self.play(Create(ax))
+        self.wait(3)
 
-        # ax = Axes(
-        #     x_range=[0, 33],
-        #     y_range=[0, 15],
-        #     x_length=12,
-        #     y_length=6.5,
-        #     axis_config={"color": GREEN},
-        #     x_axis_config={
-        #         "numbers_to_include": np.arange(0, 32, 5),
-        #         "color": GRAY,
-        #     },
-        #     y_axis_config={
-        #         "numbers_to_include": np.arange(0, 16, 5),
-        #         "color": GRAY
-        #     },
-        #     tips=True,
-        # )
-        # labels = ax.get_axis_labels(x_label="", y_label="")
-        # labels[0].shift(0.4 * DOWN)
-        # labels[1].shift(0.4 * LEFT)
-        # labels.set_color(WHITE)
-        # labels[1].set_color(YELLOW)
-        # ax.add(labels)
-        #
-        #
-        # primes2 = [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37]
-        # primes2_labels = [" 2", " 3", "2^2", " 5", " 7", " 2^3", " 3^2", " 11", " 13", "2^4", " 17", " 19", " 23",
-        #                   " 5^2", " 3^3", " 29", " 31", " 2^5", " 37"]
-        #
-        # prime_color = [YELLOW, YELLOW, RED, YELLOW, YELLOW, GREEN, RED, YELLOW, YELLOW, BLUE, YELLOW, YELLOW,
-        #                YELLOW, RED, GREEN, YELLOW, YELLOW, ORANGE, YELLOW]
-        #
-        # ax.next_to(title,DOWN)
-        # ax.shift(0.5*UP+ 0.75*RIGHT)
-        #
-        # self.play( Create(ax))
-        # self.wait()
-        #
-        # data = load_data()
-        # x_vals = []
-        # for k in range(1, len(data[0]) + 1):
-        #     x_vals.append(37 / 1000 * k)
-        #
-        # lines = []
-        # last = len(data) - 2
-        #
-        # for j in range(0, len(data[last]) - 1):
-        #     line = Line(ax.coords_to_point(x_vals[j], data[last][j]),
-        #                 ax.coords_to_point(x_vals[j + 1], data[last][j + 1])).set_color(WHITE)
-        #     line.set_color(YELLOW)
-        #     line.set_style(stroke_width=3)
-        #     lines.append(line)
-        #
-        # current_label_index = 0
-        # current_label = primes2_labels[current_label_index]
-        # collect_lines = []
-        # count = 0
-        # old_label = None
-        # for i in range(0, len(lines)):
-        #     collect_lines.append(Create(lines[i],rate_func=linear))
-        #     if x_vals[i] > primes2[current_label_index]:
-        #         self.play(AnimationGroup(*collect_lines,lag_ratio=1,run_time=1))
-        #         collect_lines = []
-        #         lab = MathTex(current_label)
-        #         p_color = prime_color[current_label_index]
-        #         lab.set_color(p_color)
-        #         circle = Circle(radius = 0.3)
-        #         circle.set_style(fill_color=p_color,fill_opacity=0.1,stroke_opacity=1,stroke_color=p_color)
-        #         if count%2==0:
-        #             pos = lines[i].get_last_point()+0.5*UP
-        #         else:
-        #             pos = lines[i].get_last_point()-0.8*UP
-        #         label = VGroup(circle,lab)
-        #         label.move_to(pos)
-        #         if old_label is None:
-        #             self.play(Write(lab),GrowFromCenter(circle))
-        #         else:
-        #             self.play(Write(lab),GrowFromCenter(circle))
-        #             #self.play(FadeOut(old_label),Write(lab),GrowFromCenter(circle))
-        #         current_label_index = current_label_index + 1
-        #         current_label = primes2_labels[current_label_index]
-        #         count=count+1
-        #         old_label = label
-        #
-        # self.wait(2)
+        removables = []
+        dots = []
+        for index in range(0, 4):
+            dot = Dot().set_color(colors[index]).move_to(ax.coords_to_point(index + 1, math.factorial(index + 1)))
+            dots.append(dot)
+            copy = table_content[3 * index + 2].copy()
+            removables.append(copy)
+            self.play(Transform(copy, dot))
+
+        self.wait(3)
+
+        function = plot_function(ax,lambda x: math.gamma(x + 1), [-0.99, 4], 500, col=YELLOW)
+        anim = AnimationGroup(*[Create(line, run_time=2 / len(function)) for line in reversed(function)],rate_func=linear, lag_ratio=1)
+        for f in function:
+            removables.append(f)
+        self.play(anim)
+
+        gammas = []
+        for i in range(-4, -1):
+            gammas.append(
+                plot_function(axes=ax, fnc=lambda x: math.gamma(x + 1), x_range=[i + 0.01, i + 0.99], res=500,
+                                   col=YELLOW))
+        self.wait(3)
+
+        for lines in reversed(gammas):
+            anim = AnimationGroup(*[Create(line,run_time = 1/len(lines)) for line in reversed(lines)],rate_func=linear, lag_ratio=1)
+            for l in lines:
+                removables.append(l)
+            self.play(anim)
+        self.wait(3)
+
+        dot = Dot().set_color(colors[4]).move_to(ax.coords_to_point(0.5,math.gamma(1.5)))
+        self.play(Write(table_content[12].set_color(colors[4])),Create(dot))
+        self.wait(2)
+
+        self.play(TransformFromCopy(dot,table_content[14].set_color(colors[4])))
+
+        self.wait(3)
+
+        anims = []
+        for index in range(0, 6):
+            anims.append(Write(headlines[1][index]))
+        self.play(Write(headlines[1][6]))
+        self.play(AnimationGroup(*anims, rate_func=linear, lag_ratio=0.5, run_time=2),
+                  Write(headlines[1][7], rate_func=linear, run_time=2))
+
+        self.wait(3)
+
+        self.remove(*table_content)
+        self.remove(ax)
+        self.remove(dot)
+        self.remove(*removables)
+
+        self.wait(2)
+
+        # primes
+
+        ax = Axes(
+            x_range=[0, 33],
+            y_range=[0, 15],
+            x_length=8,
+            y_length=6,
+            axis_config={"color": GREEN},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 32, 5),
+                "color": GRAY,
+            },
+            y_axis_config={
+                "tick_size": 0.03,
+                "longer_tick_multiple": 3,
+                "numbers_with_elongated_ticks": np.arange(0, 16, 5),
+                "numbers_to_include": np.arange(0, 16, 5),
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="", y_label="")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        labels[1].set_color(YELLOW)
+        ax.add(labels)
+
+        primes2 = [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37]
+        primes2_labels = [" 2", " 3", "2^2", " 5", " 7", " 2^3", " 3^2", " 11", " 13", "2^4", " 17", " 19", " 23",
+                          " 5^2", " 3^3", " 29", " 31", " 2^5", " 37"]
+        prime_dist2 = [ 1., 2., 2.5, 3.5, 4.5, 4.83333, 5.33333, 6.33333, 7.33333, 7.58333, 8.58333, 9.58333, 10.5833,
+                        11.0833, 11.4167, 12.4167, 13.4167, 13.6167,14.6167]
+
+        prime_color = [YELLOW, YELLOW, RED, YELLOW, YELLOW, GREEN, RED, YELLOW, YELLOW, BLUE, YELLOW, YELLOW,
+                       YELLOW, RED, GREEN, YELLOW, YELLOW, ORANGE, YELLOW]
+
+        ax.next_to(title,DOWN)
+        ax.to_edge(RIGHT)
+
+        self.play( Create(ax))
+        self.wait()
+
+        data = load_data()
+        x_vals = []
+        for k in range(1, len(data[0]) + 1):
+            x_vals.append(37 / 1000 * k)
+
+        lines = []
+        last = len(data) - 2
+
+        for j in range(0, len(data[last]) - 1):
+            line = Line(ax.coords_to_point(x_vals[j], data[last][j]),
+                        ax.coords_to_point(x_vals[j + 1], data[last][j + 1])).set_color(WHITE)
+            line.set_color(YELLOW)
+            line.set_style(stroke_width=3)
+            lines.append(line)
+
+        current_label_index = 0
+        current_label = primes2_labels[current_label_index]
+        collect_lines = []
+        count = 0
+        old_label = None
+        for i in range(0, len(lines)):
+            collect_lines.append(Create(lines[i],rate_func=linear))
+            if x_vals[i] > primes2[current_label_index]:
+                self.play(AnimationGroup(*collect_lines,lag_ratio=1,run_time=1))
+                collect_lines = []
+                lab = MathTex(current_label)
+                p_color = prime_color[current_label_index]
+                lab.set_color(p_color)
+                circle = Circle(radius = 0.35)
+                circle.set_style(fill_color=p_color,fill_opacity=0.1,stroke_opacity=1,stroke_color=p_color)
+                if count%2==0:
+                    pos = ax.coords_to_point(primes2[count],prime_dist2[count]+1)
+                else:
+                    pos = ax.coords_to_point(primes2[count],prime_dist2[count-1]-1)
+                label = VGroup(circle,lab)
+                label.scale(0.7)
+                label.move_to(pos)
+                if old_label is None:
+                    self.play(Write(lab),GrowFromCenter(circle))
+                else:
+                    self.play(Write(lab),GrowFromCenter(circle))
+                    #self.play(FadeOut(old_label),Write(lab),GrowFromCenter(circle))
+                current_label_index = current_label_index + 1
+                current_label = primes2_labels[current_label_index]
+                count=count+1
+                old_label = label
+
+        self.wait(2)
+
+        anims = []
+        for index in range(0, 7):
+            anims.append(Write(headlines[2][index]))
+        self.play(Write(headlines[2][7]))
+        self.play(AnimationGroup(*anims, rate_func=linear, lag_ratio=0.5, run_time=2),
+                  Write(headlines[2][8], rate_func=linear, run_time=2))
+
+        self.wait(10)
 
 
-def get_squares(n=9,color = GREEN):
+def get_squares(n=9, color=GREEN):
     rows = int(np.sqrt(n))
     group = []
     row_last = None
-    for row in range(0,rows):
+    for row in range(0, rows):
         col_last = None
-        for col in range(0,rows):
+        for col in range(0, rows):
             s = Square().scale(0.1)
-            s.set_style(fill_color=color,fill_opacity=0.8,stroke_color=color,stroke_opacity=1)
+            s.set_style(fill_color=color, fill_opacity=0.8, stroke_color=color, stroke_opacity=1)
 
-            if row>0 and col==0:
-                s.next_to(row_last,DOWN,buff = 0.5*SMALL_BUFF)
-            if col>0:
-                s.next_to(col_last,RIGHT,buff = 0.5*SMALL_BUFF)
+            if row > 0 and col == 0:
+                s.next_to(row_last, DOWN, buff=0.5 * SMALL_BUFF)
+            if col > 0:
+                s.next_to(col_last, RIGHT, buff=0.5 * SMALL_BUFF)
             else:
                 row_last = s
 
