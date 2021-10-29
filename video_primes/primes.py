@@ -1538,25 +1538,126 @@ class Logo(Scene):
             c.set_style(fill_color=BLUE, fill_opacity=0.8,stroke_color=BLUE);
             circles3.append(c)
 
-        group = VGroup(function,*circles1,*circles2,*circles3)
+        logo = VGroup(function,*circles1,*circles2,*circles3)
 
-        group.scale(2)
-        group.shift(-5*RIGHT+0.9*UP)
+        logo.scale(2)
+        logo.shift(-5*RIGHT+0.9*UP)
         anims = []
-        anims.append(Create(function,run_time=6,rate_func=rate_functions.double_smooth))
-        anims.append(AnimationGroup(*[AnimationGroup(GrowFromCenter(circles1[i],run_time=1.5),GrowFromCenter(circles2[i],run_time=1),GrowFromCenter(circles3[i],run_time=1.5)) for i in range(0,len(circles1))],lag_ratio=0.1))
+        time = 1 #6
+
+        anims.append(Create(function,run_time=time,rate_func=rate_functions.double_smooth))
+        anims.append(AnimationGroup(*[AnimationGroup(GrowFromCenter(circles1[i],run_time=time/4),GrowFromCenter(circles2[i],run_time=1),GrowFromCenter(circles3[i],run_time=1.5)) for i in range(0,len(circles1))],lag_ratio=0.1))
         self.play(AnimationGroup(*anims,lag_ratio=0.5))
 
         #squares
 
-        squares = [1,4,9,16,25]
+        squares = [1,4,9,16,25,36]
+        colors = [RED, GREEN,BLUE,ORANGE, PURPLE,PINK]
 
-        anims = []
-        for s in squares:
-            anims.append(get_squares(s))
+        square_groups = []
+        for i,s in enumerate(squares):
+            square_groups.append(get_squares(s,colors[i]))
 
-        square_groups = VGroup(*anims)
-        square_groups.arrange()
+        square_vgroups = []
+        for group in square_groups:
+            square_vgroups.append(VGroup(*group))
+
+        full_group = VGroup(*square_vgroups)
+        full_group.arrange(buff = MED_SMALL_BUFF)
+        full_group.shift(2*UP+2*RIGHT)
+
+        for square_group in square_groups:
+            anims = []
+            for square in square_group:
+                anims.append(Create(square))
+            self.play(AnimationGroup(*anims,lag_ratio=1),run_time = 2) # create square one by one
+        self.wait(2)
+
+        ax = Axes(
+            x_range=[0, 7],
+            y_range=[0, 40],
+            x_length=7,
+            y_length=5,
+            x_axis_config={
+                "numbers_to_include": np.arange(0,7, 1),
+                "color": GRAY,
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 40, 10),
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="", y_label="")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        labels[1].set_color(YELLOW)
+        ax.add(labels)
+        ax.next_to(full_group,DOWN)
+        ax.shift(0.5*UP)
+
+        self.play(Create(ax))
+        self.wait(3)
+
+        removeables = []
+        dots =[]
+        for i,s in enumerate(squares):
+            dot = Dot().set_color(colors[i]).move_to(ax.coords_to_point(i+1,s))
+            dots.append(dot)
+            copy = full_group[i].copy()
+            removeables.append(copy)
+            self.play(TransformFromCopy(copy,dot))
+
+        self.wait(3)
+
+        graph = ax.get_graph(lambda x: x**2,[0,6],color = YELLOW)
+        self.play(GrowFromPoint(graph,ax.coords_to_point(0,0)))
+
+        headline1 = Tex("d","i","s","c","r","e","t","e","$\leftrightarrow$", r"{\calligra \Large smooth}")
+        for i in range(0,8):
+            headline1[i].set_color(colors[i%len(colors)])
+        headline1[9].set_color(YELLOW)
+
+        last = logo
+        headlines=[
+            headline1,
+        ]
+
+        for headline in headlines:
+            headline.next_to(last,DOWN)
+            if last==logo:
+                headline.to_edge(LEFT)
+            last = headline
+
+        anims =[]
+        for i in range(0,8):
+            anims.append(Write(headlines[0][i]))
+        self.play(Write(headlines[0][8]))
+        self.play(AnimationGroup(*anims,rate_func=linear, lag_ratio=0.5,run_time=2),Write(headlines[0][9],rate_func=linear,run_time=2))
+
+        self.wait(3)
+
+        self.remove(ax,full_group,*removeables)
+
+        table = Table(
+            [["$1!$", "$1$","$1$"],
+             ["$2!$", r"$1\cdot 2$", "$2$"],
+             ["$3!$", r"$1\cdot 2\cdot 3$", "$6$"],
+             ["$4!$", r"$1\cdot 2\cdot 3\cdot 4$", "$24$"],
+             ],
+            #col_labels=[Text("factorial"), Text("expression"),Text("result")],
+            #row_labels=[Text("one"), Text("two"),Text("three"),Text("four")],
+            top_left_entry=Star().scale(0.3),
+            include_outer_lines=True,
+            arrange_in_grid_config={"cell_alignment": RIGHT},
+        )
+
+        for row in table:
+            self.play(Write(row))
+            self.wait(2)
+
+
         #primes
 
         # ax = Axes(
@@ -1643,3 +1744,26 @@ class Logo(Scene):
         #         old_label = label
         #
         # self.wait(2)
+
+
+def get_squares(n=9,color = GREEN):
+    rows = int(np.sqrt(n))
+    group = []
+    row_last = None
+    for row in range(0,rows):
+        col_last = None
+        for col in range(0,rows):
+            s = Square().scale(0.1)
+            s.set_style(fill_color=color,fill_opacity=0.8,stroke_color=color,stroke_opacity=1)
+
+            if row>0 and col==0:
+                s.next_to(row_last,DOWN,buff = 0.5*SMALL_BUFF)
+            if col>0:
+                s.next_to(col_last,RIGHT,buff = 0.5*SMALL_BUFF)
+            else:
+                row_last = s
+
+            group.append(s)
+            col_last = s
+
+    return group

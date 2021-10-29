@@ -12,7 +12,6 @@ def test_axes(scene):
         x_length=6,
         y_length=6,
         color=WHITE,
-        axis_config={"exclude_origin_tick": False},
     )
     labels = graph.get_axis_labels()
     scene.add(graph, labels)
@@ -177,16 +176,27 @@ def test_t_label(scene):
 @frames_comparison
 def test_get_area(scene):
     ax = Axes().add_coordinates()
-    curve = ax.get_graph(lambda x: 2 * np.sin(x), color=DARK_BLUE)
-    area = ax.get_area(
-        curve,
+    curve1 = ax.get_graph(
+        lambda x: 2 * np.sin(x),
+        x_range=[-5, ax.x_range[1]],
+        color=DARK_BLUE,
+    )
+    curve2 = ax.get_graph(lambda x: (x + 4) ** 2 - 2, x_range=[-5, -2], color=RED)
+    area1 = ax.get_area(
+        curve1,
         x_range=(PI / 2, 3 * PI / 2),
-        dx_scaling=10,
         color=(GREEN_B, GREEN_D),
         opacity=1,
     )
+    area2 = ax.get_area(
+        curve1,
+        x_range=(-4.5, -2),
+        color=(RED, YELLOW),
+        opacity=0.2,
+        bounded_graph=curve2,
+    )
 
-    scene.add(ax, curve, area)
+    scene.add(ax, curve1, curve2, area1, area2)
 
 
 @frames_comparison
@@ -232,3 +242,18 @@ def test_get_z_axis_label(scene):
     lab = ax.get_z_axis_label(Tex("$z$-label"))
     scene.set_camera_orientation(phi=2 * PI / 5, theta=PI / 5)
     scene.add(ax, lab)
+
+
+@frames_comparison
+def test_log_scaling_graph(scene):
+    ax = Axes(
+        x_range=[0, 8],
+        y_range=[-2, 4],
+        x_length=10,
+        y_axis_config={"scaling": LogBase()},
+    )
+    ax.add_coordinates()
+
+    gr = ax.get_graph(lambda x: x, use_smoothing=False, x_range=[0.01, 8])
+
+    scene.add(ax, gr)

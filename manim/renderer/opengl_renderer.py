@@ -5,8 +5,7 @@ import moderngl
 import numpy as np
 from PIL import Image
 
-from manim import config
-from manim.renderer.cairo_renderer import handle_play_like_call
+from manim import config, logger
 from manim.utils.caching import handle_caching_play
 from manim.utils.color import color_to_rgba
 from manim.utils.exceptions import EndSceneEarlyException
@@ -87,7 +86,7 @@ class OpenGLCamera(OpenGLMobject):
         self.light_source = OpenGLPoint(self.light_source_position)
 
         self.default_model_matrix = model_matrix
-        super().__init__(model_matrix=model_matrix, **kwargs)
+        super().__init__(model_matrix=model_matrix, should_render=False, **kwargs)
 
         if euler_angles is None:
             euler_angles = [0, 0, 0]
@@ -225,6 +224,8 @@ class OpenGLRenderer:
         self._original_skipping_status = skip_animations
         self.skip_animations = skip_animations
         self.animation_start_time = 0
+        self.animation_elapsed_time = 0
+        self.time = 0
         self.animations_hashes = []
         self.num_plays = 0
 
@@ -234,6 +235,8 @@ class OpenGLRenderer:
         # Initialize texture map.
         self.path_to_texture_id = {}
 
+        self._background_color = color_to_rgba(config["background_color"], 1.0)
+
     def init_scene(self, scene):
         self.partial_movie_files = []
         self.file_writer = self._file_writer_class(
@@ -242,7 +245,7 @@ class OpenGLRenderer:
         )
         self.scene = scene
         if not hasattr(self, "window"):
-            if config["preview"]:
+            if self.should_create_window():
                 from .opengl_renderer_window import Window
 
                 self.window = Window(self)
@@ -267,6 +270,21 @@ class OpenGLRenderer:
                 moderngl.ONE,
                 moderngl.ONE,
             )
+
+    def should_create_window(self):
+        if config["force_window"]:
+            logger.warning(
+                "'--force_window' is enabled, this is intended for debugging purposes "
+                "and may impact performance if used when outputting files",
+            )
+            return True
+        return (
+            config["preview"]
+            and not config["save_last_frame"]
+            and not config["format"]
+            and not config["write_to_movie"]
+            and not config["dry_run"]
+        )
 
     def get_pixel_shape(self):
         if hasattr(self, "frame_buffer_object"):
@@ -383,16 +401,21 @@ class OpenGLRenderer:
             raise EndSceneEarlyException()
 
     @handle_caching_play
-    @handle_play_like_call
     def play(self, scene, *args, **kwargs):
         # TODO: Handle data locking / unlocking.
+        self.animation_start_time = time.time()
+        self.file_writer.begin_animation(not self.skip_animations)
+
         if scene.compile_animation_data(*args, **kwargs):
             scene.begin_animations()
             scene.play_internal()
 
+        self.file_writer.end_animation(not self.skip_animations)
+        self.time += scene.duration
+        self.num_plays += 1
+
     def clear_screen(self):
-        window_background_color = color_to_rgba(config["background_color"])
-        self.frame_buffer_object.clear(*window_background_color)
+        self.frame_buffer_object.clear(*self.background_color)
         self.window.swap_buffers()
 
     def render(self, scene, frame_offset, moving_mobjects):
@@ -401,8 +424,7 @@ class OpenGLRenderer:
         if self.skip_animations:
             return
 
-        if config["write_to_movie"]:
-            self.file_writer.write_frame(self)
+        self.file_writer.write_frame(self)
 
         if self.window is not None:
             self.window.swap_buffers()
@@ -411,11 +433,12 @@ class OpenGLRenderer:
                 self.window.swap_buffers()
 
     def update_frame(self, scene):
-        window_background_color = color_to_rgba(config["background_color"])
-        self.frame_buffer_object.clear(*window_background_color)
+        self.frame_buffer_object.clear(*self.background_color)
         self.refresh_perspective_uniforms(scene.camera)
 
         for mobject in scene.mobjects:
+            if not mobject.should_render:
+                continue
             self.render_mobject(mobject)
 
         for obj in scene.meshes:
@@ -426,10 +449,24 @@ class OpenGLRenderer:
         self.animation_elapsed_time = time.time() - self.animation_start_time
 
     def scene_finished(self, scene):
-        if config["save_last_frame"]:
+        # When num_plays is 0, no images have been output, so output a single
+        # image in this case
+        if self.num_plays > 0:
+            self.file_writer.finish()
+        elif self.num_plays == 0 and config.write_to_movie:
+            config.write_to_movie = False
+
+        if self.should_save_last_frame():
+            config.save_last_frame = True
             self.update_frame(scene)
             self.file_writer.save_final_image(self.get_image())
-        self.file_writer.finish()
+
+    def should_save_last_frame(self):
+        if config["save_last_frame"]:
+            return True
+        if self.scene.interactive_mode:
+            return False
+        return self.num_plays == 0
 
     def get_image(self) -> Image.Image:
         """Returns an image from the current frame. The first argument passed to image represents
@@ -444,10 +481,11 @@ class OpenGLRenderer:
         PIL.Image
             The PIL image of the array.
         """
+        raw_buffer_data = self.get_raw_frame_buffer_object_data()
         image = Image.frombytes(
             "RGBA",
             self.get_pixel_shape(),
-            self.context.fbo.read(self.get_pixel_shape(), components=4),
+            raw_buffer_data,
             "raw",
             "RGBA",
             0,
@@ -493,7 +531,8 @@ class OpenGLRenderer:
     def get_frame(self):
         # get current pixel values as numpy data in order to test output
         raw = self.get_raw_frame_buffer_object_data(dtype="f1")
-        result_dimensions = (config["pixel_height"], config["pixel_width"], 4)
+        pixel_shape = self.get_pixel_shape()
+        result_dimensions = (pixel_shape[1], pixel_shape[0], 4)
         np_buf = np.frombuffer(raw, dtype="uint8").reshape(result_dimensions)
         np_buf = np.flipud(np_buf)
         return np_buf
@@ -512,3 +551,11 @@ class OpenGLRenderer:
             # Only scale wrt one axis
             scale = fh / ph
             return fc + scale * np.array([(px - pw / 2), (py - ph / 2), 0])
+
+    @property
+    def background_color(self):
+        return self._background_color
+
+    @background_color.setter
+    def background_color(self, value):
+        self._background_color = color_to_rgba(value, 1.0)
