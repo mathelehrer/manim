@@ -1954,3 +1954,54 @@ def get_squares(n=9, color=GREEN):
             col_last = s
 
     return group
+
+class zeta(Scene):
+    def construct(self):
+        title = Tex(r"The $\zeta$-function")
+        title.set_color(RED)
+        title.to_corner(UP+RIGHT)
+        self.play(Write(title))
+
+        first = "01_empty_grid"
+        img = ImageMobject(first)
+        img.to_corner(UP+LEFT)
+        self.play(FadeIn(img))
+        self.wait(2)
+
+        labels = []
+        for i in range(1,11,1):
+            label = MathTex(str(i))
+            label.scale(0.5)
+            label2 = label.copy()
+            label.move_to((2.65-0.35*i)*LEFT+0.75*DOWN)
+            label2.move_to(2.75*LEFT+(-0.5+0.34*i)*UP)
+            labels.append(label)
+            labels.append(label2)
+
+        neg_labels=[]
+        for i in range(-10,0,2):
+            label = MathTex(str(i))
+            label.scale(0.5)
+            label.move_to((2.65 - 0.35 * i) * LEFT + 0.75 * DOWN)
+            neg_labels.append(label)
+
+        self.play(*[Write(labels[i]) for i in range(0,len(labels))])
+        self.wait(2)
+
+        squares = []
+        for i in range(1,6):
+            square = MathTex(str(i*i))
+            squares.append(square)
+
+        for i,square in enumerate(squares):
+            if (i==0):
+                square.next_to(title,DOWN)
+                square.next_to(img,RIGHT)
+            else:
+                square.next_to(squares[i-1],RIGHT)
+            square.set_color(YELLOW)
+        self.play(*[Write(squares[i]) for i in range(0,len(squares))])
+        self.wait(2)
+        self.play(*[Write(neg_labels[i]) for i in range(0, len(neg_labels))])
+        self.wait(2)
+        self.wait(10)
