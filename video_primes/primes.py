@@ -117,14 +117,14 @@ class Fourier2(Scene):
         conclusion.set_color(YELLOW)
         conclusion.next_to(title, DOWN)
 
-        theorem = MathTex(r"f(x)", "=", r"\sum_{n=0}^\infty", r"a_n", r"\sin(n\cdot x)+", "b_n", r"\cos(n\cdot x)")
+        theorem = MathTex(r"\left \lfloor{\tfrac{x}{\pi}}\right \rfloor ", "=", r"\sum_{n=0}^\infty", r"a_n", r"\sin(n\cdot x)+", "b_n", r"\cos(n\cdot x)")
         theorem.set_color(WHITE)
         theorem.scale(0.7)
         theorem.next_to(conclusion, DOWN)
         theorem.to_edge(LEFT)
 
-        theorem2 = MathTex(r"a_n", r"=", r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}f(x)\sin(n\cdot x) {\rm d} x")
-        theorem3 = MathTex(r"b_n", r"=", r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}f(x)\cos(n\cdot x) {\rm d} x")
+        theorem2 = MathTex(r"a_n", r"=", r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}\left \lfloor{\tfrac{x}{\pi}}\right \rfloor \sin(n\cdot x) {\rm d} x")
+        theorem3 = MathTex(r"b_n", r"=", r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}\left \lfloor{\tfrac{x}{\pi}}\right \rfloor \cos(n\cdot x) {\rm d} x")
         theorem2.set_color(GREEN)
         theorem3.set_color(RED)
         theorem2.scale(0.7)
@@ -142,12 +142,27 @@ class Fourier2(Scene):
         self.wait(3)
         self.play(ApplyMethod(theorem[5].set_color, RED), Transform(theorem[5].copy(), theorem3[0]))
         self.play(Write(theorem3[1:]))
+        self.wait(3)
+
+        solution1 = MathTex(r"\tfrac{\pi}{4} a_n","=",r"\left\{0,\frac{1}{1},0,\tfrac{1}{3},0,\tfrac{1}{5},\dots\right\}")
+        solution1.set_color(GREEN)
+        solution1.scale(0.7)
+        solution1.next_to(theorem2,buff=LARGE_BUFF)
+        solution2 = MathTex(r"b_n", "=", r"\left\{0,0,0,0,0,0,\dots\right\}")
+        solution2.set_color(GREEN)
+        solution2.scale(0.7)
+        solution2.next_to(theorem3, buff=LARGE_BUFF)
+        align_formulas_with_equal(solution2,solution1,1,1)
+
+        self.play(Write(solution1))
+        self.wait(3)
+        self.play(Write(solution2))
         self.wait(10)
 
 
 class Primes(Scene):
     def construct(self):
-        title = MathTex(r"\text{The prime distribution function: }", "\pi(x)")
+        title = MathTex(r"\text{The prime counting function: }", "\pi(x)")
         title.to_edge(UP)
         title.set_color(YELLOW)
         self.play(Write(title))
@@ -170,6 +185,9 @@ class Primes(Scene):
             axis_config={"color": GREEN},
             x_axis_config={
                 "numbers_to_include": np.arange(0, 101, 10),
+                "tick_size": 0.03,
+                "longer_tick_multiple": 3,
+                "numbers_with_elongated_ticks": np.arange(0, 101, 5),
                 "color": GRAY,
                 "font_size": 18,
                 "line_to_number_buff": 1.3 * MED_SMALL_BUFF
@@ -245,6 +263,9 @@ class Primes2(Scene):
             axis_config={"color": GREEN},
             x_axis_config={
                 "numbers_to_include": np.arange(0, 101, 10),
+                "tick_size": 0.03,
+                "longer_tick_multiple": 3,
+                "numbers_with_elongated_ticks": np.arange(0, 101, 5),
                 "color": GRAY,
                 "font_size": 18,
                 "line_to_number_buff": 1.3 * MED_SMALL_BUFF
@@ -356,6 +377,7 @@ class Primes2(Scene):
                 self.play(Create(prime_graphs3[i]))
             if not primes2[i] in primes:
                 self.wait(3)
+        self.play(Write(new_labels[i]))
         self.wait(3)
 
         self.remove(*prime_graphs)
@@ -1160,7 +1182,7 @@ class Riemann3(Scene):
         removeables = []
         for i in range(0, 4):
             new_part = MathTex(str(i + 1) + "\cdot",
-                               r"\int\limits_" + str(p[i]) + "^" + str(p[i + 1]) + r"x^{-s-1}{\rm d}x")
+                               r"\int\limits_" + str(p[i]) + "^{" + str(p[i + 1]) + r"}x^{-s-1}{\rm d}x")
             new_part.scale(0.5)
             new_part[0].set_color(YELLOW)
             new_part.next_to(old_part, RIGHT)
@@ -1802,6 +1824,8 @@ class Logo(Scene):
 
         # primes
 
+        removables=[]
+
         ax = Axes(
             x_range=[0, 33],
             y_range=[0, 15],
@@ -1840,6 +1864,7 @@ class Logo(Scene):
         ax.next_to(title,DOWN)
         ax.to_edge(RIGHT)
 
+        removables.append(ax)
         self.play( Create(ax))
         self.wait()
 
@@ -1864,6 +1889,7 @@ class Logo(Scene):
         count = 0
         old_label = None
         for i in range(0, len(lines)):
+            removables.append(lines[i])
             collect_lines.append(Create(lines[i],rate_func=linear))
             if x_vals[i] > primes2[current_label_index]:
                 self.play(AnimationGroup(*collect_lines,lag_ratio=1,run_time=1))
@@ -1880,6 +1906,8 @@ class Logo(Scene):
                 label = VGroup(circle,lab)
                 label.scale(0.7)
                 label.move_to(pos)
+                removables.append(lab)
+                removables.append(circle)
                 if old_label is None:
                     self.play(Write(lab),GrowFromCenter(circle))
                 else:
@@ -1899,6 +1927,9 @@ class Logo(Scene):
         self.play(AnimationGroup(*anims, rate_func=linear, lag_ratio=0.5, run_time=2),
                   Write(headlines[2][8], rate_func=linear, run_time=2))
 
+        self.wait(3)
+
+        self.remove(*removables)
         self.wait(10)
 
 
