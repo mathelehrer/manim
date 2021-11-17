@@ -4,6 +4,7 @@ import numpy as np
 from manim import *
 from colour import Color
 
+
 class Intro0(Scene):
     def construct(self):
 
@@ -31,7 +32,6 @@ class Intro0(Scene):
         phi.clear_updaters()
         omega.clear_updaters()
         pendulum_anim.clear_updaters()
-
 
 
 class Intro(Scene):

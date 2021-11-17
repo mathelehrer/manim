@@ -57,6 +57,142 @@ class Fourier(Scene):
         rect3 = ax.get_graph(lambda x: rectilinear(x), color=YELLOW, x_range=[2.01 * np.pi, 2.99 * np.pi])
         rect4 = ax.get_graph(lambda x: rectilinear(x), color=YELLOW, x_range=[3.01 * np.pi, 3.99 * np.pi])
 
+        pi_labels = MathTex(r"\pi",r"2\pi",r"3\pi",r"4\pi")
+        pi_labels.set_color(YELLOW)
+        for i,l in enumerate(pi_labels):
+            l.move_to(ax.coords_to_point((i+1)*np.pi,0.11))
+
+        origin = ax.coords_to_point(0, 0)
+        self.play(Create(ax))
+        self.wait(1)
+        self.play(Create(rect1))
+        self.play(Write(pi_labels[0]))
+        self.play(Create(rect2))
+        self.play(Write(pi_labels[1]))
+        self.play(Create(rect3))
+        self.play(Write(pi_labels[2]))
+        self.play(Create(rect4))
+        self.play(Write(pi_labels[3]))
+        self.wait(1)
+
+        def harmonic(x, n):
+            return np.sin(x * n) * 4 / n / np.pi
+
+        def approx(x, n):
+            result = 0
+            for i in range(1, 2 * n, 2):
+                result = result + np.sin(x * i) * 4 / i / np.pi
+            return result
+
+        t = ValueTracker(0)
+        t.add_updater(lambda mobject, dt: mobject.increment_value(dt / 10))
+
+        colors = color_gradient([GREEN, BLUE],100)
+
+        draw_harmonic = (lambda: ax.get_graph(lambda x: max(0,(1-t.get_value()))*harmonic(x,3),color=BLUE,x_range=[0,4*np.pi]))
+        draw_result = (lambda: ax.get_graph(lambda x: approx(x,1)+min(t.get_value(),1)*harmonic(x,3),
+                                            color=colors[min(len(colors)-1,int(t.get_value()*len(colors)))],x_range=[0,4*np.pi]))
+
+        approx1 = ax.get_graph(lambda x: approx(x, 1), color=GREEN, x_range=[0, 4 * np.pi])
+        approx2 = ax.get_graph(lambda x: approx(x, 2), color=BLUE, x_range=[0, 4 * np.pi])
+        approx3 = ax.get_graph(lambda x: approx(x, 3), color=RED, x_range=[0, 4 * np.pi])
+        approx4 = ax.get_graph(lambda x: approx(x, 50), color=WHITE, x_range=[0, 4 * np.pi, 0.001])
+
+        functions = []
+        function = MathTex(r"\tfrac{4}{\pi}\sin(x)")
+        function.set_color(GREEN)
+        functions.append(function)
+        function2 = MathTex(r"\tfrac{4}{\pi}\sin(x)+\tfrac{4}{3\pi}\sin(3x)")
+        function2.set_color(BLUE)
+        functions.append(function2)
+        function3 = MathTex(r"\tfrac{4}{\pi}\sin(x)+\tfrac{4}{3\pi}\sin(3x)+\tfrac{4}{5\pi}\sin(5x)")
+        function3.set_color(RED)
+        functions.append(function3)
+        function4 = MathTex(
+            r"\tfrac{4}{\pi}\sin(x)+\tfrac{4}{3\pi}\sin(3x)+\tfrac{4}{5\pi}\sin(5x)+\dots+\tfrac{4}{49\pi}\sin(49x)")
+        function4.set_color(WHITE)
+        functions.append(function4)
+        for function in functions:
+            function.next_to(ax, DOWN)
+
+        self.play(Create(approx1), Write(functions[0]))
+        self.wait(2)
+
+        self.add(t)
+        removable = always_redraw(draw_harmonic)
+        self.play(Create(removable),Create(always_redraw(draw_result)),rate_func=smooth)
+        self.wait(10)
+        t.clear_updaters()
+        self.play(FadeOut(removable), Transform(functions[0], functions[1]))
+        self.wait(3)
+
+        t2 = ValueTracker(0)
+        t2.add_updater(lambda mobject, dt: mobject.increment_value(dt / 10))
+
+        colors2 = color_gradient([BLUE, RED], 100)
+
+        draw_harmonic2 = (lambda: ax.get_graph(lambda x: max(0, (1 - t2.get_value())) * harmonic(x, 5), color=RED,
+                                              x_range=[0, 4 * np.pi]))
+        draw_result2 = (lambda: ax.get_graph(lambda x: approx(x, 2) + min(t2.get_value(), 1) * harmonic(x, 5),
+                                            color=colors2[min(len(colors2) - 1, int(t2.get_value() * len(colors2)))] ,
+                                            x_range=[0, 4 * np.pi]))
+
+        self.add(t2)
+        removable2 = always_redraw(draw_harmonic2)
+        self.play(Create(removable2), Create(always_redraw(draw_result2)), rate_func=smooth)
+        self.wait(10)
+        t2.clear_updaters()
+        self.play(FadeOut(removable2), Transform(functions[0], functions[2]))
+        self.wait(3)
+
+
+        self.play(Create(approx4), Transform(functions[0], functions[3]))
+        self.wait(3)
+
+        self.wait(10)
+
+
+class Fourier_Trailer(Scene):
+    def construct(self):
+        title = MathTex(r"\text{The step function: }", r"(-1)^{\left \lfloor{\tfrac{x}{\pi}}\right \rfloor }")
+        title.to_edge(UP)
+        title.set_color(YELLOW)
+        # self.play(Write(title))
+
+        ax = Axes(
+            x_range=[-0, 4 * np.pi + 1],
+            y_range=[-1.5, 1.5],
+            x_length=10,
+            y_length=5,
+            axis_config={"color": GREEN},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 4 * np.pi, 1),
+                "color": GRAY
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(-1, 1.1, 1),
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="x", y_label="y")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        ax.add(labels)
+        ax.set_color(WHITE)
+
+        def rectilinear(x):
+            if int(x / np.pi) % 2 == 0:
+                return 1
+            else:
+                return -1
+
+        rect1 = ax.get_graph(lambda x: rectilinear(x), color=YELLOW, x_range=[0, 0.99 * np.pi])
+        rect2 = ax.get_graph(lambda x: rectilinear(x), color=YELLOW, x_range=[1.01 * np.pi, 1.99 * np.pi])
+        rect3 = ax.get_graph(lambda x: rectilinear(x), color=YELLOW, x_range=[2.01 * np.pi, 2.99 * np.pi])
+        rect4 = ax.get_graph(lambda x: rectilinear(x), color=YELLOW, x_range=[3.01 * np.pi, 3.99 * np.pi])
+
         origin = ax.coords_to_point(0, 0)
         self.play(Create(ax))
         self.wait(1)
@@ -93,13 +229,13 @@ class Fourier(Scene):
         functions.append(function4)
         for function in functions:
             function.next_to(ax, DOWN)
-        self.play(Create(approx1), Write(functions[0]))
+        self.play(Create(approx1))
         self.wait(3)
-        self.play(Create(approx2), Transform(functions[0], functions[1]))
+        self.play(Create(approx2))
         self.wait(3)
-        self.play(Create(approx3), Transform(functions[0], functions[2]))
+        self.play(Create(approx3))
         self.wait(3)
-        self.play(Create(approx4), Transform(functions[0], functions[3]))
+        self.play(Create(approx4))
         self.wait(3)
 
         self.wait(10)
@@ -117,20 +253,31 @@ class Fourier2(Scene):
         conclusion.set_color(YELLOW)
         conclusion.next_to(title, DOWN)
 
-        theorem = MathTex(r"\left \lfloor{\tfrac{x}{\pi}}\right \rfloor ", "=", r"\sum_{n=0}^\infty", r"a_n", r"\sin(n\cdot x)+", "b_n", r"\cos(n\cdot x)")
+        theorem = MathTex(r"(-1)^{\left \lfloor{\tfrac{x}{\pi}}\right \rfloor} ", "=", r"\sum_{n=0}^\infty", r"a_n",
+                          r"\sin(n\cdot x)+", "b_n", r"\cos(n\cdot x)")
         theorem.set_color(WHITE)
         theorem.scale(0.7)
         theorem.next_to(conclusion, DOWN)
         theorem.to_edge(LEFT)
 
-        theorem2 = MathTex(r"a_n", r"=", r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}\left \lfloor{\tfrac{x}{\pi}}\right \rfloor \sin(n\cdot x) {\rm d} x")
-        theorem3 = MathTex(r"b_n", r"=", r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}\left \lfloor{\tfrac{x}{\pi}}\right \rfloor \cos(n\cdot x) {\rm d} x")
+        theorem2 = MathTex(r"a_n", r"=",
+                           r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}(-1)^{\left \lfloor{\tfrac{x}{\pi}}\right \rfloor} \sin(n\cdot x) {\rm d} x")
+
+        theorem3 = MathTex(r"b_n", r"=",
+                           r"\tfrac{1}{\pi}\int\limits_{0}^{2\pi}(-1)^{\left \lfloor{\tfrac{x}{\pi}}\right \rfloor} \cos(n\cdot x) {\rm d} x")
         theorem2.set_color(GREEN)
         theorem3.set_color(RED)
         theorem2.scale(0.7)
         theorem3.scale(0.7)
         theorem2.next_to(theorem, DOWN)
-        theorem3.next_to(theorem2, DOWN)
+        solution1 = MathTex(r" a_n", "=",
+                            r"\left\{0,\tfrac{4}{\pi},0,\tfrac{4}{3\pi},0,\tfrac{4}{5\pi},\dots\right\}")
+        solution1.set_color(GREEN)
+        solution1.scale(0.7)
+        solution1.next_to(theorem2, DOWN)
+        align_formulas_with_equal(solution1, theorem2, 1, 1)
+
+        theorem3.next_to(solution1, DOWN)
         align_formulas_with_equal(theorem2, theorem, 1, 1)
         align_formulas_with_equal(theorem3, theorem2, 1, 1)
         self.play(Write(conclusion))
@@ -144,15 +291,11 @@ class Fourier2(Scene):
         self.play(Write(theorem3[1:]))
         self.wait(3)
 
-        solution1 = MathTex(r"\tfrac{\pi}{4} a_n","=",r"\left\{0,\frac{1}{1},0,\tfrac{1}{3},0,\tfrac{1}{5},\dots\right\}")
-        solution1.set_color(GREEN)
-        solution1.scale(0.7)
-        solution1.next_to(theorem2,buff=LARGE_BUFF)
         solution2 = MathTex(r"b_n", "=", r"\left\{0,0,0,0,0,0,\dots\right\}")
-        solution2.set_color(GREEN)
+        solution2.set_color(RED)
         solution2.scale(0.7)
-        solution2.next_to(theorem3, buff=LARGE_BUFF)
-        align_formulas_with_equal(solution2,solution1,1,1)
+        solution2.next_to(theorem3, DOWN)
+        align_formulas_with_equal(solution2, solution1, 1, 1)
 
         self.play(Write(solution1))
         self.wait(3)
@@ -462,7 +605,18 @@ class Primes3(Scene):
         dist = ax.coords_to_point(0, 1.3) - ax.coords_to_point(0, 0)
         self.play(*[ApplyMethod(later_movers[i].shift, dist[1] * UP) for i in range(0, len(later_movers))])
         self.play(*[ApplyMethod(new_labels[i].scale, 0.7) for i in range(0, len(new_labels))])
-        self.wait(3)
+        self.wait(6)
+
+        ranges = [r"\infty",str(14),str(50),str(77),str(101),str(123),str(143),str(163),str(182),str(201),str(219),str(236),r"\infty"]
+        results=[]
+        for r in ranges:
+            result = MathTex(r"\Pi(x)", "=",
+                             r"\frac{1}{2\pi}\int\limits_{-"+str(r)+"}^{+"+str(r)+r"}\log\left(\zeta(a+i b)\right )\frac{x^{a+i b}}{a+ i b}{\rm d}b")
+            result[0].set_color(YELLOW)
+            result.to_edge(RIGHT)
+            result.shift(1.5 * DOWN)
+            results.append(result)
+
         data = load_data()
         x_vals = []
         for i in range(1, len(data[0]) + 1):
@@ -472,21 +626,21 @@ class Primes3(Scene):
             dots.append(VGroup(*[Line(ax.coords_to_point(x_vals[j], data[i][j]),
                                       ax.coords_to_point(x_vals[j + 1], data[i][j + 1])).set_color(WHITE) for j in
                                  range(0, len(data[i]) - 1)]))
+
+        self.play(Write(results[0]))
+        self.wait(3)
+
+        print(len(dots))
         for i in range(0, len(dots)):
             if i > 0:
                 self.remove(dots[i - 1])
-            self.play(Create(dots[i]))
+            if i==0:
+                self.play(Create(dots[i]),Transform(results[0],results[1]))
+            else:
+                self.play(Create(dots[i]), Transform(results[0],results[i+1]))
             self.wait(2)
 
-        result = MathTex(r"\Pi", "(", "x", ")", "=",
-                         r"\frac{1}{2\pi}\int\limits_{-\infty}^{+\infty}\log\left(\zeta(a+i b)\right )\frac{x^{a+i b}}{a+ i b}{\rm d}b")
-        result[0].set_color(YELLOW)
-        result[1].set_color(RED)
-        result[2].set_color(GREEN)
-        result[3].set_color(BLUE)
-        result.to_edge(RIGHT)
-        result.shift(1.5 * DOWN)
-        rect = SurroundingRectangle(result)
+        rect = SurroundingRectangle(results[len(results)-1])
         self.play(Write(result))
         self.wait()
         self.play(GrowFromPoint(rect, DL))
@@ -649,6 +803,148 @@ class Primes4(Scene):
         self.wait(10)
 
 
+class Primes4_Trailer(Scene):
+    def construct(self):
+        title = MathTex(r"\text{Riemann's prime counting function: }", r"\Pi(x)")
+        title.to_edge(UP)
+        title.set_color(YELLOW)
+
+        ax = Axes(
+            x_range=[0, 39],
+            y_range=[0, 15],
+            x_length=13,
+            y_length=6,
+            axis_config={"color": GREEN},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 36, 5),
+                "color": GRAY,
+                "font_size": 18,
+                "line_to_number_buff": 1.6 * MED_SMALL_BUFF
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 16, 5),
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="x", y_label="\\Pi(x)")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        labels[1].set_color(YELLOW)
+        ax.add(labels)
+
+        prime_dist2 = [0., 0., 1., 2., 2.5, 3.5, 3.5, 4.5, 4.83333, 5.33333, 5.33333, 6.33333, 6.33333, 7.33333,
+                       7.33333, 7.33333, 7.58333, 8.58333, 8.58333, 9.58333, 9.58333, 9.58333, 9.58333, 10.5833,
+                       10.5833, 11.0833, 11.0833, 11.4167, 11.4167, 12.4167, 12.4167, 13.4167, 13.6167, 13.6167,
+                       13.6167, 13.6167, 13.6167]
+        primes = [0, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
+                  101]
+        primes2 = [0, 2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37]
+        primes2_labels = ["0", " 2", " 3", "2^2", " 5", " 7", " 2^3", " 3^2", " 11", " 13", "2^4", " 17", " 19", " 23",
+                          " 5^2", " 3^3", " 29", " 31", " 2^5", " 37"]
+
+        prime_color = [YELLOW, YELLOW, YELLOW, RED, YELLOW, YELLOW, GREEN, RED, YELLOW, YELLOW, BLUE, YELLOW, YELLOW,
+                       YELLOW, RED, GREEN, YELLOW, YELLOW, ORANGE, YELLOW]
+
+        def pdf2(x):
+            return prime_dist2[int(x)]
+
+        prime_graphs = []
+        for i in range(0, len(primes2) - 1):
+            prime_graphs.append(
+                ax.get_graph(lambda x: pdf2(x), color=prime_color[i],
+                             x_range=[primes2[i] + 0.01, primes2[i + 1] - 0.01, 0.1]))
+
+        labels = []
+        for i in range(1, len(primes2_labels)):
+            lab = MathTex(primes2_labels[i])
+            lab.scale(0.7)
+            lab.set_color(prime_color[i])
+            lab.move_to(ax.coords_to_point(primes2[i], -0.6))
+            labels.append(lab)
+
+        self.add(ax, *prime_graphs, *labels)
+
+        # zoom in further
+        graph_group = VGroup(ax, *prime_graphs, *labels)
+        graph_group_transform = VGroup(ax, *prime_graphs)
+
+        ax2 = Axes(
+            x_range=[0, 11],
+            y_range=[0, 7],
+            x_length=6,
+            y_length=3.5,
+            axis_config={"color": GREEN},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 10, 1),
+                "color": GRAY,
+                "font_size": 18,
+                "line_to_number_buff": 10 * LARGE_BUFF  # move out of sight
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 7, 1),
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels2 = ax2.get_axis_labels(x_label="x", y_label="\\Pi(x)")
+        labels2[0].shift(1 * DOWN + 0.5 * LEFT)
+        labels2[1].shift(0.4 * LEFT)
+        labels2.set_color(WHITE)
+        labels2[1].set_color(YELLOW)
+        ax2.add(labels2)
+        ax2.to_edge(RIGHT)
+        ax2.shift(1.5 * DOWN)
+
+        prime_graphs2 = []
+        prime_labels2 = []
+        for i in range(0, 8):
+            prime_graphs2.append(
+                ax2.get_graph(lambda x: pdf2(x), color=prime_color[i],
+                              x_range=[primes2[i] + 0.01, primes2[i + 1] - 0.01, 0.1]))
+
+        for i in range(1, len(prime_graphs) + 1):
+            lab = MathTex(primes2_labels[i])
+            lab.scale(0.7)
+            lab.set_color(prime_color[i])
+            if i < len(prime_graphs2):
+                lab.move_to(ax2.coords_to_point(primes2[i], -0.6))
+            else:
+                lab.move_to(ax2.coords_to_point(primes2[i] + 3, -0.6))  # move out of sight
+            prime_labels2.append(lab)
+
+        graph_group2 = VGroup(ax2, *prime_graphs2)
+
+        title2 = MathTex(r"\text{Riemann's prime counting function}")
+        title2.to_edge(UP)
+        title2.set_color(YELLOW)
+
+        self.play(Transform(graph_group_transform, graph_group2),
+                  *[Transform(labels[j], prime_labels2[j]) for j in range(0, len(prime_labels2))])
+        self.wait(3)
+
+        data = load_data2()
+        x_vals = []
+        for i in range(1, len(data[0]) + 1):
+            x_vals.append(37 / 1000 * i)
+        dots = []
+        for i in range(0, len(data)):
+            lines = []
+            for j in range(0, len(data[i]) - 1):
+                if x_vals[j] < 11:
+                    lines.append(Line(ax2.coords_to_point(x_vals[j], data[i][j]),
+                                      ax2.coords_to_point(x_vals[j + 1], data[i][j + 1])).set_color(WHITE))
+            dots.append(VGroup(*lines))
+        for i in range(0, len(dots)):
+            if i > 0:
+                self.remove(dots[i - 1])
+            self.play(Create(dots[i]))
+            self.wait(2)
+
+        self.wait(10)
+
+
 def load_data2():
     values = []
     with open(f'prime_dist_approx_37_first_ten.csv', 'r') as csvFile:
@@ -712,7 +1008,7 @@ class HiddenPrimes(Scene):
 
 class Riemann(Scene):
     def construct(self):
-        title = Tex("Riemann 1856")
+        title = Tex("Riemann 1859")
         title.to_edge(UP)
         title.set_color(YELLOW)
 
@@ -940,7 +1236,7 @@ def highlight_part(scene, img, x1, y1, x2, y2):
 
 class Riemann2(Scene):
     def construct(self):
-        title = Tex("Riemann 1856")
+        title = Tex("Riemann 1859")
         title.to_edge(UP)
         title.set_color(YELLOW)
 
@@ -1014,11 +1310,361 @@ class Riemann2(Scene):
 
 class Riemann3(Scene):
     def construct(self):
-        title = Tex("Riemann 1856")
+        title = Tex("Riemann 1859")
         title.to_edge(UP)
         title.set_color(YELLOW)
 
         self.add(title)
+
+        page4 = ImageMobject("riemann4")
+        page4.to_edge(LEFT)
+        self.play(FadeIn(page4))
+
+
+        sub = highlight_part(self, page4, 30, 680, 466, 770)
+        csub = sub.copy()
+        csub.scale(2)
+        csub.to_corner(UL, buff=LARGE_BUFF)
+
+        self.play(Transform(sub, csub))
+
+
+        log_zeta3 = MathTex(r"\log\zeta(s)", "=",
+                            r"\sum_{p}^{\infty}", "p^{-s}", "+", r"\tfrac{1}{2}\sum_{p}^{\infty}", "p^{-2s}", "+",
+                            r"\tfrac{1}{3}\sum_{p}^{"
+                            r"\infty}", "p^{-3s}", r"+\dots")
+        log_zeta3.set_color(YELLOW)
+        log_zeta3.scale(0.7)
+        log_zeta3.next_to(csub, DOWN)
+        log_zeta3.to_edge(LEFT)
+
+        self.play(Write(log_zeta3))
+
+
+        integral = MathTex(r"s\int\limits_a^\infty x^{-s-1}{\rm d}x=\left.-\frac{s}{s} x^{-s}\right|^\infty_a=a^{-s}")
+        integral.scale(0.7)
+        integral.set_color(GREEN)
+        integral.next_to(log_zeta3, DOWN)
+        integral.to_edge(RIGHT)
+
+        self.play(Write(integral))
+
+
+        log_zeta4 = MathTex(r"\log\zeta(s)", "=",
+                            r"\sum_{p}^{\infty}",
+                            r"s\int\limits^\infty_{p} x^{-s-1}{\rm d}x", "+", r"\tfrac{1}{2}\sum_{p}^{\infty}",
+                            r"s\int\limits^\infty_{p^2} x^{-s-1}{\rm d}x", "+", r"\tfrac{1}{3}\sum_{p}^{\infty}",
+                            r"s\int\limits^\infty_{p^3} x^{-s-1}{\rm d}x"
+                            , r"+\dots")
+
+        log_zeta4.scale(0.7)
+        log_zeta4[0].set_color(YELLOW)
+        log_zeta4.next_to(integral, DOWN)
+        align_formulas_with_equal(log_zeta4, log_zeta3, 1, 1)
+
+        self.play(Write(log_zeta4[0:2]))
+        for i in range(2, len(log_zeta3)):
+            self.play(TransformFromCopy(log_zeta3[i], log_zeta4[i]))
+            if i % 2 == 0:
+                self.wait(2)
+
+
+
+        # make factor s dynamic
+        log_zeta5 = MathTex(r"\log\zeta(s)", "=",
+                            r"\sum_{p}^{\infty}",
+                            "s", r"\int\limits^\infty_{p} x^{-s-1}{\rm d}x", "+", r"\tfrac{1}{2}\sum_{p}^{\infty}",
+                            "s", r"\int\limits^\infty_{p^2} x^{-s-1}{\rm d}x", "+", r"\tfrac{1}{3}\sum_{p}^{\infty}",
+                            "s", r"\int\limits^\infty_{p^3} x^{-s-1}{\rm d}x"
+                            , r"+\dots")
+
+        log_zeta5.scale(0.7)
+        log_zeta5[0].set_color(YELLOW)
+        log_zeta5.move_to(log_zeta4)
+
+        self.add(log_zeta5)
+        self.remove(log_zeta4)
+
+        log_zeta6 = MathTex(r"\frac{\log\zeta(s)}{s}", "=",
+                            r"\sum_{p}^{\infty}",
+                            r"\int\limits^\infty_{p} x^{-s-1}{\rm d}x", "+", r"\tfrac{1}{2}\sum_{p}^{\infty}",
+                            r"\int\limits^\infty_{p^2} x^{-s-1}{\rm d}x", "+", r"\tfrac{1}{3}\sum_{p}^{\infty}",
+                            r"\int\limits^\infty_{p^3} x^{-s-1}{\rm d}x"
+                            , r"+\dots")
+        log_zeta6.scale(0.7)
+        log_zeta6.next_to(log_zeta5, DOWN)
+        align_formulas_with_equal(log_zeta6, log_zeta5, 1, 1)
+
+        group = VGroup(log_zeta5[0], log_zeta5[3], log_zeta5[7], log_zeta5[11])
+        group2 = VGroup(log_zeta5[1], log_zeta5[2], log_zeta5[4], log_zeta5[5], log_zeta5[6], log_zeta5[8],
+                        log_zeta5[9], log_zeta5[10], log_zeta5[12:len(log_zeta5)])
+        self.play(TransformFromCopy(group, log_zeta6[0]))
+        self.wait()
+        self.play(TransformFromCopy(group2, log_zeta6[1:len(log_zeta6)]))
+
+
+        rect = Rectangle(color=BLACK, width=14.0, height=5.5)
+        rect.set_style(fill_color=BLACK, fill_opacity=1, stroke_color=BLACK)
+        rect.shift(0.25 * UP)
+        self.play(GrowFromEdge(rect, UP))
+        self.wait()
+
+        self.add(log_zeta6)
+
+        self.play(log_zeta6.animate().next_to(title, DOWN))
+        self.play(log_zeta6[2:4].animate().set_color(GREEN))
+
+
+        part = MathTex(r"\sum_{p}^{\infty}\int\limits^\infty_{p} x^{-s-1}{\rm d}x", "=",
+                       r"\int\limits_2^\infty x^{-s-1}{\rm d}x", "+",
+                       r"\int\limits_3^\infty x^{-s-1}{\rm d}x", "+",
+                       r"\int\limits_5^\infty x^{-s-1}{\rm d}x", "+",
+                       r"\int\limits_7^\infty x^{-s-1}{\rm d}x", r"+\dots")
+        part.scale(0.5)
+        part[0].set_color(GREEN)
+        part.next_to(log_zeta6, DOWN)
+        align_formulas_with_equal(part, log_zeta6, 1, 1)
+
+        subpart = VGroup(log_zeta6[2:4])
+        csubpart = subpart.copy()
+        csubpart.move_to(subpart)
+        self.play(Transform(csubpart, part[0]))
+        self.play(Write(part[1:len(part)]))
+
+
+        lines = [
+            MathTex(r"\int\limits^\infty_{2} x^{-s-1}{\rm d}x", "=",
+                    r"\int\limits_2^3 x^{-s-1}{\rm d}x", "+",
+                    r"\int\limits_3^5 x^{-s-1}{\rm d}x", "+",
+                    r"\int\limits_5^7x^{-s-1}{\rm d}x", "+",
+                    r"\int\limits_7^{11} x^{-s-1}{\rm d}x", r"+\dots"),
+            MathTex(r"\int\limits^\infty_{3} x^{-s-1}{\rm d}x", "=",
+                    r"\int\limits_3^5 x^{-s-1}{\rm d}x", "+",
+                    r"\int\limits_5^7x^{-s-1}{\rm d}x", "+",
+                    r"\int\limits_7^{11} x^{-s-1}{\rm d}x", r"+\dots"),
+            MathTex(r"\int\limits^\infty_{5} x^{-s-1}{\rm d}x", "=",
+                    r"\int\limits_5^7x^{-s-1}{\rm d}x", "+",
+                    r"\int\limits_7^{11} x^{-s-1}{\rm d}x", r"+\dots"),
+            MathTex(r"\int\limits^\infty_{7} x^{-s-1}{\rm d}x", "=",
+                    r"\int\limits_7^{11} x^{-s-1}{\rm d}x", r"+\dots"),
+        ]
+
+        old_line = part
+        for i, line in enumerate(lines):
+            line.scale(0.5)
+            line.next_to(old_line, DOWN)
+            for j in range(0, len(line)):
+                if i == 0 or j < 2:
+                    if j == 0:
+                        line[j].align_to(old_line[j], RIGHT)
+                    else:
+                        line[j].align_to(old_line[j], LEFT)
+                else:
+                    line[j].align_to(old_line[j + 2], LEFT)
+            old_line = line
+
+        for i in range(0, len(lines)):
+            self.play(TransformFromCopy(part[2 * i + 2], lines[i][0]))
+            self.wait(2)
+            self.play(Write(lines[i][1:]))
+            self.wait(2)
+
+        self.play(Unwrite(part[2:]), *[Unwrite(lines[i][0:2]) for i in range(0, len(lines))])
+        self.wait(2)
+
+        p = [2, 3, 5, 7, 11]
+
+        old_part = part[0:2]
+        removeables = []
+        for i in range(0, 4):
+            new_part = MathTex(str(i + 1) + "\cdot",
+                               r"\int\limits_" + str(p[i]) + "^{" + str(p[i + 1]) + r"}x^{-s-1}{\rm d}x")
+            new_part.scale(0.5)
+            new_part[0].set_color(YELLOW)
+            new_part.next_to(old_part, RIGHT)
+            col_group = []
+            plus_group = []
+            for col in range(0, i + 1):
+                self.play(lines[col][2 * i + 2 - 2 * col].animate(run_time=0.1).set_color(YELLOW))
+                col_group.append(lines[col][2 * i + 2 - 2 * col])
+                plus_group.append(lines[col][2 * i + 3 - 2 * col])
+            self.wait(2)
+            group = VGroup(*col_group)
+            self.play(Transform(group, new_part))
+            removeables.append(group)
+
+            if i < 3:
+                new_plus = MathTex("+")
+            else:
+                new_plus = MathTex(r"+\dots")
+            new_plus.scale(0.5)
+            new_plus.next_to(new_part)
+            group = VGroup(*plus_group)
+            removeables.append(group)
+            self.play(Transform(group, new_plus))
+            old_part = VGroup(old_part, new_part, new_plus)
+
+
+
+        pcf = MathTex("=", r"\int\limits_0^\infty", r"\pi(x)\cdot", r"x^{-s-1}\rm{d} x")
+        pcf.scale(0.5)
+        pcf.next_to(part, DOWN)
+        pcf[2].set_color(YELLOW)
+        align_formulas_with_equal(pcf, part, 0, 1)
+
+        self.play(Write(pcf))
+        removeables.append(pcf)
+        self.wait(2)
+
+        pcf2 = MathTex("=", r"\int\limits_0^2", r"0\cdot", r"x^{-s-1}\rm{d} x",
+                       "+", r"\int\limits_2^3", r"1\cdot", r"x^{-s-1}\rm{d} x",
+                       "+", r"\int\limits_3^5", r"2\cdot", r"x^{-s-1}\rm{d} x",
+                       "+", r"\int\limits_5^7", r"3\cdot", r"x^{-s-1}\rm{d} x",
+                       "+", r"\int\limits_7^{11}", r"4\cdot", r"x^{-s-1}\rm{d} x",
+                       r"+\dots")
+        pcf2.scale(0.5)
+        pcf2.next_to(pcf, DOWN)
+        for i in range(2, len(pcf2), 4):
+            pcf2[i].set_color(YELLOW)
+        align_formulas_with_equal(pcf2, pcf, 0, 0)
+
+        prime_dist = [0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10, 11,
+                      11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16,
+                      16, 16, 16, 17, 17, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 21, 21, 21, 21, 21, 21, 22,
+                      22, 22, 22, 23, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25, 25]
+        primes = [0, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
+                  101]
+
+        def pdf(x):
+            return prime_dist[int(x)]
+
+        ax = Axes(
+            x_range=[0, 12],
+            y_range=[0, 6],
+            x_length=6,
+            y_length=3,
+            axis_config={"color": GREEN},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 12, 100),
+                "color": GRAY,
+                "font_size": 18,
+                "line_to_number_buff": 3 * MED_SMALL_BUFF  # make them disappear
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 5, 1),
+                "font_size": 24,
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="x", y_label="\\pi(x)")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        labels[1].set_color(YELLOW)
+        ax.add(labels)
+        ax.scale(0.7)
+        ax.to_corner(LEFT + DOWN)
+
+        prime_graphs = []
+        for i in range(0, len(primes) - 1):
+            prime_graphs.append(
+                ax.get_graph(lambda x: pdf(x), color=YELLOW, x_range=[primes[i] + 0.01, primes[i + 1] - 0.01, 0.1]))
+        self.play(Create(ax))
+
+        labels = []
+        for i in range(0, 5):
+            text = pcf2[4 * i:4 * (i + 1)]
+            if i > 0:
+                lab = MathTex(primes[i])
+                lab.scale(0.7)
+                lab.set_color(YELLOW)
+                lab.move_to(ax.coords_to_point(primes[i], -1))
+                labels.append(lab)
+                self.play(Create(prime_graphs[i]), Write(lab), Write(text))
+            else:
+                self.play(Create(prime_graphs[i]), Write(text))
+            removeables.append(text)
+            self.wait(2)
+        text = Write(pcf2[20])
+        self.play(text)
+        removeables.append(text)
+
+
+        self.remove(part[1], pcf2[20])
+        self.remove(*removeables)
+        self.remove(ax)
+        self.remove(*prime_graphs, *labels)
+        self.remove(csubpart)
+
+
+        log_zeta7 = MathTex(r"\frac{\log\zeta(s)}{s}",
+                            "=", r"\int\limits_0^\infty", r"\pi(x)\cdot", r"x^{-s-1}\rm{d} x", "+",
+                            r"\int\limits_0^\infty", r"\tfrac{1}{2}\pi\left(\sqrt{x}\right)\cdot",
+                            r"x^{-s-1}\rm{d} x", "+",
+                            r"\int\limits_0^\infty",
+                            r"\tfrac{1}{3}\pi\left( \sqrt[\leftroot{-1}\uproot{2}\scriptstyle 3]{x}\right)\cdot",
+                            r"x^{-s-1}\rm{d} x", r"+\dots"
+                            )
+        log_zeta7.scale(0.7)
+        log_zeta7[3].set_color(YELLOW)
+        log_zeta7[7].set_color(YELLOW)
+        log_zeta7[11].set_color(YELLOW)
+        log_zeta7.next_to(log_zeta6, DOWN)
+        align_formulas_with_equal(log_zeta7, log_zeta6, 1, 1)
+
+        self.play(Write(log_zeta7[0:2]))
+        self.wait(2)
+        self.play(TransformFromCopy(log_zeta6[2:4], log_zeta7[2:5]))
+        self.wait(2)
+        self.play(TransformFromCopy(log_zeta6[4], log_zeta7[5]))
+        self.wait(2)
+        self.play(TransformFromCopy(log_zeta6[5:7], log_zeta7[6:9]))
+        self.wait(2)
+        self.play(TransformFromCopy(log_zeta6[7], log_zeta7[9]))
+        self.wait(2)
+        self.play(TransformFromCopy(log_zeta6[8:10], log_zeta7[10:13]))
+        self.wait(2)
+        self.play(TransformFromCopy(log_zeta6[10], log_zeta7[13]))
+
+
+
+        page5 = ImageMobject("riemann5")
+        page5.scale(1)
+        page5.next_to(log_zeta7, DOWN)
+        page5.to_edge(LEFT)
+        self.play(FadeIn(page5))
+
+
+        sub = highlight_part(self, page5, 36, 56, 366, 160)
+        csub = sub.copy()
+        csub.scale(2)
+        csub.to_corner(DOWN + LEFT, buff=LARGE_BUFF)
+
+        self.play(Transform(sub, csub))
+
+
+        result = MathTex(r"\frac{\log\zeta(s)}{s}",
+                         "=", r"\int\limits_0^\infty", r"\Pi(x)\cdot", r"x^{-s-1}\rm{d} x")
+        result.set_color(YELLOW)
+        result.next_to(csub)
+
+        self.play(Write(result))
+
+
+        self.play(FadeOut(log_zeta7), FadeOut(log_zeta6), FadeOut(sub),
+                  result.animate().set_color(WHITE).scale(0.7).to_corner(UP + LEFT, buff=LARGE_BUFF))
+        self.wait(10)
+
+
+
+class Riemann3_Trailer(Scene):
+    def construct(self):
+        title = Tex("Riemann 1859")
+        title.to_edge(UP)
+        title.set_color(YELLOW)
+
+        #self.add(title)
 
         page4 = ImageMobject("riemann4")
         page4.to_edge(LEFT)
@@ -1360,14 +2006,164 @@ class Riemann3(Scene):
                   result.animate().set_color(WHITE).scale(0.7).to_corner(UP + LEFT, buff=LARGE_BUFF))
         self.wait(10)
 
-
 class Riemann4(Scene):
     def construct(self):
-        title = Tex("Riemann 1856")
+        title = Tex("Riemann 1859")
         title.to_edge(UP)
         title.set_color(YELLOW)
 
         self.add(title)
+        result = MathTex(r"\frac{\log\zeta(s)}{s}",
+                         "=", r"\int\limits_0^\infty", r"\Pi(x)", r"\cdot", r"x^{-s-1}\rm{d} x")
+        result.set_color(WHITE)
+        result.scale(0.7)
+        result.to_corner((UP + LEFT), buff=LARGE_BUFF)
+        self.add(result)
+        self.wait(3)
+
+        self.play(result[3].animate().set_color(YELLOW))
+        self.wait(2)
+
+        transform = MathTex(r"\Pi(x)", r"\xrightarrow{\text{\tt Mellin}}", r"\frac{\log\zeta(s)}{s}")
+        transform.scale(0.7)
+        transform.next_to(result, DOWN)
+
+        self.play(Write(transform))
+        self.wait(2)
+
+        inv_transform = MathTex(r"\frac{\log\zeta(s)}{s}",
+                                r"\xrightarrow{\text{\begin{tiny} \tt Mellin \end{tiny}}^{-1}}", r"\Pi(x)")
+        inv_transform.scale(0.7)
+        inv_transform.next_to(transform, DOWN)
+        align_formulas_with_equal(inv_transform, transform, 1, 1)
+
+        self.play(Write(inv_transform))
+        self.wait(2)
+
+        page6 = ImageMobject("riemann6")
+        page6.scale(1)
+        page6.next_to(title, DOWN)
+        page6.to_edge(RIGHT)
+
+        self.play(FadeIn(page6))
+        self.wait(3)
+
+        sub = highlight_part(self, page6, 138, 52, 350, 108)
+        csub = sub.copy()
+        csub.scale(3)
+        csub.to_corner(UP + RIGHT, buff=LARGE_BUFF)
+
+        self.play(Transform(sub, csub))
+        self.wait(3)
+
+        result = MathTex(r"\Pi(x)", "=",
+                         r"\frac{1}{2\pi i}\int\limits_{a-i\infty}^{a+i\infty}\frac{\log\zeta(s)}{s}x^{s}{\rm d}s")
+        result.scale(0.7)
+        result[0].set_color(YELLOW)
+        result.next_to(csub, DOWN)
+
+        self.play(Write(result))
+        self.wait()
+
+        rect = SurroundingRectangle(result)
+        self.play(GrowFromPoint(rect, DOWN + LEFT))
+        self.wait(3)
+
+        ax = Axes(
+            x_range=[0, 33],
+            y_range=[0, 15],
+            x_length=6.5,
+            y_length=3,
+            axis_config={"color": GREEN},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 0, 5),
+                "color": GRAY,
+                "font_size": 18,
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 16, 5),
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="", y_label="")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        labels[1].set_color(YELLOW)
+        ax.add(labels)
+        ax.shift(2 * DOWN)
+
+        primes2 = [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37]
+        primes2_labels = [" 2", " 3", "2^2", " 5", " 7", " 2^3", " 3^2", " 11", " 13", "2^4", " 17", " 19", " 23",
+                          " 5^2", " 3^3", " 29", " 31", " 2^5", " 37"]
+
+        prime_color = [YELLOW, YELLOW, RED, YELLOW, YELLOW, GREEN, RED, YELLOW, YELLOW, BLUE, YELLOW, YELLOW,
+                       YELLOW, RED, GREEN, YELLOW, YELLOW, ORANGE, YELLOW]
+
+        img = ImageMobject("log_zeta.png")
+        img.scale(0.5)
+        img.to_corner(DOWN + LEFT)
+        img.shift(0.5 * UP + LEFT)
+
+        ax.next_to(img, RIGHT)
+        ax.shift(DOWN)
+
+        self.play(FadeIn(img), Create(ax))
+        self.wait()
+
+        data = load_data()
+        x_vals = []
+        for k in range(1, len(data[0]) + 1):
+            x_vals.append(37 / 1000 * k)
+
+        lines = []
+        last = len(data) - 2
+
+        for j in range(0, len(data[last]) - 1):
+            line = Line(ax.coords_to_point(x_vals[j], data[last][j]),
+                        ax.coords_to_point(x_vals[j + 1], data[last][j + 1])).set_color(WHITE)
+            line.set_color(YELLOW)
+            line.set_style(stroke_width=1)
+            lines.append(line)
+
+        current_label_index = 0
+        current_label = primes2_labels[current_label_index]
+        collect_lines = []
+        for i in range(0, len(lines)):
+            collect_lines.append(lines[i])
+            if x_vals[i] > primes2[current_label_index]:
+                self.play(*[Create(collect_lines[j]) for j in range(0, len(collect_lines))])
+                collect_lines = []
+                lab = MathTex(current_label)
+                lab.scale(0.4)
+                lab.set_color(prime_color[current_label_index])
+                if prime_color[current_label_index] == YELLOW:
+                    lab.move_to(ax.coords_to_point(primes2[current_label_index], -1))
+                else:
+                    lab.move_to(ax.coords_to_point(primes2[current_label_index], +1))
+                self.play(Write(lab))
+                current_label_index = current_label_index + 1
+                current_label = primes2_labels[current_label_index]
+
+        self.wait(2)
+
+        continued = Tex("To be continued ...")
+        continued.scale(0.5)
+        continued.to_corner(DOWN + LEFT)
+        continued.shift(0.4 * DOWN)
+
+        self.play(Write(continued))
+        self.wait(10)
+
+
+class Riemann4_Trailer(Scene):
+    def construct(self):
+        title = Tex("Riemann 1859")
+        title.to_edge(UP)
+        title.set_color(YELLOW)
+
+        # self.add(title)
         result = MathTex(r"\frac{\log\zeta(s)}{s}",
                          "=", r"\int\limits_0^\infty", r"\Pi(x)", r"\cdot", r"x^{-s-1}\rm{d} x")
         result.set_color(WHITE)
@@ -1517,10 +2313,10 @@ def plot_function(axes, fnc, x_range, res, col=WHITE):
     points = []
     for it in range(0, res):
         x = x_range[0] + delta * it
-        if fnc(x)<25:
+        if fnc(x) < 25:
             points.append([x, fnc(x)])
     lines = []
-    for it in range(0, len(points)-1):
+    for it in range(0, len(points) - 1):
         lines.append(Line(axes.coords_to_point(points[it][0], points[it][1]),
                           axes.coords_to_point(points[it + 1][0], points[it + 1][1])).set_color(col))
     return lines
@@ -1528,13 +2324,13 @@ def plot_function(axes, fnc, x_range, res, col=WHITE):
 
 class Logo(Scene):
     def construct(self):
-        title = Tex("Primes and $\zeta(s)$")
+        title = Tex("Primes and Riemann's $\zeta$-function")
         title.set_color(YELLOW)
         title.to_edge(UP)
 
-        self.play(Write(title))
+        self.add(title)
 
-        #logo
+        # logo
         n = 19
 
         def path(t):
@@ -1579,17 +2375,22 @@ class Logo(Scene):
 
         logo = VGroup(function, *circles1, *circles2, *circles3)
 
-        logo.scale(1)
-        logo.to_corner(UP+LEFT)
-        logo.shift( RIGHT )
+        logo.scale(1.5)
+        logo.to_corner(UP + LEFT)
+        logo.shift(0.5 * RIGHT)
+
+        riem = ImageMobject("riemann_profile.png")
+        riem.scale(0.5)
+        riem.move_to(logo.get_center())
+
         anims = []
         time = 10  # 6
 
-        anims.append(Create(function, run_time=time, rate_func=rate_functions.double_smooth))
-        anims.append(AnimationGroup(*[
-            AnimationGroup(GrowFromCenter(circles1[i], run_time=time / 4), GrowFromCenter(circles2[i], run_time=1),
-                           GrowFromCenter(circles3[i], run_time=1.5)) for i in range(0, len(circles1))], lag_ratio=0.1))
-        self.play(AnimationGroup(*anims, lag_ratio=0.5))
+        # anims.append(Create(function, run_time=time, rate_func=rate_functions.double_smooth))
+        # anims.append(AnimationGroup(*[
+        #     AnimationGroup(GrowFromCenter(circles1[i], run_time=time / 4), GrowFromCenter(circles2[i], run_time=1),
+        #                    GrowFromCenter(circles3[i], run_time=1.5)) for i in range(0, len(circles1))], lag_ratio=0.1))
+        # self.play(AnimationGroup(*anims, lag_ratio=0.5))
 
         # squares
 
@@ -1666,12 +2467,12 @@ class Logo(Scene):
                         r"{\calligra \Large smooth}")
         headline2 = Tex("s", "e", "r", "i", "e", "s", "$\,\,\leftrightarrow\,\,$",
                         r"{\calligra \Large functions}")
-        headline3 = Tex("n","u","m","b","e","r","s","$\,\,\leftrightarrow\,\,$",r"{\calligra \Large geometry}")
+        headline3 = Tex("n", "u", "m", "b", "e", "r", "s", "$\,\,\leftrightarrow\,\,$", r"{\calligra \Large geometry}")
         for index in range(0, 8):
             headline1[index].set_color(colors[index % len(colors)])
-            if index<len(headline2)-2:
+            if index < len(headline2) - 2:
                 headline2[index].set_color(colors[index % len(colors)])
-            if index<len(headline2)-1:
+            if index < len(headline2) - 1:
                 headline3[index].set_color(colors[index % len(colors)])
         headline1[9].set_color(YELLOW)
         headline2[7].set_color(YELLOW)
@@ -1686,10 +2487,12 @@ class Logo(Scene):
         ]
 
         for headline in headlines:
-            headline.next_to(last, DOWN,buff = LARGE_BUFF)
-            align_formulas_with_equal(headline,last,len(headline)-2,len(last)-2)
+            align_formulas_with_equal(headline, last, len(headline) - 2, len(last) - 2)
             if last == logo:
-                headline.shift(0.3*RIGHT)
+                headline.shift(-0.2 * RIGHT)
+                headline.next_to(last, DOWN, buff=SMALL_BUFF)
+            else:
+                headline.next_to(last, DOWN, buff=LARGE_BUFF)
             last = headline
 
         anims = []
@@ -1712,7 +2515,7 @@ class Logo(Scene):
              ["2!", r"1\cdot 2", "2"],
              ["3!", r"1\cdot 2\cdot 3", "6"],
              ["4!", r"1\cdot 2\cdot 3\cdot 4", "24"],
-             [r"\tfrac{1}{2}!","?",r"\tfrac{\sqrt{\pi}}{2}"]
+             [r"\tfrac{1}{2}!", "?", r"\tfrac{\sqrt{\pi}}{2}"]
              ],
             # col_labels=[Text("factorial"), Text("expression"),Text("result")],
             # row_labels=[Text("one"), Text("two"),Text("three"),Text("four")],
@@ -1762,7 +2565,7 @@ class Logo(Scene):
         labels[1].set_color(YELLOW)
         ax.add(labels)
         ax.next_to(full_group, DOWN)
-        ax.shift(DOWN )
+        ax.shift(DOWN)
 
         self.play(Create(ax))
         self.wait(3)
@@ -1778,8 +2581,9 @@ class Logo(Scene):
 
         self.wait(3)
 
-        function = plot_function(ax,lambda x: math.gamma(x + 1), [-0.99, 4], 500, col=YELLOW)
-        anim = AnimationGroup(*[Create(line, run_time=2 / len(function)) for line in reversed(function)],rate_func=linear, lag_ratio=1)
+        function = plot_function(ax, lambda x: math.gamma(x + 1), [-0.99, 4], 500, col=YELLOW)
+        anim = AnimationGroup(*[Create(line, run_time=2 / len(function)) for line in reversed(function)],
+                              rate_func=linear, lag_ratio=1)
         for f in function:
             removables.append(f)
         self.play(anim)
@@ -1788,21 +2592,22 @@ class Logo(Scene):
         for i in range(-4, -1):
             gammas.append(
                 plot_function(axes=ax, fnc=lambda x: math.gamma(x + 1), x_range=[i + 0.01, i + 0.99], res=500,
-                                   col=YELLOW))
+                              col=YELLOW))
         self.wait(3)
 
         for lines in reversed(gammas):
-            anim = AnimationGroup(*[Create(line,run_time = 1/len(lines)) for line in reversed(lines)],rate_func=linear, lag_ratio=1)
+            anim = AnimationGroup(*[Create(line, run_time=1 / len(lines)) for line in reversed(lines)],
+                                  rate_func=linear, lag_ratio=1)
             for l in lines:
                 removables.append(l)
             self.play(anim)
         self.wait(3)
 
-        dot = Dot().set_color(colors[4]).move_to(ax.coords_to_point(0.5,math.gamma(1.5)))
-        self.play(Write(table_content[12].set_color(colors[4])),Create(dot))
+        dot = Dot().set_color(colors[4]).move_to(ax.coords_to_point(0.5, math.gamma(1.5)))
+        self.play(Write(table_content[12].set_color(colors[4])), Create(dot))
         self.wait(2)
 
-        self.play(TransformFromCopy(dot,table_content[14].set_color(colors[4])))
+        self.play(TransformFromCopy(dot, table_content[14].set_color(colors[4])))
 
         self.wait(3)
 
@@ -1824,7 +2629,7 @@ class Logo(Scene):
 
         # primes
 
-        removables=[]
+        removables = []
 
         ax = Axes(
             x_range=[0, 33],
@@ -1855,17 +2660,17 @@ class Logo(Scene):
         primes2 = [2, 3, 4, 5, 7, 8, 9, 11, 13, 16, 17, 19, 23, 25, 27, 29, 31, 32, 37]
         primes2_labels = [" 2", " 3", "2^2", " 5", " 7", " 2^3", " 3^2", " 11", " 13", "2^4", " 17", " 19", " 23",
                           " 5^2", " 3^3", " 29", " 31", " 2^5", " 37"]
-        prime_dist2 = [ 1., 2., 2.5, 3.5, 4.5, 4.83333, 5.33333, 6.33333, 7.33333, 7.58333, 8.58333, 9.58333, 10.5833,
-                        11.0833, 11.4167, 12.4167, 13.4167, 13.6167,14.6167]
+        prime_dist2 = [1., 2., 2.5, 3.5, 4.5, 4.83333, 5.33333, 6.33333, 7.33333, 7.58333, 8.58333, 9.58333, 10.5833,
+                       11.0833, 11.4167, 12.4167, 13.4167, 13.6167, 14.6167]
 
         prime_color = [YELLOW, YELLOW, RED, YELLOW, YELLOW, GREEN, RED, YELLOW, YELLOW, BLUE, YELLOW, YELLOW,
                        YELLOW, RED, GREEN, YELLOW, YELLOW, ORANGE, YELLOW]
 
-        ax.next_to(title,DOWN)
+        ax.next_to(title, DOWN)
         ax.to_edge(RIGHT)
 
         removables.append(ax)
-        self.play( Create(ax))
+        self.play(Create(ax))
         self.wait()
 
         data = load_data()
@@ -1890,32 +2695,32 @@ class Logo(Scene):
         old_label = None
         for i in range(0, len(lines)):
             removables.append(lines[i])
-            collect_lines.append(Create(lines[i],rate_func=linear))
+            collect_lines.append(Create(lines[i], rate_func=linear))
             if x_vals[i] > primes2[current_label_index]:
-                self.play(AnimationGroup(*collect_lines,lag_ratio=1,run_time=1))
+                self.play(AnimationGroup(*collect_lines, lag_ratio=1, run_time=1))
                 collect_lines = []
                 lab = MathTex(current_label)
                 p_color = prime_color[current_label_index]
                 lab.set_color(p_color)
-                circle = Circle(radius = 0.35)
-                circle.set_style(fill_color=p_color,fill_opacity=0.1,stroke_opacity=1,stroke_color=p_color)
-                if count%2==0:
-                    pos = ax.coords_to_point(primes2[count],prime_dist2[count]+1)
+                circle = Circle(radius=0.35)
+                circle.set_style(fill_color=p_color, fill_opacity=0.1, stroke_opacity=1, stroke_color=p_color)
+                if count % 2 == 0:
+                    pos = ax.coords_to_point(primes2[count], prime_dist2[count] + 1)
                 else:
-                    pos = ax.coords_to_point(primes2[count],prime_dist2[count-1]-1)
-                label = VGroup(circle,lab)
+                    pos = ax.coords_to_point(primes2[count], prime_dist2[count - 1] - 1)
+                label = VGroup(circle, lab)
                 label.scale(0.7)
                 label.move_to(pos)
                 removables.append(lab)
                 removables.append(circle)
                 if old_label is None:
-                    self.play(Write(lab),GrowFromCenter(circle))
+                    self.play(Write(lab), GrowFromCenter(circle))
                 else:
-                    self.play(Write(lab),GrowFromCenter(circle))
-                    #self.play(FadeOut(old_label),Write(lab),GrowFromCenter(circle))
+                    self.play(Write(lab), GrowFromCenter(circle))
+                    # self.play(FadeOut(old_label),Write(lab),GrowFromCenter(circle))
                 current_label_index = current_label_index + 1
                 current_label = primes2_labels[current_label_index]
-                count=count+1
+                count = count + 1
                 old_label = label
 
         self.wait(2)
@@ -1955,53 +2760,511 @@ def get_squares(n=9, color=GREEN):
 
     return group
 
+
 class zeta(Scene):
     def construct(self):
         title = Tex(r"The $\zeta$-function")
         title.set_color(RED)
-        title.to_corner(UP+RIGHT)
+        title.to_edge(UP)
         self.play(Write(title))
 
         first = "01_empty_grid"
         img = ImageMobject(first)
-        img.to_corner(UP+LEFT)
-        self.play(FadeIn(img))
+        img.to_corner(UP + LEFT)
+        # self.play(FadeIn(img))
         self.wait(2)
 
+        movers = [title]
+
         labels = []
-        for i in range(1,11,1):
+        for i in range(1, 11, 1):
             label = MathTex(str(i))
             label.scale(0.5)
             label2 = label.copy()
-            label.move_to((2.65-0.35*i)*LEFT+0.75*DOWN)
-            label2.move_to(2.75*LEFT+(-0.5+0.34*i)*UP)
+            label.move_to((2.65 - 0.35 * i) * LEFT + 0.75 * DOWN)
+            label2.move_to(2.75 * LEFT + (-0.5 + 0.34 * i) * UP)
             labels.append(label)
             labels.append(label2)
 
-        neg_labels=[]
-        for i in range(-10,0,2):
+        neg_labels = []
+        for i in range(-10, 0, 2):
             label = MathTex(str(i))
             label.scale(0.5)
             label.move_to((2.65 - 0.35 * i) * LEFT + 0.75 * DOWN)
             neg_labels.append(label)
 
-        self.play(*[Write(labels[i]) for i in range(0,len(labels))])
-        self.wait(2)
+        nnew_squares = []
+        for i in range(1, 6):
+            square = MathTex(r"1", "\over", str(i), "^2")
+            square.scale(0.7)
+            nnew_squares.append(square)
+            movers.append(square)
+            if i < 5:
+                tex = MathTex("+")
+                nnew_squares.append(tex.scale(0.7))
+                movers.append(tex)
+        math_tex = MathTex(r"\dots")
+        movers.append(math_tex)
+        nnew_squares.append(math_tex.scale(0.7))
+
+        for i, square in enumerate(nnew_squares):
+            if i == 0:
+                square.next_to(img, RIGHT, buff=0.8 * LARGE_BUFF)
+                square.shift(2.25 * UP)
+            else:
+                square.next_to(nnew_squares[i - 1], RIGHT, buff=0.7 * SMALL_BUFF)
+            if i % 2 == 0:
+                square[3].set_color(YELLOW)
+
+        new_squares = []
+        for i in range(1, 6):
+            square = MathTex(r"1", "\over", str(i * i))
+            square.scale(0.7)
+            new_squares.append(square)
+            movers.append(square)
+            if i < 5:
+                m = MathTex("+")
+                new_squares.append(m.scale(0.7))
+        tex1 = MathTex(r"\dots")
+        new_squares.append(tex1.scale(0.7))
+
+        for i, square in enumerate(new_squares):
+            if i == 0:
+                square.next_to(nnew_squares[0], UP)
+            elif i<len(new_squares)-1:
+                square.next_to(new_squares[i - 1], RIGHT, buff=0.85 * SMALL_BUFF)
+            else:
+                square.next_to(new_squares[i - 1], RIGHT, buff=1.2 * SMALL_BUFF)
+            if i % 2 == 0:
+                square[2].set_color(YELLOW)
 
         squares = []
-        for i in range(1,6):
-            square = MathTex(str(i*i))
+        for i in range(1, 6):
+            square = MathTex(str(i * i))
+            square.scale(0.7)
+            movers.append(square)
             squares.append(square)
+            if i < 5:
+                tex2 = MathTex("+")
+                squares.append(tex2.scale(0.7))
+        tex3 = MathTex("1",r"\dots")
+        tex3[0].set_color(BLACK)
+        movers.append(tex3)
+        squares.append(tex3.scale(0.7))
 
-        for i,square in enumerate(squares):
-            if (i==0):
-                square.next_to(title,DOWN)
-                square.next_to(img,RIGHT)
-            else:
-                square.next_to(squares[i-1],RIGHT)
-            square.set_color(YELLOW)
-        self.play(*[Write(squares[i]) for i in range(0,len(squares))])
+        for i, square in enumerate(squares):
+            square.move_to(new_squares[i])
+            # if i == 0:
+            #     square.next_to(new_squares[0], UP)
+            # else:
+            #     square.next_to(squares[i - 1], RIGHT, buff=0.9 * SMALL_BUFF)
+            if i % 2 == 0:
+                square.set_color(YELLOW)
+        self.play(*[Write(squares[i]) for i in range(0, len(squares), 2)],Write(squares[len(squares)-1]))
         self.wait(2)
+
+        self.play(*[Transform(squares[i], new_squares[i]) for i in range(0, len(squares), 2)],)
+        self.wait(2)
+
+        self.play(*[TransformFromCopy(squares[i], nnew_squares[i]) for i in range(0, len(squares), 2)])
+        self.wait(2)
+
+        zeta = MathTex(r"\zeta(", "2", ")", "=")
+        movers.append(zeta)
+        zeta.scale(0.7)
+        zeta[1].set_color(YELLOW)
+        zeta.next_to(nnew_squares[0], LEFT)
+        sol = MathTex(r"\approx 1.64")
+        movers.append(sol)
+        sol.scale(0.7).set_color(YELLOW).next_to(nnew_squares[len(nnew_squares) - 1], RIGHT)
+
+        self.play(*[Write(nnew_squares[i]) for i in range(1, len(nnew_squares), 2)])
+        self.play(Write(zeta), Write(sol))
+        self.play(title.animate().to_corner(UP + RIGHT).shift(0.9 * LEFT))
+        self.wait(2)
+
+        self.play(*[Write(labels[i]) for i in range(0, len(labels))])
+        self.wait(2)
+
+        val = [1.20, 1.08, 1.04, 1.02, 1.01, 1.00]
+        tmp = nnew_squares
+
+        for i in range(3, 8):
+            parts = []
+            for j in range(1, 6):
+                square = MathTex(r"1", "\over", str(j), "^" + str(i))
+                movers.append(square)
+                square.scale(0.7)
+                square[3].set_color(YELLOW)
+                parts.append(square)
+                if j < 5:
+                    tex4 = MathTex("+")
+                    movers.append(tex4)
+                    parts.append(tex4.scale(0.7))
+            tex5 = MathTex(r"\dots")
+            movers.append(tex5)
+            parts.append(tex5.scale(0.7))
+
+            for j, square in enumerate(parts):
+                if j == 0:
+                    square.next_to(tmp[0], DOWN)
+                else:
+                    square.next_to(parts[j - 1], RIGHT, buff=0.7 * SMALL_BUFF)
+
+            zeta = MathTex(r"\zeta(", str(i), ")", "=")
+            movers.append(zeta)
+            zeta.scale(0.7)
+            zeta[1].set_color(YELLOW)
+            zeta.next_to(parts[0], LEFT)
+            sol = MathTex(r"\approx " + str(val[i - 3]))
+            movers.append(sol)
+            sol.scale(0.7).set_color(YELLOW).next_to(parts[len(parts) - 1], RIGHT)
+
+            self.play(Write(zeta), *[Write(parts[i]) for i in range(0, len(parts))], Write(sol))
+            self.wait(2)
+            tmp = parts
+
+        self.wait(5)
+
+        self.play(*[mover.animate().shift(1.8 * UP) for mover in movers])
+        self.wait(2)
+
+        dots = MathTex(r"\dots")
+        dots.scale(0.7)
+        dots.next_to(zeta,DOWN,buff = LARGE_BUFF)
+        dots.align_to(zeta[3],LEFT)
+        self.play(Write(dots))
+        self.wait(2)
+
+        harmonic = MathTex(r"\zeta(",str(1),")","=")
+        harmonic.scale(0.7)
+        harmonic[1].set_color(YELLOW)
+        parts = []
+        for j in range(1, 6):
+            square = MathTex(r"1", "\over", str(j), "^" + str(1))
+            movers.append(square)
+            square.scale(0.7)
+            square[3].set_color(YELLOW)
+            parts.append(square)
+            if j < 5:
+                tex4 = MathTex("+")
+                movers.append(tex4)
+                parts.append(tex4.scale(0.7))
+        tex5 = MathTex(r"\dots")
+        movers.append(tex5)
+        parts.append(tex5.scale(0.7))
+
+        harmonic.next_to(dots, DOWN,buff = LARGE_BUFF)
+        align_formulas_with_equal(harmonic, zeta, 3, 3)
+
+        for j, square in enumerate(parts):
+            if j == 0:
+                square.next_to(harmonic, RIGHT)
+            else:
+                square.next_to(parts[j - 1], RIGHT, buff=0.7 * SMALL_BUFF)
+
+
+        infty = MathTex(r"=\infty")
+        infty.scale(0.7)
+        infty.set_color(YELLOW)
+        infty.next_to(parts[len(parts)-1],RIGHT)
+
+        self.play(Write(harmonic))
+        self.play(*[Write(part) for part in parts])
+        self.play(Write(infty))
+        self.wait(2)
+
         self.play(*[Write(neg_labels[i]) for i in range(0, len(neg_labels))])
         self.wait(2)
+
+
+
+
+        self.wait(10)
+
+
+class Intro2(Scene):
+    def construct(self):
+
+        title = Tex("The sound of primes")
+        title.set_color(YELLOW)
+        title.to_edge(UP)
+
+        self.play(Write(title))
+
+        # logo
+        n = 19
+
+        def path(t):
+            step = np.floor(np.abs(n * t) / np.pi)
+            sign = (-1) ** step
+            val = 0.25 * sign * np.cos(sign * np.abs(n * t)) - 0.5 * step + (n - 1) / 4 + 1j * (
+                    0.25 * np.sin(n * t) + 0.75)
+            inv = 1 / val.conjugate()  # circluar inversion
+            return np.array((inv.real, inv.imag, 0))
+
+        function = ParametricFunction(path, t_range=np.array([-np.pi, np.pi]), fill_opacity=0).set_color(RED)
+
+        circles1 = []
+        for index in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 2 + index * index
+            r = 1 / den
+            x = 2 * index / den
+            y = 3 / den
+            c = Circle().scale(r).move_to(x * LEFT + y * UP)
+            c.set_style(fill_color=RED, fill_opacity=0.8);
+            circles1.append(c)
+
+        circles2 = []
+        for index in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 6 + 4 * index * (index - 1)
+            r = 1 / den
+            x = (8 * index - 4) / den
+            y = 9 / den
+            c = Circle().scale(r).move_to(x * LEFT + y * UP)
+            c.set_style(fill_color=GREEN, fill_opacity=0.8, stroke_color=GREEN);
+            circles2.append(c)
+
+        circles3 = []
+        for index in range(-int(np.floor(n / 2)), int(np.floor(n / 2))):
+            den = 15 + 4 * index * (index - 1)
+            r = 1 / den
+            x = (8 * index - 4) / den
+            y = 15 / den
+            c = Circle().scale(r).move_to(x * LEFT + y * UP)
+            c.set_style(fill_color=BLUE, fill_opacity=0.8, stroke_color=BLUE);
+            circles3.append(c)
+
+        logo = VGroup(function, *circles1, *circles2, *circles3)
+
+        logo.scale(1)
+        logo.to_corner(UP + LEFT)
+        logo.shift(1.5 * RIGHT)
+
+        number_objects = []
+        prime_objects = []
+        non_prime_objects = []
+        primes = [0, 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
+                  101]
+        prime_dist = [0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10, 11,
+                      11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16,
+                      16, 16, 16, 17, 17, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 21, 21, 21, 21, 21, 21, 22,
+                      22, 22, 22, 23, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25, 25]
+
+        def pdf(x):
+            return prime_dist[int(x)]
+
+        for row in range(0, 10):
+            for col in range(0, 10):
+                number = row * 10 + col + 1
+                number_obj = MathTex(str(number))
+                number_obj.scale(0.7)
+                if number in primes:
+                    prime_objects.append(number_obj)
+                else:
+                    non_prime_objects.append(number_obj)
+                number_objects.append(number_obj)
+
+        group = VGroup(*number_objects)
+        group.arrange_in_grid(10, 10)
+        group.next_to(logo, DOWN)
+        group.shift(0.5 * RIGHT)
+
+        ax = Axes(
+            x_range=[0, 105],
+            y_range=[0, 30],
+            x_length=6,
+            y_length=5.5,
+            axis_config={"color": GREEN},
+            x_axis_config={
+                "numbers_to_include": np.arange(0, 101, 10),
+                "tick_size": 0.01,
+                "longer_tick_multiple": 10,
+                "numbers_with_elongated_ticks": np.arange(0, 101, 5),
+                "color": GRAY,
+                "font_size": 18,
+                "line_to_number_buff": 1.3 * MED_SMALL_BUFF
+            },
+            y_axis_config={
+                "numbers_to_include": np.arange(0, 30, 5),
+                "tick_size": 0.03,
+                "longer_tick_multiple": 3,
+                "numbers_with_elongated_ticks": np.arange(0, 30, 5),
+                "font_size": 18,
+                "color": GRAY
+            },
+            tips=True,
+        )
+        labels = ax.get_axis_labels(x_label="x", y_label="\\pi(x)")
+        labels[0].shift(0.4 * DOWN)
+        labels[1].shift(0.4 * LEFT)
+        labels.set_color(WHITE)
+        labels[1].set_color(YELLOW)
+        ax.add(labels)
+        ax.next_to(logo, DOWN, buff=-1 * LARGE_BUFF)
+        ax.to_edge(LEFT, buff=SMALL_BUFF)
+
+        fade_out_anims = []
+        count = 0
+        for i in range(1, 101):
+            if i in primes:
+                graph = ax.get_graph(lambda x: pdf(x), color=YELLOW, x_range=[i + 0.001, i + 1 - 0.001, 0.1])
+                fade_out_anims.append(TransformFromCopy(number_objects[i - 1], graph,run_time=2))
+                fade_out_anims.append(number_objects[i-1].animate().scale(0.7).set_color(YELLOW).move_to(ax.coords_to_point(i,-1+2*(count%2))))
+                count = count+1
+            else:
+                graph = ax.get_graph(lambda x: pdf(x), color=WHITE, x_range=[i + 0.01, i + 1 - 0.01, 0.1])
+                fade_out_anims.append(Transform(number_objects[i - 1], graph))
+                #fade_out_anims.append(FadeOut(number_objects[i - 1]))
+
+        time = 15  # 6
+
+        circles_and_graph = AnimationGroup(
+                AnimationGroup(
+                    *[AnimationGroup(GrowFromCenter(circles1[i], run_time=1.5*time / 4), GrowFromCenter(circles2[i], run_time=1.5),
+                           GrowFromCenter(circles3[i], run_time=2.25)) for i in range(0, len(circles1))],
+                                    lag_ratio=0.1
+                ),# draw circles
+                AnimationGroup(*fade_out_anims, lag_ratio=0.1, run_time=3*time / 4), # create graph
+                lag_ratio=0)
+
+        logo_lines_and_numbers = AnimationGroup(
+            AnimationGroup(
+                Create(function, run_time=time / 3, rate_func=rate_functions.linear),  # draw logo lines
+                AnimationGroup(*[Write(number, run_time=time / 300) for number in number_objects], lag_ratio=1),# write numbers
+                lag_ratio=0)
+        )
+
+        axes_and_yellow = AnimationGroup(
+            Create(ax),
+            *[p.animate().scale(1.2).set_color(YELLOW) for p in prime_objects],
+            *[n.animate().fade(0.75) for n in non_prime_objects],
+            lag_ratio = 0
+        )
+        #self.play(AnimationGroup(*anims, lag_ratio=0.5))
+
+        self.play(logo_lines_and_numbers)
+        self.play(axes_and_yellow)
+        self.play(circles_and_graph)
+
+        self.wait(2)
+
+        zeta = MathTex(r"\zeta",r"(",r"s",r")","=","1","+",r"\frac{1}{2^s}","+",r"\frac{1}{3^s}",r"+",r"\frac{1}{4^s}",r"+",r"\frac{1}{5^s}",r"+",r"\frac{1}{6^s}",r"+",r"\frac{1}{7^s}",r"+",r"\dots")
+        colors = color_gradient(["#ff0000", "#ffff000","#ffff00", "#00ff00", "#00ffff", "#0000ff", "#ff00ff","ff0000"],len(zeta))
+        for i,z in enumerate(zeta):
+            z.set_color(colors[i])
+        zeta.next_to(logo, RIGHT, buff=1.5 * LARGE_BUFF)
+        zeta.shift(0.25 * DOWN)
+        zeta.scale(0.7)
+
+        self.play(Write(zeta))
+        self.wait(10)
+
+
+class Overview(Scene):
+    def construct(self):
+
+        title = Tex("The sound of primes")
+        title.set_color(YELLOW)
+        title.to_edge(UP)
+
+        self.add(title)
+
+        parts = [Tex("I"),Tex("II"),Tex("III"),Tex("IV")]
+        for p in parts:
+            p.scale(0.7)
+
+        rect1  = Rectangle(WHITE,3,4.5)
+        rect1.shift(1.25 *UP+4.75*LEFT)
+        parts[0].move_to(rect1.get_corner(UP+LEFT)).shift(0.2*UP)
+        rect2 = Rectangle(WHITE, 3, 4.5)
+        rect2.shift(1.25 * UP )
+        parts[1].move_to(rect2.get_corner(UP + LEFT)).shift(0.2*UP)
+        rect3 = Rectangle(WHITE, 3, 4.5)
+        rect3.shift(1.25 * UP+4.75*RIGHT)
+        parts[2].move_to(rect3.get_corner(UP + LEFT)).shift(0.2*UP)
+
+        rect4 = Rectangle(WHITE,3,9)
+        rect4.shift(2.25*DOWN)
+        parts[3].move_to(rect4.get_corner(UP+LEFT)).shift(0.2*UP)
+
+        self.play(Write(parts[0]),GrowFromPoint(rect1,rect1.get_corner(UP+LEFT)))
+        self.wait(10)
+        self.play(Write(parts[1]),GrowFromPoint(rect2,0.5*(rect2.get_corner(UP+LEFT)+rect2.get_corner(UP+RIGHT))))
+        self.wait(10)
+        self.play(Write(parts[2]),GrowFromPoint(rect3,rect3.get_corner(UP+RIGHT)))
+        self.wait(10)
+        self.play(Write(parts[3]),GrowFromPoint(rect4,0.5*(rect4.get_corner(DOWN+LEFT)+rect4.get_corner(DOWN+RIGHT))))
+        self.wait(2)
+        img = ImageMobject("riemann1.png")
+        img2 = ImageMobject("riemann2.png")
+        img.scale(0.45)
+        img2.scale(0.45)
+        img.move_to(rect4.get_corner(UP+LEFT)+1.5*DOWN+1*RIGHT)
+        img2.next_to(img,RIGHT)
+        self.play(FadeIn(img))
+        self.play(FadeIn(img2))
+        self.wait(10)
+
+
+class PrimesAndZeta(Scene):
+    def construct(self):
+        title =Tex("Primes ","and ","$\zeta$")
+        title[0].set_color(YELLOW)
+        title[2].set_color(RED)
+        title.to_edge(UP)
+        self.play(Write(title))
+        self.wait(2)
+
+        relation = MathTex(r"\Pi(x)","=",r"\frac{1}{2\pi}\int\limits_{-\infty}^{\infty}\frac{\log\zeta(a+i b)}{a+i b} x^{a+i b}\,{\rm d}b")
+        relation[0].set_color(YELLOW)
+        relation[2].set_color(RED)
+        relation.next_to(title,DOWN)
+        relation.to_edge(RIGHT)
+
+        self.play(Write(relation))
+        self.wait(10)
+
+
+class WithoutTitle(Scene):
+    def construct(self):
+        function = MathTex(r"x^s","x=")
+        number = DecimalNumber(num_decimal_places=1)
+        number.set_value(1)
+        function[1].shift(2*RIGHT)
+        number.next_to(function,RIGHT)
+        s = ValueTracker(1)
+        s.add_updater(lambda mobject, dt: mobject.increment_value(9/5*dt))
+
+        draw_number = (lambda: number.set_value(s.get_value()))
+
+        number_writer=  always_redraw(draw_number)
+        self.play(Write(function[0]))
+        self.wait()
+        self.play(Write(function[1]))
+        self.play(Write(number))
+        self.wait()
+        self.add(s,number_writer)
+        self.wait(5)
+        s.clear_updaters()
+
+        self.wait(10)
+
+        s.add_updater(lambda mobject, dt: mobject.increment_value(-9/4.333*dt))
+        self.add(s)
+        self.wait(4.3333)
+        s.clear_updaters()
+
+        self.wait(10)
+
+        self.play(FadeOut(function),FadeOut(number))
+
+        self.wait(2)
+        eq1 = MathTex(r"\Pi(2.9)"r"\approx",r"1")
+        eq2 = MathTex(r"\Pi(3.1)"r"\approx",r"2")
+        eq2.next_to(eq1,DOWN)
+        align_formulas_with_equal(eq2,eq1,1,1)
+        self.play(Write(eq1))
+        self.play(Write(eq2))
+
         self.wait(10)
